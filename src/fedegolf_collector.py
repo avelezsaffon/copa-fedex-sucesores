@@ -21,10 +21,14 @@ class FedegolfScoresCollector:
     def __init__(self):
         self.base_url = "https://federacioncolombianadegolf.com"
         self.search_url = f"{self.base_url}/handicap/"
+        self.ajax_url = f"{self.base_url}/wp-admin/admin-ajax.php"
         self.api_url = "https://servicios.federacioncolombianadegolf.com/apex"
         self.session = requests.Session()
         self.session.headers.update({
-            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)'
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+            'Accept': '*/*',
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+            'X-Requested-With': 'XMLHttpRequest'
         })
 
     def search_player_by_name(self, name: str) -> List[Dict]:
@@ -38,15 +42,17 @@ class FedegolfScoresCollector:
             Lista de diccionarios con información del jugador
         """
         try:
-            # Construir URL de búsqueda
-            search_params = {
+            # Datos para AJAX (FormData format)
+            data = {
+                'action': 'envio_salesforce',
+                'type': 'field_value',
                 'tipo_busqueda': 'nom',
                 'termino_busqueda': name
             }
 
-            response = self.session.get(
-                self.search_url,
-                params=search_params,
+            response = self.session.post(
+                self.ajax_url,
+                data=data,
                 timeout=10
             )
 
@@ -54,29 +60,32 @@ class FedegolfScoresCollector:
                 print(f"Error: Status code {response.status_code}")
                 return []
 
-            # Parsear HTML
-            soup = BeautifulSoup(response.content, 'html.parser')
+            # La respuesta es JSON
+            try:
+                result = response.json()
+                if result.get('success') and result.get('data'):
+                    busqueda_result = result['data'].get('BusquedaResult', [])
 
-            # Buscar tabla de resultados
-            players = []
-            table = soup.find('table')
+                    players = []
+                    for item in busqueda_result:
+                        if item.get('Persona'):
+                            persona = item['Persona']
+                            player = {
+                                'codigo': persona.get('CodigoJugador__c', ''),
+                                'nombre': persona.get('FirstName', ''),
+                                'apellido': persona.get('LastName', ''),
+                                'categoria': persona.get('Category__c', ''),
+                                'indice': persona.get('Index__c', ''),
+                                'salesforce_id': persona.get('Id', ''),
+                                'email': persona.get('Email', ''),
+                                'club': persona.get('Club__c', '')
+                            }
+                            players.append(player)
 
-            if table:
-                rows = table.find_all('tr')[1:]  # Saltar header
-
-                for row in rows:
-                    cols = row.find_all('td')
-                    if len(cols) >= 5:
-                        player = {
-                            'codigo': cols[0].text.strip(),
-                            'nombre': cols[1].text.strip(),
-                            'apellido': cols[2].text.strip(),
-                            'categoria': cols[3].text.strip(),
-                            'indice': cols[4].text.strip()
-                        }
-                        players.append(player)
-
-            return players
+                    return players
+            except json.JSONDecodeError:
+                print(f"Error: La respuesta no es JSON válido")
+                return []
 
         except Exception as e:
             print(f"Error en búsqueda de jugador: {str(e)}")
@@ -93,37 +102,48 @@ class FedegolfScoresCollector:
             Diccionario con información del jugador
         """
         try:
-            search_params = {
+            # Datos para AJAX
+            data = {
+                'action': 'envio_salesforce',
+                'type': 'field_value',
                 'tipo_busqueda': 'cod',
                 'termino_busqueda': code
             }
 
-            response = self.session.get(
-                self.search_url,
-                params=search_params,
+            response = self.session.post(
+                self.ajax_url,
+                data=data,
                 timeout=10
             )
 
             if response.status_code != 200:
                 return None
 
-            soup = BeautifulSoup(response.content, 'html.parser')
-            table = soup.find('table')
+            # La respuesta es JSON
+            try:
+                result = response.json()
+                if result.get('success') and result.get('data'):
+                    busqueda_result = result['data'].get('BusquedaResult', [])
 
-            if table:
-                row = table.find('tr')
-                if row:
-                    cols = row.find_all('td')
-                    if len(cols) >= 5:
-                        return {
-                            'codigo': cols[0].text.strip(),
-                            'nombre': cols[1].text.strip(),
-                            'apellido': cols[2].text.strip(),
-                            'categoria': cols[3].text.strip(),
-                            'indice': cols[4].text.strip()
-                        }
+                    if busqueda_result and len(busqueda_result) > 0:
+                        item = busqueda_result[0]
+                        if item.get('Persona'):
+                            persona = item['Persona']
+                            return {
+                                'codigo': persona.get('CodigoJugador__c', ''),
+                                'nombre': persona.get('FirstName', ''),
+                                'apellido': persona.get('LastName', ''),
+                                'categoria': persona.get('Category__c', ''),
+                                'indice': persona.get('Index__c', ''),
+                                'salesforce_id': persona.get('Id', ''),
+                                'email': persona.get('Email', ''),
+                                'club': persona.get('Club__c', '')
+                            }
 
-            return None
+                return None
+            except json.JSONDecodeError:
+                print(f"Error: La respuesta no es JSON válido")
+                return None
 
         except Exception as e:
             print(f"Error en búsqueda por código: {str(e)}")
@@ -155,25 +175,37 @@ class FedegolfScoresCollector:
                 # El contenido es HTML, parsearlo
                 soup = BeautifulSoup(response.content, 'html.parser')
 
-                # Buscar tabla de resultados
+                # Buscar la tabla correcta (la que tiene el header específico)
                 scores = []
-                table = soup.find('table')
+                tables = soup.find_all('table')
 
-                if table:
-                    rows = table.find_all('tr')[1:]  # Saltar header
+                for table in tables:
+                    rows = table.find_all('tr')
+                    if len(rows) < 2:
+                        continue
 
-                    for row in rows:
-                        cols = row.find_all('td')
-                        if len(cols) >= 7:
-                            score = {
-                                'fecha': cols[1].text.strip(),
-                                'club': cols[2].text.strip(),
-                                'cancha': cols[3].text.strip(),
-                                'marca': cols[4].text.strip(),
-                                'score': cols[5].text.strip(),
-                                'diferencial': cols[6].text.strip()
-                            }
-                            scores.append(score)
+                    # Verificar si es la tabla de scores (tiene el header correcto)
+                    header_row = rows[0]
+                    headers = [th.text.strip() for th in header_row.find_all(['th', 'td'])]
+
+                    # La tabla correcta tiene estos headers
+                    if 'FECHAS DE JUEGO' in headers and 'SCORES GROSS/AJUST' in headers:
+                        # Procesar las filas de datos
+                        for row in rows[1:]:  # Saltar header
+                            cols = row.find_all('td')
+                            if len(cols) >= 8:
+                                # Columnas: TARJETA, FECHA, CLUB, CANCHA, MARCA, PATRONES, SCORES, DIFERENCIAL
+                                score = {
+                                    'fecha': cols[1].text.strip(),
+                                    'club': cols[2].text.strip(),
+                                    'cancha': cols[3].text.strip(),
+                                    'marca': cols[4].text.strip(),
+                                    'patrones': cols[5].text.strip(),  # CMP/CUR/PAR
+                                    'scores': cols[6].text.strip(),    # GROSS/AJUST
+                                    'diferencial': cols[7].text.strip()
+                                }
+                                scores.append(score)
+                        break  # Ya encontramos la tabla correcta
 
                 return scores
 
