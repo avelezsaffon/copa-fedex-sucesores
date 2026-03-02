@@ -1,0 +1,10 @@
+__pycache__
+*.pyc
+.git
+.gitignore
+venv
+*.db
+data/
+.claude/
+*.xlsx
+*.md

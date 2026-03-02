@@ -2,9 +2,12 @@
 Script para agregar los jugadores del torneo y consultar sus rondas
 """
 
+import os
+import time
 from src.fedegolf_collector import FedegolfScoresCollector
 from src.database import create_database, agregar_jugador
-import time
+
+DB_PATH = os.environ.get("DB_PATH", "data/torneo.db")
 
 # Lista de jugadores inscritos
 JUGADORES_INSCRITOS = [
@@ -32,7 +35,7 @@ def verificar_y_agregar_jugadores():
     """
     # Crear base de datos
     print("📊 Creando base de datos...")
-    create_database("data/torneo.db")
+    create_database(DB_PATH)
 
     collector = FedegolfScoresCollector()
     jugadores_encontrados = []
@@ -69,7 +72,7 @@ def verificar_y_agregar_jugadores():
             jugadores_encontrados.append(jugador)
 
             # Agregar a base de datos
-            agregar_jugador("data/torneo.db", jugador)
+            agregar_jugador(DB_PATH, jugador)
         else:
             print(f"❌ No se encontró jugador con código {codigo}")
 

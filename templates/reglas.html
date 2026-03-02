@@ -1,0 +1,621 @@
+{% extends "base.html" %}
+
+{% block title %}Reglas y Dinamica - Copa Fedex Sucesores 2026{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Reglas y Dinamica del Torneo</h1>
+</div>
+
+<div class="reglas-intro">
+    <strong>Copa Fedex Sucesores 2026</strong> &mdash; Club de Golf de Manizales.<br>
+    Temporada: <strong>Febrero 21 a Junio 28, 2026</strong>. Todos los fines de semana, los ultimos 4 con puntos dobles.
+</div>
+
+<!-- Inscripcion y Pagos -->
+<div class="regla-card">
+    <div class="regla-header">
+        <span class="regla-num">$</span>
+        <h2>Inscripcion y Pagos</h2>
+    </div>
+    <div class="regla-body">
+        <div class="regla-detail">
+            <div class="detail-item">
+                <span class="detail-label">Inscripcion</span>
+                <span class="detail-value"><strong>$500.000</strong> para el case de premiacion final. Debe estar pago 100% antes del primer fin de semana de juego.</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Runidera semanal</span>
+                <span class="detail-value"><strong>$50.000</strong> obligatoria cada dia de juego (formato 15-15-20). Se juega por dia, no por fin de semana.</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">No jugar runidera</span>
+                <span class="detail-value">Si no quiere participar en la runidera, debe avisar <strong>explicitamente antes</strong> de salir a jugar o pegar el primer golpe.</span>
+            </div>
+        </div>
+
+        <div class="regla-note">
+            <strong>Apuestas adicionales:</strong> El que quiera casar apuestas en pareja o individuales lo puede hacer libremente.
+        </div>
+    </div>
+</div>
+
+<!-- Requisitos -->
+<div class="regla-card">
+    <div class="regla-header">
+        <span class="regla-num">1</span>
+        <h2>Requisitos de los Jugadores</h2>
+    </div>
+    <div class="regla-body">
+        <div class="regla-alert">
+            <strong>Todos los jugadores deben tener handicap por la Federacion Colombiana de Golf.</strong>
+        </div>
+        <div class="regla-detail">
+            <div class="detail-item">
+                <span class="detail-label">Handicap maximo</span>
+                <span class="detail-value"><strong>15</strong>. Si tu handicap real es mayor, juegas con 15.</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Marcas azules</span>
+                <span class="detail-value">Todos los que tengan handicap <strong>inferior a 12</strong> o no sean senior deben jugar de marcas azules.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quorum y Fechas -->
+<div class="regla-card">
+    <div class="regla-header">
+        <span class="regla-num">2</span>
+        <h2>Quorum y Fechas</h2>
+    </div>
+    <div class="regla-body">
+        <p>Se juega desde <strong>febrero 21 hasta junio 28, 2026</strong>. Todos los sabados o domingos.</p>
+
+        <div class="regla-alert">
+            Para que las tarjetas cuenten, deben haber al menos <strong>2 jugadores de la Fedex jugando juntos</strong> en la misma ronda.
+        </div>
+
+        <div class="regla-detail">
+            <div class="detail-item">
+                <span class="detail-label">Quorum</span>
+                <span class="detail-value">Un quorum para el sabado y uno para el domingo. No se vale que unos jueguen por la manana y otros por la tarde por separado.</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Objetivo</span>
+                <span class="detail-value">Integrar el grupo y evitar posibles malos entendidos con scores y tarjetas.</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Tarjetas validas</span>
+                <span class="detail-value">Solo se reciben tarjetas de rondas jugadas con el grupo. No se reciben tarjetas de rondas por la tarde o jugadas que no se cuadren por el grupo.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Fin de semana = 1 fecha -->
+<div class="regla-card">
+    <div class="regla-header">
+        <span class="regla-num">3</span>
+        <h2>Como Funciona Cada Fecha</h2>
+    </div>
+    <div class="regla-body">
+        <p>Cada fin de semana cuenta como <strong>una fecha</strong>.</p>
+
+        <div class="regla-detail">
+            <div class="detail-item">
+                <span class="detail-label">Sabado y Domingo</span>
+                <span class="detail-value">Si un jugador juega sabado y domingo, se toma la tarjeta del <strong>sabado</strong>.</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Liquidacion</span>
+                <span class="detail-value">Los domingos se liquida la tabla de posiciones para la fecha, tomando las tarjetas del sabado y domingo.</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Orden</span>
+                <span class="detail-value">Se organizan todas las tarjetas en orden <strong>neto</strong> (score bruto - handicap).</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Torneos del club</span>
+                <span class="detail-value">Los dias de torneos del club que se puedan tomar medal play se cuentan como <strong>fecha Fedex del sabado</strong>.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Logistica semanal -->
+<div class="regla-card">
+    <div class="regla-header">
+        <span class="regla-num">4</span>
+        <h2>Logistica Semanal</h2>
+    </div>
+    <div class="regla-body">
+        <ol class="regla-steps">
+            <li>
+                <strong>Jueves:</strong> Se separan los turnos para jugar entre 7:00 y 8:30 am. La idea es jugar en grupos seguidos.
+            </li>
+            <li>
+                <strong>Durante la semana:</strong> Se hace la lista de los que van a jugar el sabado.
+            </li>
+            <li>
+                <strong>Viernes:</strong> Se sortean los grupos.
+            </li>
+            <li>
+                <strong>Dia de juego:</strong> Se termina el juego, se liquida, se paga la runidera del dia y las apuestas.
+            </li>
+        </ol>
+    </div>
+</div>
+
+<!-- Reglas de juego -->
+<div class="regla-card">
+    <div class="regla-header">
+        <span class="regla-num">5</span>
+        <h2>Reglas de Juego</h2>
+    </div>
+    <div class="regla-body">
+        <div class="regla-warning">
+            <strong>No hay mulligans ni putts dados.</strong> Todo adentro.
+        </div>
+        <br>
+        <div class="regla-detail">
+            <div class="detail-item">
+                <span class="detail-label">Scores en vivo</span>
+                <span class="detail-value">Los scores se deben llevar actualizados durante el campo en la <strong>app de la Federacion</strong> para poder ver como va cada jugador en vivo.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Sistema de puntos -->
+<div class="regla-card">
+    <div class="regla-header">
+        <span class="regla-num">6</span>
+        <h2>Sistema de Puntos y Ranking</h2>
+    </div>
+    <div class="regla-body">
+        <p>Para la division de los puntos se toman las tarjetas del sabado y domingo y se organizan en <strong>orden neto</strong>.</p>
+
+        <div class="regla-detail">
+            <div class="detail-item">
+                <span class="detail-label">Score neto</span>
+                <span class="detail-value">Score bruto - Handicap (maximo 15)</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Mejores fechas</span>
+                <span class="detail-value">Al final se toman las <strong>8 mejores fechas</strong> en las que mas puntos sumo cada jugador.</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Ultimas 4 fechas</span>
+                <span class="detail-value">Los ultimos 4 fines de semana otorgan <strong>mas puntos</strong> para darle emocion al cierre.</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Empates</span>
+                <span class="detail-value">Si varios jugadores empatan en la misma posicion, se promedian los puntos de esas posiciones entre todos los empatados.</span>
+            </div>
+        </div>
+
+        <h3>Tabla de Puntos por Posicion</h3>
+        <div class="table-wrapper">
+            <table class="data-table reglas-table">
+                <thead>
+                    <tr>
+                        <th>Pos</th>
+                        <th>Puntos Normal</th>
+                        <th>Puntos Ultimas 4</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>1</td><td><strong>300</strong></td><td><strong>450</strong></td></tr>
+                    <tr><td>2</td><td>240</td><td>370</td></tr>
+                    <tr><td>3</td><td>190</td><td>300</td></tr>
+                    <tr><td>4</td><td>150</td><td>250</td></tr>
+                    <tr><td>5</td><td>120</td><td>210</td></tr>
+                    <tr><td>6</td><td>100</td><td>180</td></tr>
+                    <tr><td>7</td><td>90</td><td>155</td></tr>
+                    <tr><td>8</td><td>85</td><td>135</td></tr>
+                    <tr><td>9</td><td>80</td><td>120</td></tr>
+                    <tr><td>10</td><td>75</td><td>110</td></tr>
+                    <tr><td>11</td><td>70</td><td>100</td></tr>
+                    <tr><td>12</td><td>65</td><td>90</td></tr>
+                    <tr><td>13</td><td>60</td><td>85</td></tr>
+                    <tr><td>14</td><td>57</td><td>80</td></tr>
+                    <tr><td>15</td><td>56</td><td>75</td></tr>
+                    <tr><td>16</td><td>55</td><td>70</td></tr>
+                    <tr><td>17</td><td>54</td><td>65</td></tr>
+                    <tr><td>18</td><td>53</td><td>60</td></tr>
+                    <tr><td>19</td><td>52</td><td>57</td></tr>
+                    <tr><td>20</td><td>51</td><td>56</td></tr>
+                    <tr><td>21</td><td>50</td><td>55</td></tr>
+                    <tr><td>22</td><td>49</td><td>54</td></tr>
+                    <tr><td>23</td><td>48</td><td>53</td></tr>
+                    <tr><td>24</td><td>47</td><td>52</td></tr>
+                    <tr><td>25</td><td>46</td><td>51</td></tr>
+                    <tr><td>26</td><td>45</td><td>50</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Ejemplo de empate -->
+<div class="regla-card">
+    <div class="regla-header">
+        <span class="regla-num">?</span>
+        <h2>Ejemplo: Empate en Posicion</h2>
+    </div>
+    <div class="regla-body">
+        <p>Supongamos que en una fecha normal, 3 jugadores empatan con score neto 72:</p>
+        <div class="regla-detail">
+            <div class="detail-item">
+                <span class="detail-label">Posiciones</span>
+                <span class="detail-value">Los 3 ocuparian posiciones 5, 6 y 7</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Puntos disponibles</span>
+                <span class="detail-value">120 + 100 + 90 = 310</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Puntos cada uno</span>
+                <span class="detail-value">310 / 3 = <strong>103.3 puntos</strong> para cada uno</span>
+            </div>
+        </div>
+        <p>El siguiente jugador (sin empate) recibe los puntos de la posicion 8 (85 puntos).</p>
+    </div>
+</div>
+
+<!-- Resumen rapido -->
+<div class="regla-card tips-card">
+    <div class="regla-header">
+        <span class="regla-num">!</span>
+        <h2>Resumen Rapido</h2>
+    </div>
+    <div class="regla-body">
+        <div class="tip">
+            <strong>Temporada:</strong> Feb 21 &ndash; Jun 28, 2026. Todos los fines de semana.
+        </div>
+        <div class="tip">
+            <strong>Quorum:</strong> Minimo 2 jugadores Fedex jugando juntos.
+        </div>
+        <div class="tip">
+            <strong>Handicap:</strong> Maximo 15. HCP &lt; 12 y no-senior juegan de azules.
+        </div>
+        <div class="tip">
+            <strong>Sab + Dom:</strong> Se toma tarjeta del sabado si juega ambos dias.
+        </div>
+        <div class="tip">
+            <strong>Ranking final:</strong> Las 8 mejores fechas de cada jugador.
+        </div>
+        <div class="tip">
+            <strong>Todo adentro:</strong> Sin mulligans, sin putts dados.
+        </div>
+        <div class="tip">
+            <strong>Scores en vivo:</strong> Llevar score actualizado en la app de la Federacion.
+        </div>
+        <div class="tip warning-tip">
+            <strong>Pago:</strong> $500.000 inscripcion + $50.000 runidera diaria (15-15-20).
+        </div>
+    </div>
+</div>
+
+<!-- Regla del Hoyo en Uno -->
+<div class="regla-card">
+    <div class="regla-header">
+        <span class="regla-num">7</span>
+        <h2>Regla del Hoyo en Uno</h2>
+    </div>
+    <div class="regla-body">
+        <div class="regla-alert">
+            En caso de hoyo en uno durante una fecha oficial, <strong>todos los jugadores que esten jugando ese dia</strong> (miembros e invitados) deben pagar <strong>$300.000 COP</strong> al jugador que lo realice.
+        </div>
+
+        <div class="regla-detail">
+            <div class="detail-item">
+                <span class="detail-label">Quienes pagan</span>
+                <span class="detail-value">Todos los jugadores (miembros del torneo FedEx e invitados) que se encuentren jugando en esa fecha oficial.</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Monto</span>
+                <span class="detail-value"><strong>$300.000 COP</strong> por jugador.</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Plazo de pago</span>
+                <span class="detail-value">El pago debe realizarse <strong>ese mismo dia</strong>.</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Obligacion del ganador</span>
+                <span class="detail-value">El jugador que haga el hoyo en uno debe gastar el <strong>50% de lo recaudado ese mismo dia</strong> con el grupo.</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Excepciones</span>
+                <span class="detail-value">Ninguna. Estas obligaciones no admiten excepciones bajo ninguna circunstancia.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Regla de la Runidera -->
+<div class="regla-card">
+    <div class="regla-header">
+        <span class="regla-num">8</span>
+        <h2>Regla de la Runidera</h2>
+    </div>
+    <div class="regla-body">
+        <div class="regla-detail">
+            <div class="detail-item">
+                <span class="detail-label">Que es</span>
+                <span class="detail-value">Apuesta que se juega en <strong>todas las fechas oficiales</strong> del torneo FedEx.</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Participacion</span>
+                <span class="detail-value">Todos los miembros del torneo que esten jugando en una fecha oficial se consideran <strong>automaticamente participantes</strong>.</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">No participar</span>
+                <span class="detail-value">Si no desea participar, debe informarlo <strong>expresamente por el grupo oficial</strong> del torneo <strong>antes de la hora de salida</strong> del dia correspondiente.</span>
+            </div>
+        </div>
+
+        <div class="regla-warning">
+            Si no se realiza el aviso previo por el grupo oficial antes de las salidas, se entiende automaticamente que participa en la Runidera y debera asumir las obligaciones economicas correspondientes.
+        </div>
+    </div>
+</div>
+
+<!-- Politica de Invitados -->
+<div class="regla-card">
+    <div class="regla-header">
+        <span class="regla-num">9</span>
+        <h2>Politica de Invitados</h2>
+    </div>
+    <div class="regla-body">
+        <h3>Hoyo en Uno</h3>
+        <div class="regla-detail">
+            <div class="detail-item">
+                <span class="detail-label">Obligacion</span>
+                <span class="detail-value">Los invitados que participen en una fecha oficial <strong>deben obligatoriamente participar</strong> en la apuesta del Hoyo en Uno. Si alguien hace hoyo en uno, los invitados tambien pagan $300.000 COP. Sin excepciones.</span>
+            </div>
+        </div>
+
+        <h3>Runidera</h3>
+        <div class="regla-detail">
+            <div class="detail-item">
+                <span class="detail-label">Participacion</span>
+                <span class="detail-value">Los invitados <strong>no estan obligados</strong> a participar en la Runidera.</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Si quiere participar</span>
+                <span class="detail-value">El miembro que lo invito debe informarlo <strong>expresamente por el grupo oficial</strong> antes de la hora de salida.</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Requisito obligatorio</span>
+                <span class="detail-value">El invitado debe contar con <strong>handicap oficial vigente</strong> expedido por la Federacion correspondiente. Sin handicap federado vigente, <strong>no puede participar</strong> en la Runidera bajo ninguna circunstancia.</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Sin aviso previo</span>
+                <span class="detail-value">Si no se realiza el aviso por el grupo oficial o el invitado no cumple con el requisito de handicap, se entiende automaticamente que <strong>no participa</strong> en la Runidera.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================ -->
+<!-- REGLAS LOCALES DEL CAMPO                     -->
+<!-- ============================================ -->
+
+<h2 style="margin-top: 2.5rem;">Reglas Locales del Campo</h2>
+<div class="reglas-intro">
+    Este manual entra en vigor segun las condiciones del campo comunicadas diariamente por el Starter.
+    El objetivo es garantizar la equidad y la proteccion del campo.
+</div>
+
+<!-- Seccion 1 -->
+<div class="regla-card">
+    <div class="regla-header">
+        <span class="regla-num">1</span>
+        <h2>Condicion de "Asiento Mejorado" (Tee Up / Preferential Lies)</h2>
+    </div>
+    <div class="regla-body">
+        <div class="regla-alert">
+            Esta regla solo aplica si el Starter anuncia: <strong>"Hoy hay asiento mejorado"</strong>. Si no se anuncia, se juega la bola como esta.
+        </div>
+
+        <h3>Regla Local Modelo E-3 (Adaptada)</h3>
+        <p>Cuando la bola de un jugador reposa en una parte del <strong>Area General</strong> segada a la altura del fairway o menor (Fairways, Antegreens y Caminos de pasto corto), se permite el siguiente alivio:</p>
+
+        <div class="regla-detail">
+            <div class="detail-item">
+                <span class="detail-label">Area de Alivio</span>
+                <span class="detail-value">El ancho de una tarjeta de puntuacion (aprox. 15 cm)</span>
+            </div>
+        </div>
+
+        <h3>Procedimiento</h3>
+        <ol class="regla-steps">
+            <li>
+                <strong>Marcar:</strong> Debe marcar la posicion original con un tee o marca-bolas.
+                <span class="penalty">Penalidad: 1 golpe si no marca</span>
+            </li>
+            <li>
+                <strong>Limpiar:</strong> La bola puede ser levantada y limpiada.
+            </li>
+            <li>
+                <strong>Colocar:</strong> La bola debe colocarse dentro del ancho de la tarjeta, no mas cerca del hoyo y siempre dentro del Area General.
+            </li>
+        </ol>
+
+        <div class="regla-warning">
+            Una vez colocada y en reposo, la bola esta en juego. No puede volver a moverse.
+        </div>
+    </div>
+</div>
+
+<!-- Seccion 2 -->
+<div class="regla-card">
+    <div class="regla-header">
+        <span class="regla-num">2</span>
+        <h2>Alivio por Condiciones Anormales (Agua accidental / GUR)</h2>
+    </div>
+    <div class="regla-body">
+        <p>Para charcos de agua en el fairway o rough, o zonas de reparacion (estacas blancas o lineas blancas), aplicamos la <strong>Regla 16.1</strong>, pero con una precision en el area de alivio para este torneo.</p>
+
+        <h3>Regla Local Modelo F-1 (Condiciones Anormales del Campo)</h3>
+        <p>Si la bola reposa en agua temporal (charcos), terreno en reparacion o agujeros de animales:</p>
+
+        <div class="regla-detail">
+            <div class="detail-item">
+                <span class="detail-label">Punto de Referencia</span>
+                <span class="detail-value">El punto de alivio completo mas cercano (donde el agua ya no afecte el "lie" ni el "stance")</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Area de Alivio</span>
+                <span class="detail-value">Un palo de longitud (el mas largo de la bolsa, excepto el putter)</span>
+            </div>
+        </div>
+
+        <h3>Procedimiento</h3>
+        <p>A diferencia del asiento mejorado, aqui la bola se debe <strong>DROPEAR</strong> desde la altura de la rodilla.</p>
+
+        <div class="regla-note">
+            <strong>Nota Especial:</strong> Si el agua esta en el Green, la bola se coloca en el punto de alivio mas cercano, incluso si ese punto esta fuera del green (en el antegreen).
+        </div>
+    </div>
+</div>
+
+<!-- Seccion 3 -->
+<div class="regla-card">
+    <div class="regla-header">
+        <span class="regla-num">3</span>
+        <h2>Obstrucciones Inamovibles (Caminos y Aspersores)</h2>
+    </div>
+    <div class="regla-body">
+        <div class="regla-detail">
+            <div class="detail-item">
+                <span class="detail-label">Caminos</span>
+                <span class="detail-value">Se concede alivio sin penalidad de un palo (dropeado) si el camino es artificial (cemento, asfalto o piedra roja)</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Aspersores cerca del Green (Regla F-5)</span>
+                <span class="detail-value">Si un aspersor esta en tu linea de juego, a menos de dos palos del green y tu bola esta a menos de dos palos del aspersor, tienes alivio gratuito (punto de referencia + un palo de alivio)</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Seccion 4: Carritos -->
+<div class="regla-card">
+    <div class="regla-header">
+        <span class="regla-num">4</span>
+        <h2>Uso de Carritos de Golf</h2>
+    </div>
+    <div class="regla-body">
+        <div class="regla-note">
+            <strong>Se permite jugar en carrito</strong> siempre y cuando el resto del field este jugando.
+        </div>
+
+        <h3>Fundamento en las Reglas de Golf (USGA / R&A)</h3>
+        <p>Las Reglas de Golf <strong>no prohiben</strong> el uso de carritos motorizados de forma predeterminada. La Regla 4.3a (Uso de Equipamiento) no menciona el transporte motorizado. La unica forma de prohibirlo es que el Comite de competencia adopte la <strong>Regla Local Modelo G-6</strong>, que dice:</p>
+
+        <div class="regla-detail">
+            <div class="detail-item">
+                <span class="detail-label">Regla Local G-6</span>
+                <span class="detail-value">"Durante una ronda, un jugador o caddie no debe usar ninguna forma de transporte motorizado excepto si es autorizado por el Comite."</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Nuestra decision</span>
+                <span class="detail-value">La Copa Fedex Sucesores <strong>NO adopta la Regla Local G-6</strong>. Por lo tanto, el uso de carritos esta permitido.</span>
+            </div>
+        </div>
+
+        <p>En resumen: si la USGA no lo prohibe explicitamente y el Comite no adopta G-6, los carritos estan permitidos. Asi de simple.</p>
+    </div>
+</div>
+
+<!-- Seccion 5: Caddies -->
+<div class="regla-card">
+    <div class="regla-header">
+        <span class="regla-num">5</span>
+        <h2>Juego sin Caddie</h2>
+    </div>
+    <div class="regla-body">
+        <div class="regla-note">
+            <strong>Se permite jugar sin caddie.</strong> Ningun jugador esta obligado a contratar un caddie.
+        </div>
+
+        <p>Cada jugador es libre de decidir si juega con o sin caddie. Los motivos incluyen:</p>
+
+        <div class="regla-detail">
+            <div class="detail-item">
+                <span class="detail-label">Riesgo laboral</span>
+                <span class="detail-value">Los jugadores no pueden ser obligados a asumir el riesgo laboral que implica la contratacion de un caddie, incluyendo la responsabilidad que se genera en caso de accidentes o lesiones durante la ronda.</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Regla 10.3 USGA</span>
+                <span class="detail-value">Las Reglas de Golf permiten que un jugador tenga un caddie pero <strong>no lo exigen</strong>. Tener caddie es un derecho, no una obligacion.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tabla resumen reglas locales -->
+<div class="regla-card">
+    <div class="regla-header">
+        <span class="regla-num">6</span>
+        <h2>Tabla de Referencia Rapida</h2>
+    </div>
+    <div class="regla-body">
+        <p>Para evitar confusiones durante la ronda:</p>
+        <div class="table-wrapper">
+            <table class="data-table reglas-table">
+                <thead>
+                    <tr>
+                        <th>Situacion</th>
+                        <th>Donde aplica</th>
+                        <th>Distancia de Alivio</th>
+                        <th>Accion</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Asiento Mejorado (Tee Up)</strong></td>
+                        <td>Solo Fairway / Antegreen</td>
+                        <td>Una tarjeta</td>
+                        <td><span class="badge-colocar">COLOCAR</span> (previa marca)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Agua Accidental / GUR</strong></td>
+                        <td>Todo el campo</td>
+                        <td>Un palo</td>
+                        <td><span class="badge-dropear">DROPEAR</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Caminos / Aspersores</strong></td>
+                        <td>Todo el campo</td>
+                        <td>Un palo</td>
+                        <td><span class="badge-dropear">DROPEAR</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Tips del comisario -->
+<div class="regla-card tips-card">
+    <div class="regla-header">
+        <span class="regla-num">!</span>
+        <h2>Recomendaciones del Comisario</h2>
+    </div>
+    <div class="regla-body">
+        <div class="tip">
+            <strong>La Tarjeta vs. El Palo:</strong> Se usa una tarjeta para el "Tee Up" (Asiento mejorado) para evitar que los jugadores se muevan demasiado y ganen mejores angulos. El palo completo se reserva para alivios obligatorios (agua/obstrucciones).
+        </div>
+        <div class="tip">
+            <strong>El Starter:</strong> Su unica funcion es decir: <em>"Senores, hoy aplica el Manual de Reglas Locales Seccion 1 (Asiento Mejorado)"</em>. Nada mas. Los detalles tecnicos ya estan en este manual.
+        </div>
+        <div class="tip warning-tip">
+            <strong>Fairway vs Rough:</strong> El "Tee Up" (una tarjeta) <strong>NUNCA</strong> aplica en el rough. Si mueven la bola en el rough bajo la regla de "asiento mejorado", son <strong>2 golpes de penalidad</strong> por jugar desde lugar equivocado.
+        </div>
+    </div>
+</div>
+{% endblock %}

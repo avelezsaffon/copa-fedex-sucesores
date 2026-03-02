@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Ranking - Copa Fedex Sucesores 2026{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Leaderboard</h1>
+    <div class="actions">
+        <button class="btn btn-secondary" onclick="syncAll()">Sincronizar Todo</button>
+        <button class="btn btn-primary" onclick="recalcular()">Recalcular Ranking</button>
+    </div>
+</div>
+
+<div id="notification" class="notification hidden"></div>
+
+{% if ranking %}
+<div class="table-wrapper">
+    <table class="ranking-table">
+        <thead>
+            <tr>
+                <th class="sticky-col col-pos">#</th>
+                <th class="sticky-col col-name">Jugador</th>
+                <th class="col-total">Total</th>
+                <th class="col-played">Jugadas</th>
+                <th class="col-avg">Promedio</th>
+                {% for fecha in fechas %}
+                <th class="col-date">
+                    <a href="/fecha/{{ fecha.id }}">
+                        {{ fecha.fecha[5:] }}
+                    </a>
+                    {% if fecha.es_ultima_cuatro %}<span class="badge-final">F</span>{% endif %}
+                </th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in ranking %}
+            <tr class="{% if r.posicion <= 3 %}top-{{ r.posicion }}{% endif %}">
+                <td class="sticky-col col-pos">{{ r.posicion }}</td>
+                <td class="sticky-col col-name">
+                    <a href="/jugador/{{ r.jugador_id }}">{{ r.apellido }}</a>
+                </td>
+                <td class="col-total"><strong>{{ r.total_puntos }}</strong></td>
+                <td class="col-played">{{ r.fechas_jugadas }}</td>
+                <td class="col-avg">{{ r.promedio_puntos }}</td>
+                {% for fecha in fechas %}
+                {% set puntos = r.puntos_por_fecha.get(fecha.fecha) %}
+                <td class="col-date {% if puntos and fecha.fecha in r.top_n_fechas %}in-top12{% elif puntos %}not-top12{% endif %}">
+                    {% if puntos %}{{ puntos }}{% else %}-{% endif %}
+                </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="empty-state">
+    <p>No hay datos de ranking todavia.</p>
+    <p>1. Ve a <a href="/jugadores">Jugadores</a> y sincroniza las rondas</p>
+    <p>2. Marca las rondas aplicables al torneo</p>
+    <p>3. Haz clic en "Recalcular Ranking"</p>
+</div>
+{% endif %}
+
+<div class="legend">
+    <span class="legend-item"><span class="dot in-top12"></span> En top 8</span>
+    <span class="legend-item"><span class="dot not-top12"></span> Fuera del top 8</span>
+    <span class="legend-item"><span class="badge-final">F</span> Ultimas 4 fechas</span>
+</div>
+{% endblock %}

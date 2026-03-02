@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Fecha {{ fecha.fecha }} - Copa Fedex Sucesores{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <a href="/ranking" class="back-link">&larr; Ranking</a>
+        <h1>Fecha: {{ fecha.fecha }}</h1>
+    </div>
+</div>
+
+<div class="player-info">
+    <span>Jugadores: <strong>{{ fecha.num_jugadores }}</strong></span>
+    <span>Estado: <strong class="{% if fecha.valida %}text-valid{% else %}text-invalid{% endif %}">
+        {% if fecha.valida %}Valida{% else %}No valida (menos de 8 jugadores){% endif %}
+    </strong></span>
+    {% if fecha.es_ultima_cuatro %}
+    <span class="badge-final">Ultima 4 - Puntos x1.5</span>
+    {% endif %}
+</div>
+
+{% if resultados %}
+<div class="table-wrapper">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Pos</th>
+                <th>Jugador</th>
+                <th>Score Bruto</th>
+                <th>Handicap</th>
+                <th>Score Neto</th>
+                <th>Puntos</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% set prev_pos = namespace(val=0) %}
+            {% for r in resultados %}
+            <tr class="{% if r.posicion <= 3 %}top-{{ r.posicion }}{% endif %}{% if r.posicion == prev_pos.val %} tie-row{% endif %}">
+                <td>{{ r.posicion }}</td>
+                <td><a href="/jugador/{{ r.jugador_id }}">{{ r.nombre }} {{ r.apellido }}</a></td>
+                <td>{{ r.score_gross or '-' }}</td>
+                <td>{{ r.handicap_aplicado or '-' }}</td>
+                <td>{{ r.score_neto }}</td>
+                <td><strong>{{ r.puntos }}</strong></td>
+            </tr>
+            {% set prev_pos.val = r.posicion %}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="empty-state">
+    <p>No hay resultados para esta fecha.</p>
+</div>
+{% endif %}
+{% endblock %}

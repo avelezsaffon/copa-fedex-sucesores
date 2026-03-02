@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}Jugadores - Copa Fedex Sucesores 2026{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Jugadores</h1>
+    <div class="actions">
+        <button class="btn btn-secondary" onclick="syncAll()">Sincronizar Todos</button>
+    </div>
+</div>
+
+<div id="notification" class="notification hidden"></div>
+
+<div class="agregar-jugador-form">
+    <h3>Agregar Jugador</h3>
+    <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+        <input type="text" id="codigo-federacion" placeholder="Codigo de federacion" class="input-codigo">
+        <button class="btn btn-primary btn-small" onclick="agregarJugador()">Agregar</button>
+    </div>
+</div>
+
+<div class="cards-grid">
+    {% for j in jugadores %}
+    <div class="card">
+        <div class="card-header">
+            <a href="/jugador/{{ j.id }}" class="card-name">{{ j.nombre }} {{ j.apellido }}</a>
+            {% if j.posicion_ranking != '-' %}
+            <span class="card-rank {% if j.posicion_ranking <= 3 %}rank-top{% endif %}">
+                #{{ j.posicion_ranking }}
+            </span>
+            {% endif %}
+        </div>
+        <div class="card-body">
+            <div class="card-stat">
+                <span class="stat-label">Codigo</span>
+                <span class="stat-value">{{ j.codigo or '-' }}</span>
+            </div>
+            <div class="card-stat">
+                <span class="stat-label">Indice</span>
+                <span class="stat-value">{{ j.indice or '-' }}</span>
+            </div>
+            <div class="card-stat">
+                <span class="stat-label">HCP Azules</span>
+                <span class="stat-value">{{ calcular_hcp_cancha(j.indice, SLOPE_AZULES, CR_AZULES) }}</span>
+            </div>
+            <div class="card-stat">
+                <span class="stat-label">HCP Blancas</span>
+                <span class="stat-value">{{ calcular_hcp_cancha(j.indice, SLOPE_BLANCAS, CR_BLANCAS) }}</span>
+            </div>
+            <div class="card-stat">
+                <span class="stat-label">Categoria</span>
+                <span class="stat-value">{{ j.categoria or '-' }}</span>
+            </div>
+            <div class="card-stat">
+                <span class="stat-label">Puntos</span>
+                <span class="stat-value">{{ j.total_puntos }}</span>
+            </div>
+            <div class="card-stat">
+                <span class="stat-label">Fechas</span>
+                <span class="stat-value">{{ j.fechas_jugadas }}</span>
+            </div>
+        </div>
+        {% if j.sparkline %}
+        <div class="card-sparkline">
+            <canvas id="spark-{{ j.id }}" width="260" height="50"></canvas>
+        </div>
+        {% endif %}
+        <div class="card-actions">
+            <a href="/jugador/{{ j.id }}" class="btn btn-small">Ver Detalle</a>
+            <button class="btn btn-small btn-secondary" onclick="syncJugador({{ j.id }}, this)">Sync</button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+async function agregarJugador() {
+    var input = document.getElementById('codigo-federacion');
+    var codigo = input.value.trim();
+    if (!codigo) {
+        showNotification('Ingresa un codigo de federacion', 'error');
+        return;
+    }
+    showNotification('Buscando jugador con codigo ' + codigo + '...', 'loading');
+    try {
+        var response = await adminFetch('/api/jugador/agregar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ codigo: codigo })
+        });
+        if (response.status === 404) {
+            var err = await response.json();
+            showNotification(err.error || 'Jugador no encontrado', 'error');
+            return;
+        }
+        var data = await response.json();
+        showNotification('Jugador agregado: ' + data.nombre + ' (Indice: ' + data.indice + ')', 'success');
+        input.value = '';
+        setTimeout(function() { location.reload(); }, 1500);
+    } catch (e) {
+        showNotification(e.message === 'Clave incorrecta' ? 'Clave incorrecta' : 'Error al agregar jugador', 'error');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    var sparkData = {
+        {% for j in jugadores %}
+        {% if j.sparkline %}
+        "{{ j.id }}": {{ j.sparkline }},
+        {% endif %}
+        {% endfor %}
+    };
+
+    Object.keys(sparkData).forEach(function(id) {
+        var data = sparkData[id];
+        if (data.length < 2) return;
+        var canvas = document.getElementById('spark-' + id);
+        if (!canvas) return;
+
+        new Chart(canvas, {
+            type: 'line',
+            data: {
+                labels: data.map(function(_, i) { return ''; }),
+                datasets: [{
+                    data: data,
+                    borderColor: '#2d8a4e',
+                    backgroundColor: 'rgba(45, 138, 78, 0.1)',
+                    borderWidth: 2,
+                    tension: 0.3,
+                    fill: true,
+                    pointRadius: 0,
+                }]
+            },
+            options: {
+                responsive: false,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                scales: {
+                    x: { display: false },
+                    y: { display: false }
+                },
+                animation: false,
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

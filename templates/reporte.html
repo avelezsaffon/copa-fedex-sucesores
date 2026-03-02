@@ -1,0 +1,246 @@
+{% extends "base.html" %}
+
+{% block title %}Reporte - Copa Fedex Sucesores 2026{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Reporte de Prensa</h1>
+    <p class="page-subtitle">Cronologia completa de la Copa Fedex Sucesores 2026</p>
+</div>
+
+{% if jornadas %}
+
+{% for datos in jornadas %}
+{% if datos.fechas %}
+{% set fecha_torneo = datos.fechas[0] %}
+{% set fecha_str = fecha_torneo.fecha %}
+{% set resultados = datos.resultados_por_fecha.get(fecha_str, []) %}
+{% set jornada_num = jornadas|length - loop.index0 %}
+
+<div class="reporte-jornada" id="fecha-{{ fecha_str }}">
+
+<div class="reporte-hero">
+    <div class="reporte-dates">
+        <span class="reporte-date-badge">Fecha {{ jornada_num }}</span>
+    </div>
+    <h2>Jornada {{ fecha_str[8:] }}-{{ (fecha_str[8:]|int + 1) }} de {{ fecha_str[5:7] }}, {{ fecha_str[:4] }}</h2>
+    <p class="reporte-subtitle">Club de Golf de Manizales &middot; Tees Azules</p>
+</div>
+
+{% if resultados %}
+<!-- Resultados del fin de semana -->
+<div class="reporte-section">
+    <div class="reporte-section-header">
+        <h2>Resultados del Fin de Semana</h2>
+        <span class="reporte-players-count">{{ resultados|length }} jugadores</span>
+    </div>
+
+    <!-- Podio -->
+    <div class="reporte-podio">
+        {% for r in resultados[:3] %}
+        <div class="podio-card podio-{{ loop.index }}">
+            <div class="podio-medal">
+                {% if loop.index == 1 %}&#127942;{% elif loop.index == 2 %}&#129352;{% else %}&#129353;{% endif %}
+            </div>
+            <div class="podio-name">{{ r.nombre }} {{ r.apellido }}</div>
+            <div class="podio-scores">
+                <div class="podio-score-item">
+                    <span class="podio-label">Gross</span>
+                    <span class="podio-value">{{ r.score_gross }}</span>
+                </div>
+                <div class="podio-score-item">
+                    <span class="podio-label">HCP</span>
+                    <span class="podio-value">{{ r.handicap_aplicado|int if r.handicap_aplicado is not none else '-' }}</span>
+                </div>
+                <div class="podio-score-item">
+                    <span class="podio-label">Neto</span>
+                    <span class="podio-value podio-neto">{{ r.score_neto|int }}</span>
+                </div>
+            </div>
+            <div class="podio-puntos">{{ r.puntos }} pts</div>
+            {% if r.ronda_fecha and r.ronda_fecha != fecha_str %}
+            <div class="podio-dia">Jugo Domingo</div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Tabla completa -->
+    <div class="table-wrapper">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Pos</th>
+                    <th>Jugador</th>
+                    <th>Dia</th>
+                    <th>Gross</th>
+                    <th>HCP</th>
+                    <th>Neto</th>
+                    <th>Puntos</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in resultados %}
+                <tr class="{% if r.posicion <= 3 %}top-{{ r.posicion }}{% endif %}">
+                    <td>{{ r.posicion }}</td>
+                    <td>{{ r.nombre }} {{ r.apellido }}</td>
+                    <td>{% if r.ronda_fecha == fecha_str %}Sab{% else %}Dom{% endif %}</td>
+                    <td>{{ r.score_gross or '-' }}</td>
+                    <td>{{ r.handicap_aplicado|int if r.handicap_aplicado is not none else '-' }}</td>
+                    <td><strong>{{ r.score_neto|int }}</strong></td>
+                    <td><strong>{{ r.puntos }}</strong></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Notas destacadas -->
+    <div class="reporte-notas">
+        {% set ganador = resultados[0] %}
+        {% if ganador.score_gross and ganador.score_gross < 72 %}
+        <div class="nota-item nota-fire">
+            <strong>{{ ganador.nombre }} {{ ganador.apellido }}</strong> disparo {{ ganador.score_gross }} golpes,
+            {{ 72 - ganador.score_gross }} bajo par. Ronda espectacular.
+        </div>
+        {% elif ganador.score_gross == 72 %}
+        <div class="nota-item nota-fire">
+            <strong>{{ ganador.nombre }} {{ ganador.apellido }}</strong> igualo el par del campo con {{ ganador.score_gross }} golpes.
+        </div>
+        {% endif %}
+
+        {% set empates = {} %}
+        {% for r in resultados %}
+            {% if empates.update({r.score_neto: empates.get(r.score_neto, 0) + 1}) %}{% endif %}
+        {% endfor %}
+        {% for neto, count in empates.items() if count > 1 %}
+        <div class="nota-item nota-tie">
+            Empate a {{ count }} jugadores con neto {{ neto|int }}.
+            {% set empatados = resultados|selectattr('score_neto', 'equalto', neto)|list %}
+            Puntos promediados: {{ empatados[0].puntos }} pts cada uno.
+        </div>
+        {% endfor %}
+
+        {% set jugadores_domingo = resultados|selectattr('ronda_fecha', 'ne', fecha_str)|list %}
+        {% if jugadores_domingo %}
+        <div class="nota-item nota-info">
+            {% for j in jugadores_domingo %}{{ j.nombre }} {{ j.apellido }}{% if not loop.last %}, {% endif %}{% endfor %}
+            jugaron el domingo.
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Handicaps de la jornada -->
+<div class="reporte-section">
+    <div class="reporte-section-header">
+        <h2>Handicaps de la Jornada</h2>
+    </div>
+    <p class="hint">Handicap de cancha aplicado (Tees Azules, Slope 137, CR 71.8)</p>
+    <div class="table-wrapper">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Jugador</th>
+                    <th>HCP Aplicado</th>
+                    <th>Indice Actual</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in resultados %}
+                <tr>
+                    <td>{{ r.nombre }} {{ r.apellido }}</td>
+                    <td><strong>{{ r.handicap_aplicado|int if r.handicap_aplicado is not none else '-' }}</strong></td>
+                    <td>{{ r.indice_actual }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+<!-- Jugadores en otras canchas -->
+{% if datos.otras_canchas %}
+<div class="reporte-section">
+    <div class="reporte-section-header">
+        <h2>Jugaron en Otras Canchas</h2>
+    </div>
+    <div class="table-wrapper">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Jugador</th>
+                    <th>Fecha</th>
+                    <th>Club</th>
+                    <th>Cancha</th>
+                    <th>Gross</th>
+                    <th>Diferencial</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in datos.otras_canchas %}
+                <tr>
+                    <td>{{ r.nombre }} {{ r.apellido }}</td>
+                    <td>{{ r.fecha }}</td>
+                    <td>{{ r.club }}</td>
+                    <td>{{ r.cancha }}</td>
+                    <td>{{ r.score_gross }}</td>
+                    <td>{{ r.diferencial }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+</div><!-- .reporte-jornada -->
+
+{% if not loop.last %}
+<hr class="reporte-divider">
+{% endif %}
+
+{% endif %}
+{% endfor %}
+
+<!-- Ranking General (siempre al final) -->
+{% if ranking %}
+<div class="reporte-section">
+    <div class="reporte-section-header">
+        <h2>Ranking General</h2>
+        <span class="reporte-players-count">Mejores 8 fechas</span>
+    </div>
+    <div class="table-wrapper">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Jugador</th>
+                    <th>Puntos</th>
+                    <th>Jugadas</th>
+                    <th>Promedio</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in ranking %}
+                <tr class="{% if r.posicion <= 3 %}top-{{ r.posicion }}{% endif %}">
+                    <td>{{ r.posicion }}</td>
+                    <td><a href="/jugador/{{ r.jugador_id }}">{{ r.nombre }} {{ r.apellido }}</a></td>
+                    <td><strong>{{ r.total_puntos }}</strong></td>
+                    <td>{{ r.fechas_jugadas }}</td>
+                    <td class="col-avg">{{ r.promedio_puntos }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+{% else %}
+<div class="empty-state">
+    <p>No hay resultados de jornadas todavia.</p>
+</div>
+{% endif %}
+{% endblock %}

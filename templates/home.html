@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio - Copa Fedex Sucesores 2026{% endblock %}
+
+{% block content %}
+<div class="home-hero">
+    <div class="home-logos">
+        <img src="/static/img/club-manizales.png" alt="Club Manizales" class="home-logo" onerror="this.style.display='none'">
+        <img src="/static/img/fedex-cup.png" alt="Fedex Cup Sucesores" class="home-logo" onerror="this.style.display='none'">
+    </div>
+    <h1 class="home-title">Copa Fedex Sucesores 2026</h1>
+    <p class="home-subtitle">Club de Golf de Manizales &middot; Feb 21 - Jun 28, 2026</p>
+    <div class="home-actions">
+        <a href="/ranking" class="btn btn-primary">Ver Ranking</a>
+        <a href="/fechas" class="btn btn-secondary">Matriz de Fechas</a>
+    </div>
+</div>
+
+<div id="notification" class="notification hidden"></div>
+
+<h2>Participantes</h2>
+<p class="hint">Haz clic en el check para marcar si un jugador ya pago la inscripcion.</p>
+
+<div class="table-wrapper">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Pago</th>
+                <th>Jugador</th>
+                <th>Codigo</th>
+                <th>Indice</th>
+                <th>HCP Azules</th>
+                <th>HCP Blancas</th>
+                <th>Categoria</th>
+                <th>Ranking</th>
+                <th>Puntos</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for j in jugadores %}
+            <tr class="{% if j.pago %}row-pago{% endif %}" id="row-pago-{{ j.id }}">
+                <td>
+                    <input type="checkbox"
+                           class="toggle-check"
+                           {% if j.pago %}checked{% endif %}
+                           onchange="togglePago({{ j.id }}, this)">
+                </td>
+                <td><a href="/jugador/{{ j.id }}">{{ j.nombre }} {{ j.apellido }}</a></td>
+                <td>{{ j.codigo or '-' }}</td>
+                <td>{{ j.indice or '-' }}</td>
+                <td>{{ calcular_hcp_cancha(j.indice, SLOPE_AZULES, CR_AZULES) }}</td>
+                <td>{{ calcular_hcp_cancha(j.indice, SLOPE_BLANCAS, CR_BLANCAS) }}</td>
+                <td>{{ j.categoria or '-' }}</td>
+                <td>
+                    {% if j.posicion_ranking != '-' %}
+                    <strong>#{{ j.posicion_ranking }}</strong>
+                    {% else %}-{% endif %}
+                </td>
+                <td>{{ j.total_puntos }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+async function togglePago(jugadorId, checkbox) {
+    try {
+        var response = await adminFetch('/api/jugador/' + jugadorId + '/toggle-pago', { method: 'POST' });
+        var data = await response.json();
+        checkbox.checked = data.pago;
+        var row = document.getElementById('row-pago-' + jugadorId);
+        if (data.pago) {
+            row.classList.add('row-pago');
+        } else {
+            row.classList.remove('row-pago');
+        }
+        showNotification(
+            data.pago ? 'Pago registrado' : 'Pago desmarcado',
+            'success'
+        );
+    } catch (e) {
+        showNotification(e.message === 'Clave incorrecta' ? 'Clave incorrecta' : 'Error al cambiar estado de pago', 'error');
+        checkbox.checked = !checkbox.checked;
+    }
+}
+</script>
+{% endblock %}

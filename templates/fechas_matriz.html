@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Asignaciones - Copa Fedex Sucesores 2026{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Asignaciones por Fecha</h1>
+    <div class="actions">
+        <button class="btn btn-primary" onclick="recalcularDesdeMatriz()">Recalcular Ranking</button>
+    </div>
+</div>
+
+<div id="notification" class="notification hidden"></div>
+
+<p class="hint">Haz clic en una celda para asignar/desasignar un jugador a una fecha. Luego recalcula el ranking.</p>
+
+<div class="table-wrapper">
+    <table class="ranking-table matriz-table">
+        <thead>
+            <tr>
+                <th class="sticky-col col-pos">#</th>
+                <th class="sticky-col col-name">Jugador</th>
+                <th>Idx</th>
+                {% for fecha in fechas %}
+                <th class="col-date">
+                    <a href="/fecha/{{ fecha.id }}" class="fecha-link">{{ fecha.fecha[5:] }}</a>
+                    {% if fecha.es_ultima_cuatro %}<span class="badge-final">F</span>{% endif %}
+                </th>
+                {% endfor %}
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for j in jugadores %}
+            <tr>
+                <td class="sticky-col col-pos">{{ loop.index }}</td>
+                <td class="sticky-col col-name">
+                    <a href="/jugador/{{ j.id }}">{{ j.apellido }}, {{ j.nombre }}</a>
+                </td>
+                <td>{{ j.indice or '-' }}</td>
+                {% for fecha in fechas %}
+                {% set key = j.id|string ~ '_' ~ fecha.id|string %}
+                {% set asig = asignaciones.get(key) %}
+                <td class="col-date celda-asignar {% if asig %}asignado{% endif %}"
+                    data-jugador="{{ j.id }}"
+                    data-fecha="{{ fecha.id }}"
+                    onclick="toggleAsignacion(this, {{ j.id }}, {{ fecha.id }})"
+                    title="{{ j.nombre }} {{ j.apellido }} - {{ fecha.fecha }}">
+                    {% if asig and asig.puntos %}
+                        {{ asig.puntos }}
+                    {% elif asig %}
+                        &#10003;
+                    {% else %}
+                        &nbsp;
+                    {% endif %}
+                </td>
+                {% endfor %}
+                <td class="col-total"><strong>{{ j.total_puntos or 0 }}</strong></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="legend">
+    <span class="legend-item"><span class="dot asignado-dot"></span> Asignado</span>
+    <span class="legend-item"><span class="badge-final">F</span> Ultimas 4 fechas (mas puntos)</span>
+</div>
+
+<script>
+async function toggleAsignacion(cell, jugadorId, fechaId) {
+    cell.style.opacity = '0.5';
+    try {
+        var response = await adminFetch('/api/asignar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ jugador_id: jugadorId, fecha_torneo_id: fechaId })
+        });
+        var data = await response.json();
+        if (data.asignado) {
+            cell.classList.add('asignado');
+            cell.innerHTML = '&#10003;';
+        } else {
+            cell.classList.remove('asignado');
+            cell.innerHTML = '&nbsp;';
+        }
+        cell.style.opacity = '1';
+        showNotification(
+            data.asignado ? 'Jugador asignado a la fecha' : 'Jugador desasignado',
+            'success'
+        );
+    } catch (e) {
+        cell.style.opacity = '1';
+        showNotification(e.message === 'Clave incorrecta' ? 'Clave incorrecta' : 'Error al cambiar asignacion', 'error');
+    }
+}
+
+async function recalcularDesdeMatriz() {
+    showNotification('Recalculando ranking...', 'loading');
+    try {
+        var response = await adminFetch('/api/recalcular', { method: 'POST' });
+        var data = await response.json();
+        showNotification(
+            'Ranking recalculado: ' + data.jugadores_en_ranking + ' jugadores',
+            'success'
+        );
+        setTimeout(function() { location.reload(); }, 1500);
+    } catch (e) {
+        showNotification(e.message === 'Clave incorrecta' ? 'Clave incorrecta' : 'Error al recalcular', 'error');
+    }
+}
+</script>
+{% endblock %}

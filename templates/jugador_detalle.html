@@ -1,0 +1,337 @@
+{% extends "base.html" %}
+
+{% block title %}{{ jugador.nombre }} {{ jugador.apellido }} - Copa Fedex Sucesores{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <a href="/jugadores" class="back-link">&larr; Jugadores</a>
+        <h1>{{ jugador.nombre }} {{ jugador.apellido }}</h1>
+    </div>
+    <div class="actions">
+        <button class="btn btn-secondary" onclick="syncJugador({{ jugador.id }}, this)">Sincronizar Rondas</button>
+    </div>
+</div>
+
+<div id="notification" class="notification hidden"></div>
+
+<div class="player-info">
+    <span>Codigo: <strong>{{ jugador.codigo or '-' }}</strong></span>
+    <span>Indice: <strong>{{ jugador.indice or '-' }}</strong></span>
+    <span>HCP Azules: <strong>{{ calcular_hcp_cancha(jugador.indice, SLOPE_AZULES, CR_AZULES) }}</strong></span>
+    <span>HCP Blancas: <strong>{{ calcular_hcp_cancha(jugador.indice, SLOPE_BLANCAS, CR_BLANCAS) }}</strong></span>
+    <span>Categoria: <strong>{{ jugador.categoria or '-' }}</strong></span>
+    <span>Club: <strong>{{ jugador.club or '-' }}</strong></span>
+</div>
+
+{% if rondas %}
+<h2>Tendencia de Scores</h2>
+<div class="chart-container">
+    <canvas id="scoreChart"></canvas>
+</div>
+{% endif %}
+
+{% if resultados %}
+<h2>Resultados en Torneo</h2>
+<div class="table-wrapper">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Pos</th>
+                <th>Score Neto</th>
+                <th>Puntos</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in resultados %}
+            <tr class="{% if loop.index <= 8 %}in-top12{% else %}not-top12{% endif %}">
+                <td>{{ r.fecha }}</td>
+                <td>{{ r.posicion }}</td>
+                <td>{{ r.score_neto }}</td>
+                <td><strong>{{ r.puntos }}</strong></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        {% if resultados|length > 0 %}
+        <tfoot>
+            <tr>
+                <td colspan="3"><strong>Total (Top 8)</strong></td>
+                <td><strong>{{ resultados[:8]|sum(attribute='puntos')|round(2) }}</strong></td>
+            </tr>
+        </tfoot>
+        {% endif %}
+    </table>
+</div>
+{% endif %}
+
+{% if fechas_asignadas %}
+<h2>Fechas Asignadas</h2>
+<p class="hint">Estas son las fechas del torneo donde este jugador fue asignado. Puedes gestionarlas desde <a href="/fechas">la matriz de fechas</a>.</p>
+<div class="table-wrapper">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Pos</th>
+                <th>Gross</th>
+                <th>HCP</th>
+                <th>Neto</th>
+                <th>Puntos</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for f in fechas_asignadas %}
+            <tr class="{% if f.puntos %}row-aplicable{% endif %}">
+                <td>{{ f.fecha }}</td>
+                <td>{{ f.posicion or '-' }}</td>
+                <td>{{ f.score_gross or '-' }}</td>
+                <td>{{ f.handicap_aplicado or '-' }}</td>
+                <td>{{ f.score_neto or '-' }}</td>
+                <td><strong>{{ f.puntos or '-' }}</strong></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+<h2>Historial de Rondas</h2>
+<p class="hint">Historial de rondas registradas en la Federacion. Haz clic en una ronda para ver el detalle hoyo por hoyo.</p>
+
+{% if rondas %}
+<div class="rondas-list">
+    {% for r in rondas %}
+    <div class="ronda-item" id="ronda-{{ r.id }}">
+        <div class="ronda-header" onclick="toggleHoyos({{ r.id }}, '{{ r.tarjeta_id or '' }}')">
+            <div class="ronda-info">
+                <span class="ronda-fecha">{{ r.fecha }}</span>
+                <span class="ronda-club">{{ r.club or '' }} {{ r.cancha or '' }}</span>
+            </div>
+            <div class="ronda-scores">
+                <span class="ronda-score">{{ r.score_gross or '-' }}</span>
+                <span class="ronda-score-label">Gross</span>
+                <span class="ronda-score">{{ r.score_ajustado or '-' }}</span>
+                <span class="ronda-score-label">Ajust.</span>
+                <span class="ronda-score">{{ r.diferencial or '-' }}</span>
+                <span class="ronda-score-label">Dif.</span>
+            </div>
+            <span class="ronda-expand" id="expand-{{ r.id }}">&#9654;</span>
+        </div>
+        <div class="ronda-detail" id="detail-{{ r.id }}" style="display:none;">
+            <div class="ronda-detail-loading" id="loading-{{ r.id }}">Cargando hoyos...</div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <p>No hay rondas sincronizadas. Haz clic en "Sincronizar Rondas" para traer datos de la federacion.</p>
+</div>
+{% endif %}
+
+{% if rondas %}
+<script>
+(function() {
+    // Rondas ordenadas por fecha ascendente (vienen DESC del backend)
+    var rondas = [
+        {% for r in rondas|reverse %}
+        {% if r.score_gross %}
+        { fecha: "{{ r.fecha }}", gross: {{ r.score_gross }}, diferencial: {{ r.diferencial or 'null' }}, ajustado: {{ r.score_ajustado or 'null' }} },
+        {% endif %}
+        {% endfor %}
+    ];
+
+    if (rondas.length > 1) {
+        var labels = rondas.map(function(r) { return r.fecha.substring(5); });
+        var ctx = document.getElementById('scoreChart').getContext('2d');
+
+        var datasets = [
+            {
+                label: 'Score Gross',
+                data: rondas.map(function(r) { return r.gross; }),
+                borderColor: '#2d8a4e',
+                backgroundColor: 'rgba(45, 138, 78, 0.1)',
+                tension: 0.3,
+                fill: true,
+                pointRadius: 3,
+            }
+        ];
+
+        // Agregar diferencial si hay datos
+        var difData = rondas.map(function(r) { return r.diferencial; });
+        if (difData.some(function(d) { return d !== null; })) {
+            datasets.push({
+                label: 'Diferencial',
+                data: difData,
+                borderColor: '#d4a017',
+                backgroundColor: 'rgba(212, 160, 23, 0.1)',
+                tension: 0.3,
+                fill: false,
+                pointRadius: 3,
+                yAxisID: 'y1',
+            });
+        }
+
+        new Chart(ctx, {
+            type: 'line',
+            data: { labels: labels, datasets: datasets },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                plugins: {
+                    legend: { position: 'top', labels: { font: { size: 12 } } },
+                },
+                scales: {
+                    y: {
+                        title: { display: true, text: 'Score Gross' },
+                        ticks: { font: { size: 11 } },
+                    },
+                    y1: {
+                        position: 'right',
+                        title: { display: true, text: 'Diferencial' },
+                        grid: { drawOnChartArea: false },
+                        ticks: { font: { size: 11 } },
+                    },
+                    x: {
+                        ticks: { font: { size: 10 }, maxRotation: 45 },
+                    }
+                }
+            }
+        });
+    }
+})();
+
+var hoyosCache = {};
+
+function toggleHoyos(rondaId, tarjetaId) {
+    var detail = document.getElementById('detail-' + rondaId);
+    var expand = document.getElementById('expand-' + rondaId);
+
+    if (detail.style.display !== 'none') {
+        detail.style.display = 'none';
+        expand.innerHTML = '&#9654;';
+        return;
+    }
+
+    detail.style.display = 'block';
+    expand.innerHTML = '&#9660;';
+
+    if (hoyosCache[rondaId]) {
+        renderHoyos(rondaId, hoyosCache[rondaId]);
+        return;
+    }
+
+    if (!tarjetaId) {
+        document.getElementById('loading-' + rondaId).innerHTML = '<span class="hint">No hay datos de hoyos disponibles. Sincroniza de nuevo para obtener el link de la tarjeta.</span>';
+        return;
+    }
+
+    document.getElementById('loading-' + rondaId).innerHTML = 'Cargando hoyos...';
+
+    fetch('/api/ronda/' + rondaId + '/hoyos')
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.error) {
+                document.getElementById('loading-' + rondaId).innerHTML = '<span class="hint">' + data.error + '</span>';
+                return;
+            }
+            hoyosCache[rondaId] = data;
+            renderHoyos(rondaId, data);
+        })
+        .catch(function() {
+            document.getElementById('loading-' + rondaId).innerHTML = '<span class="hint">Error al cargar hoyos</span>';
+        });
+}
+
+function renderHoyos(rondaId, data) {
+    var hoyos = data.hoyos || [];
+    if (hoyos.length === 0) {
+        document.getElementById('loading-' + rondaId).innerHTML = '<span class="hint">No hay datos de hoyos</span>';
+        return;
+    }
+
+    var front = hoyos.filter(function(h) { return h.hoyo <= 9; });
+    var back = hoyos.filter(function(h) { return h.hoyo > 9; });
+
+    var html = '<div class="scorecard-wrapper">';
+
+    // Front 9
+    html += buildScorecardTable(front, data.out, 'IDA');
+
+    // Back 9
+    html += buildScorecardTable(back, data['in'], 'VUELTA');
+
+    // Total
+    if (data.total && data.total.score) {
+        html += '<div class="scorecard-total">Total: <strong>' + data.total.score + '</strong>';
+        if (data.total.ajustado && data.total.ajustado !== data.total.score) {
+            html += ' (Ajust: ' + data.total.ajustado + ')';
+        }
+        html += '</div>';
+    }
+
+    html += '</div>';
+
+    document.getElementById('detail-' + rondaId).innerHTML = html;
+}
+
+function buildScorecardTable(holes, subtotal, label) {
+    var html = '<table class="scorecard-table"><thead><tr><th>' + label + '</th>';
+    holes.forEach(function(h) { html += '<th>' + h.hoyo + '</th>'; });
+    if (subtotal) html += '<th class="subtotal-col">' + (label === 'IDA' ? 'OUT' : 'IN') + '</th>';
+    html += '</tr></thead><tbody>';
+
+    // Par row
+    html += '<tr class="par-row"><td>Par</td>';
+    var parSum = 0;
+    holes.forEach(function(h) {
+        html += '<td>' + (h.par || '') + '</td>';
+        parSum += h.par || 0;
+    });
+    if (subtotal) html += '<td class="subtotal-col">' + (subtotal.par || parSum) + '</td>';
+    html += '</tr>';
+
+    // Score row
+    html += '<tr class="score-row"><td>Score</td>';
+    holes.forEach(function(h) {
+        var cls = '';
+        if (h.score && h.par) {
+            if (h.score < h.par) cls = 'birdie';
+            else if (h.score === h.par) cls = 'par-score';
+            else if (h.score === h.par + 1) cls = 'bogey';
+            else if (h.score > h.par + 1) cls = 'double-bogey';
+        }
+        html += '<td class="' + cls + '">' + (h.score || '') + '</td>';
+    });
+    if (subtotal) html += '<td class="subtotal-col"><strong>' + (subtotal.score || '') + '</strong></td>';
+    html += '</tr>';
+
+    // +/- row
+    html += '<tr class="diff-row"><td>+/-</td>';
+    var runningDiff = 0;
+    holes.forEach(function(h) {
+        if (h.score && h.par) {
+            var diff = h.score - h.par;
+            runningDiff += diff;
+            var cls = diff < 0 ? 'birdie' : (diff === 0 ? 'par-score' : (diff === 1 ? 'bogey' : 'double-bogey'));
+            html += '<td class="' + cls + '">' + (diff > 0 ? '+' + diff : diff) + '</td>';
+        } else {
+            html += '<td></td>';
+        }
+    });
+    if (subtotal && subtotal.score && subtotal.par) {
+        var totalDiff = parseInt(subtotal.score) - parseInt(subtotal.par);
+        html += '<td class="subtotal-col">' + (totalDiff > 0 ? '+' + totalDiff : totalDiff) + '</td>';
+    } else if (subtotal) {
+        html += '<td class="subtotal-col">' + (runningDiff > 0 ? '+' + runningDiff : runningDiff) + '</td>';
+    }
+    html += '</tr>';
+
+    html += '</tbody></table>';
+    return html;
+}
+</script>
+{% endif %}
+{% endblock %}
