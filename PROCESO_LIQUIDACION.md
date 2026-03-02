@@ -6,6 +6,13 @@ Este documento describe el proceso paso a paso para liquidar (calcular resultado
 una nueva fecha del torneo Copa Fedex Sucesores 2026. Un agente de IA puede seguir
 estas instrucciones para ejecutar el proceso completo.
 
+## IMPORTANTE: Backup de Datos
+
+La base de datos SQLite es la **unica fuente de verdad** de todos los scores, handicaps y
+resultados del torneo. No existe otra copia. Despues de CADA liquidacion es **obligatorio**
+exportar las tablas a `data/backup/` y commitear los JSON a GitHub (ver paso 9).
+Si la DB de produccion se pierde o corrompe, los JSON en el repo son el respaldo.
+
 ## Arquitectura
 
 - **App**: FastAPI desplegada en Fly.dev (`copa-fedex-sucesores`)
@@ -207,16 +214,56 @@ flyctl sftp shell -a copa-fedex-sucesores
 **NOTA**: La maquina de Fly tiene auto-stop. Hacer `curl` a la URL primero
 para despertarla antes de usar SSH/SFTP.
 
-### 9. Crear branch de snapshot
+### 9. Backup de la base de datos (OBLIGATORIO)
 
-Despues de liquidar, crear un branch con el estado actual:
+**CRITICO**: La base de datos SQLite es la unica fuente de verdad de los scores y resultados.
+Si se pierde, NO hay forma de recuperar los datos. Este paso es **obligatorio** despues de
+cada liquidacion.
+
+Exportar todas las tablas a JSON en `data/backup/`:
 
 ```bash
+cd /Users/andresvelezsaffon/torneo-golf
+source venv/bin/activate
+python3 -c "
+import sqlite3, json
+
+conn = sqlite3.connect('data/torneo_prod.db')  # o descargar la de produccion primero
+conn.row_factory = sqlite3.Row
+
+tablas = ['jugadores', 'rondas', 'fechas_torneo', 'resultados_fecha', 'tabla_puntos']
+for tabla in tablas:
+    rows = [dict(r) for r in conn.execute(f'SELECT * FROM {tabla}').fetchall()]
+    with open(f'data/backup/{tabla}.json', 'w') as f:
+        json.dump(rows, f, indent=2, ensure_ascii=False)
+    print(f'{tabla}: {len(rows)} registros exportados')
+conn.close()
+"
+```
+
+Tambien se puede descargar la DB de produccion directamente:
+```bash
+# Despertar la maquina primero
+curl -s https://copa-fedex-sucesores.fly.dev/ > /dev/null
+# Descargar la DB
+flyctl sftp shell -a copa-fedex-sucesores
+> get /data/torneo.db data/torneo_prod.db
+```
+
+**Los archivos de backup DEBEN ser commiteados y pusheados a GitHub** para que queden
+versionados. No es suficiente tenerlos solo en local.
+
+### 10. Crear branch de snapshot y commit final
+
+Despues de liquidar y hacer backup, commitear todo y crear un branch con el estado actual:
+
+```bash
+git add data/backup/
+git commit -m "Backup DB despues de Fecha X - YYYY-MM-DD"
 git checkout -b fechaX-YYYY-MM-DD
-git add -A
-git commit -m "Fecha X liquidada - YYYY-MM-DD"
 git push origin fechaX-YYYY-MM-DD
 git checkout main
+git push origin main
 ```
 
 ## Herramientas Clave
