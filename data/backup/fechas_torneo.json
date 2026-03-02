@@ -1,0 +1,154 @@
+[
+  {
+    "id": 1,
+    "fecha": "2026-02-21",
+    "es_ultima_cuatro": 0,
+    "valida": 1,
+    "num_jugadores": 13,
+    "created_at": "2026-02-21 01:42:00"
+  },
+  {
+    "id": 3,
+    "fecha": "2026-02-28",
+    "es_ultima_cuatro": 0,
+    "valida": 1,
+    "num_jugadores": 12,
+    "created_at": "2026-02-21 01:42:00"
+  },
+  {
+    "id": 5,
+    "fecha": "2026-03-07",
+    "es_ultima_cuatro": 0,
+    "valida": 0,
+    "num_jugadores": 0,
+    "created_at": "2026-02-21 01:42:00"
+  },
+  {
+    "id": 7,
+    "fecha": "2026-03-14",
+    "es_ultima_cuatro": 0,
+    "valida": 0,
+    "num_jugadores": 0,
+    "created_at": "2026-02-21 01:42:00"
+  },
+  {
+    "id": 9,
+    "fecha": "2026-03-21",
+    "es_ultima_cuatro": 0,
+    "valida": 0,
+    "num_jugadores": 0,
+    "created_at": "2026-02-21 01:42:00"
+  },
+  {
+    "id": 11,
+    "fecha": "2026-03-28",
+    "es_ultima_cuatro": 0,
+    "valida": 0,
+    "num_jugadores": 0,
+    "created_at": "2026-02-21 01:42:00"
+  },
+  {
+    "id": 13,
+    "fecha": "2026-04-04",
+    "es_ultima_cuatro": 0,
+    "valida": 0,
+    "num_jugadores": 0,
+    "created_at": "2026-02-21 01:42:00"
+  },
+  {
+    "id": 15,
+    "fecha": "2026-04-11",
+    "es_ultima_cuatro": 0,
+    "valida": 0,
+    "num_jugadores": 0,
+    "created_at": "2026-02-21 01:42:00"
+  },
+  {
+    "id": 17,
+    "fecha": "2026-04-18",
+    "es_ultima_cuatro": 0,
+    "valida": 0,
+    "num_jugadores": 0,
+    "created_at": "2026-02-21 01:42:00"
+  },
+  {
+    "id": 19,
+    "fecha": "2026-04-25",
+    "es_ultima_cuatro": 0,
+    "valida": 0,
+    "num_jugadores": 0,
+    "created_at": "2026-02-21 01:42:00"
+  },
+  {
+    "id": 21,
+    "fecha": "2026-05-02",
+    "es_ultima_cuatro": 0,
+    "valida": 0,
+    "num_jugadores": 0,
+    "created_at": "2026-02-21 01:42:00"
+  },
+  {
+    "id": 23,
+    "fecha": "2026-05-09",
+    "es_ultima_cuatro": 0,
+    "valida": 0,
+    "num_jugadores": 0,
+    "created_at": "2026-02-21 01:42:00"
+  },
+  {
+    "id": 25,
+    "fecha": "2026-05-16",
+    "es_ultima_cuatro": 0,
+    "valida": 0,
+    "num_jugadores": 0,
+    "created_at": "2026-02-21 01:42:00"
+  },
+  {
+    "id": 27,
+    "fecha": "2026-05-23",
+    "es_ultima_cuatro": 0,
+    "valida": 0,
+    "num_jugadores": 0,
+    "created_at": "2026-02-21 01:42:00"
+  },
+  {
+    "id": 29,
+    "fecha": "2026-05-30",
+    "es_ultima_cuatro": 0,
+    "valida": 0,
+    "num_jugadores": 0,
+    "created_at": "2026-02-21 01:42:00"
+  },
+  {
+    "id": 31,
+    "fecha": "2026-06-06",
+    "es_ultima_cuatro": 1,
+    "valida": 0,
+    "num_jugadores": 0,
+    "created_at": "2026-02-21 01:42:00"
+  },
+  {
+    "id": 33,
+    "fecha": "2026-06-13",
+    "es_ultima_cuatro": 1,
+    "valida": 0,
+    "num_jugadores": 0,
+    "created_at": "2026-02-21 01:42:00"
+  },
+  {
+    "id": 35,
+    "fecha": "2026-06-20",
+    "es_ultima_cuatro": 1,
+    "valida": 0,
+    "num_jugadores": 0,
+    "created_at": "2026-02-21 01:42:00"
+  },
+  {
+    "id": 37,
+    "fecha": "2026-06-27",
+    "es_ultima_cuatro": 1,
+    "valida": 0,
+    "num_jugadores": 0,
+    "created_at": "2026-02-21 01:42:00"
+  }
+]

@@ -1,0 +1,158 @@
+[
+  {
+    "id": 1,
+    "posicion": 1,
+    "puntos_normal": 300.0,
+    "puntos_ultimas_cuatro": 450.0
+  },
+  {
+    "id": 2,
+    "posicion": 2,
+    "puntos_normal": 240.0,
+    "puntos_ultimas_cuatro": 370.0
+  },
+  {
+    "id": 3,
+    "posicion": 3,
+    "puntos_normal": 190.0,
+    "puntos_ultimas_cuatro": 300.0
+  },
+  {
+    "id": 4,
+    "posicion": 4,
+    "puntos_normal": 150.0,
+    "puntos_ultimas_cuatro": 250.0
+  },
+  {
+    "id": 5,
+    "posicion": 5,
+    "puntos_normal": 120.0,
+    "puntos_ultimas_cuatro": 210.0
+  },
+  {
+    "id": 6,
+    "posicion": 6,
+    "puntos_normal": 100.0,
+    "puntos_ultimas_cuatro": 180.0
+  },
+  {
+    "id": 7,
+    "posicion": 7,
+    "puntos_normal": 90.0,
+    "puntos_ultimas_cuatro": 155.0
+  },
+  {
+    "id": 8,
+    "posicion": 8,
+    "puntos_normal": 85.0,
+    "puntos_ultimas_cuatro": 135.0
+  },
+  {
+    "id": 9,
+    "posicion": 9,
+    "puntos_normal": 80.0,
+    "puntos_ultimas_cuatro": 120.0
+  },
+  {
+    "id": 10,
+    "posicion": 10,
+    "puntos_normal": 75.0,
+    "puntos_ultimas_cuatro": 110.0
+  },
+  {
+    "id": 11,
+    "posicion": 11,
+    "puntos_normal": 70.0,
+    "puntos_ultimas_cuatro": 100.0
+  },
+  {
+    "id": 12,
+    "posicion": 12,
+    "puntos_normal": 65.0,
+    "puntos_ultimas_cuatro": 90.0
+  },
+  {
+    "id": 13,
+    "posicion": 13,
+    "puntos_normal": 60.0,
+    "puntos_ultimas_cuatro": 85.0
+  },
+  {
+    "id": 14,
+    "posicion": 14,
+    "puntos_normal": 57.0,
+    "puntos_ultimas_cuatro": 80.0
+  },
+  {
+    "id": 15,
+    "posicion": 15,
+    "puntos_normal": 56.0,
+    "puntos_ultimas_cuatro": 75.0
+  },
+  {
+    "id": 16,
+    "posicion": 16,
+    "puntos_normal": 55.0,
+    "puntos_ultimas_cuatro": 70.0
+  },
+  {
+    "id": 17,
+    "posicion": 17,
+    "puntos_normal": 54.0,
+    "puntos_ultimas_cuatro": 65.0
+  },
+  {
+    "id": 18,
+    "posicion": 18,
+    "puntos_normal": 53.0,
+    "puntos_ultimas_cuatro": 60.0
+  },
+  {
+    "id": 19,
+    "posicion": 19,
+    "puntos_normal": 52.0,
+    "puntos_ultimas_cuatro": 57.0
+  },
+  {
+    "id": 20,
+    "posicion": 20,
+    "puntos_normal": 51.0,
+    "puntos_ultimas_cuatro": 56.0
+  },
+  {
+    "id": 21,
+    "posicion": 21,
+    "puntos_normal": 50.0,
+    "puntos_ultimas_cuatro": 55.0
+  },
+  {
+    "id": 22,
+    "posicion": 22,
+    "puntos_normal": 49.0,
+    "puntos_ultimas_cuatro": 54.0
+  },
+  {
+    "id": 23,
+    "posicion": 23,
+    "puntos_normal": 48.0,
+    "puntos_ultimas_cuatro": 53.0
+  },
+  {
+    "id": 24,
+    "posicion": 24,
+    "puntos_normal": 47.0,
+    "puntos_ultimas_cuatro": 52.0
+  },
+  {
+    "id": 25,
+    "posicion": 25,
+    "puntos_normal": 46.0,
+    "puntos_ultimas_cuatro": 51.0
+  },
+  {
+    "id": 26,
+    "posicion": 26,
+    "puntos_normal": 45.0,
+    "puntos_ultimas_cuatro": 50.0
+  }
+]
