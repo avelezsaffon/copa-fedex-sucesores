@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Copa Fedex Sucesores 2026{% endblock %}</title>
-    <link rel="stylesheet" href="/static/css/style.css?v=9">
+    <link rel="stylesheet" href="/static/css/style.css?v=10">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 </head>
 <body>
@@ -24,6 +24,28 @@
         {% block content %}{% endblock %}
     </main>
 
+    <!-- Chat Widget -->
+    <button id="chat-toggle" class="chat-toggle" title="Pregunta sobre reglas de golf">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    </button>
+
+    <div id="chat-panel" class="chat-panel hidden">
+        <div class="chat-header">
+            <span class="chat-title">Reglas de Golf</span>
+            <button id="chat-close" class="chat-close">&times;</button>
+        </div>
+        <div id="chat-messages" class="chat-messages">
+            <div class="chat-msg chat-bot">Hola! Soy el asistente de reglas de la Copa Fedex Sucesores. Preguntame lo que quieras sobre reglas del torneo o reglas generales de golf.</div>
+        </div>
+        <form id="chat-form" class="chat-input-area">
+            <input type="text" id="chat-input" class="chat-input" placeholder="Escribe tu pregunta..." autocomplete="off">
+            <button type="submit" class="chat-send">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </button>
+        </form>
+    </div>
+
     <script src="/static/js/app.js"></script>
+    <script src="/static/js/chat.js"></script>
 </body>
 </html>
