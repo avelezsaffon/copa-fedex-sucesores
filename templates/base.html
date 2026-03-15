@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Copa Fedex Sucesores 2026{% endblock %}</title>
-    <link rel="stylesheet" href="/static/css/style.css?v=10">
+    <link rel="stylesheet" href="/static/css/style.css?v=11">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 </head>
 <body>
@@ -17,6 +17,7 @@
             <a href="/jugadores" class="{% if '/jugador' in request.url.path %}active{% endif %}">Jugadores</a>
             <a href="/reporte" class="{% if request.url.path == '/reporte' %}active{% endif %}">Reporte</a>
             <a href="/reglas" class="{% if request.url.path == '/reglas' %}active{% endif %}">Reglas</a>
+            <a href="#" id="nav-chat" class="nav-chat-link">Chat</a>
         </div>
     </nav>
 
