@@ -618,4 +618,57 @@
         </div>
     </div>
 </div>
+
+<!-- Agente de Reglas -->
+<h2 style="margin-top: 2.5rem;">Agente de Reglas (Chat)</h2>
+<div class="reglas-intro">
+    El torneo cuenta con un asistente virtual entrenado para responder preguntas sobre reglas de golf y situaciones en el campo.
+    Puedes acceder al agente desde el boton de chat en la esquina inferior derecha de cualquier pagina.
+</div>
+
+<div class="regla-card">
+    <div class="regla-header">
+        <span class="regla-num">AI</span>
+        <h2>Sobre el Agente</h2>
+    </div>
+    <div class="regla-body">
+        <div class="regla-detail">
+            <div class="detail-item">
+                <span class="detail-label">Modelo</span>
+                <span class="detail-value"><strong>GPT-4o-mini</strong> (OpenAI) &mdash; modelo rapido y economico optimizado para consultas conversacionales.</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Base de conocimiento</span>
+                <span class="detail-value">
+                    <strong>Reglas de Golf 2023 (R&A / USGA)</strong> &mdash; las 24 reglas oficiales completas con sub-reglas, definiciones y penalidades.
+                    Indexadas con un sistema de busqueda <strong>RAG</strong> (Retrieval-Augmented Generation) que encuentra las secciones relevantes para cada pregunta.
+                </span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Reglas locales</span>
+                <span class="detail-value">
+                    Entrenado con todas las <strong>reglas del torneo Copa Fedex Sucesores 2026</strong>: inscripcion, quorum, sistema de puntos, reglas locales del campo (asiento mejorado, agua accidental, obstrucciones, carritos, caddies), hoyo en uno, runidera e invitados.
+                </span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Como funciona</span>
+                <span class="detail-value">
+                    Cuando haces una pregunta, el sistema busca las reglas mas relevantes en el libro oficial y se las pasa al modelo junto con las reglas locales del torneo.
+                    Asi el agente cita <strong>numeros de regla oficiales</strong> (Regla 1 a 25) y complementa con las reglas locales de la Copa Fedex.
+                </span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Personalidad</span>
+                <span class="detail-value">Paisa malhablado de Manizales. Explica las reglas con detalle, groserías y humor caldense.</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Limitaciones</span>
+                <span class="detail-value">
+                    El agente <strong>solo responde preguntas de golf</strong>. Si no esta seguro de una regla, lo dira.
+                    En caso de duda durante una ronda oficial, siempre consulta con el Comite del torneo.
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
