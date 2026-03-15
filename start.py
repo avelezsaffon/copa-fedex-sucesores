@@ -125,12 +125,9 @@ def init_db():
     from seed_data import main as seed_main
     seed_main()
 
-    # Ejecutar setup de jugadores
-    try:
-        from setup_jugadores import main as setup_main
-        setup_main()
-    except Exception as e:
-        print(f"  Setup jugadores omitido: {e}")
+    # Setup de jugadores se ejecuta manualmente: python setup_jugadores.py
+    # No se ejecuta en el arranque porque requiere conexion a la federacion
+    print("  Setup jugadores: ejecutar manualmente con 'python setup_jugadores.py'")
 
 
 if __name__ == "__main__":
