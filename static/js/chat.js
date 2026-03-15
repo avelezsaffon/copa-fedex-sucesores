@@ -10,12 +10,26 @@
     // Historial de conversacion para contexto
     var historial = [];
 
+    var navChat = document.getElementById('nav-chat');
+
+    function openChat() {
+        panel.classList.remove('hidden');
+        input.focus();
+    }
+
     toggle.addEventListener('click', function() {
         panel.classList.toggle('hidden');
         if (!panel.classList.contains('hidden')) {
             input.focus();
         }
     });
+
+    if (navChat) {
+        navChat.addEventListener('click', function(e) {
+            e.preventDefault();
+            openChat();
+        });
+    }
 
     closeBtn.addEventListener('click', function() {
         panel.classList.add('hidden');

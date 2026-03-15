@@ -57,6 +57,13 @@ a:hover { text-decoration: underline; }
     background: rgba(255,255,255,0.15);
     text-decoration: none;
 }
+.nav-chat-link {
+    background: var(--gold) !important;
+    color: #333 !important;
+    font-weight: 700 !important;
+    border-radius: 20px !important;
+    padding: 0.25rem 0.75rem !important;
+}
 
 /* === Container === */
 .container {
