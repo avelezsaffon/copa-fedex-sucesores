@@ -11,6 +11,8 @@
     var historial = [];
 
     var navChat = document.getElementById('nav-chat');
+    var clearBtn = document.getElementById('chat-clear');
+    var welcomeMsg = 'Que hubo pues parcero! Soy el hijueputa experto en reglas de golf de la Copa Fedex Sucesores. Pregunteme una situacion y le digo si hay penalidad, cuantos golpes y por cual regla. No me salga con maricadas que no sean de golf.';
 
     function openChat() {
         panel.classList.remove('hidden');
@@ -33,6 +35,15 @@
 
     closeBtn.addEventListener('click', function() {
         panel.classList.add('hidden');
+    });
+
+    clearBtn.addEventListener('click', function() {
+        historial = [];
+        messages.innerHTML = '';
+        var div = document.createElement('div');
+        div.className = 'chat-msg chat-bot';
+        div.textContent = welcomeMsg;
+        messages.appendChild(div);
     });
 
     function addMessage(text, role) {
