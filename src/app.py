@@ -30,6 +30,7 @@ from src.ranking import (
 )
 from src.sync import sync_rondas_jugador, sync_all, auto_detectar_fechas_torneo
 from src.fedegolf_collector import FedegolfScoresCollector
+from src.chat_agent import chat_responder
 
 from pydantic import BaseModel
 
@@ -338,6 +339,19 @@ async def api_eliminar_jugador(jugador_id: int):
         "status": "ok",
         "nombre": jugador['nombre'] + " " + jugador['apellido'],
     })
+
+
+class ChatRequest(BaseModel):
+    mensajes: list[dict]
+
+
+@app.post("/api/chat")
+async def api_chat(req: ChatRequest):
+    try:
+        respuesta = chat_responder(req.mensajes)
+        return JSONResponse({"respuesta": respuesta})
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=500)
 
 
 class GenerarFechasRequest(BaseModel):
