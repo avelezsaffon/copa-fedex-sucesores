@@ -961,6 +961,16 @@ h2 { margin: 1.5rem 0 0.75rem; font-size: 1.2rem; }
     padding: 0 0.25rem;
 }
 .chat-close:hover { opacity: 0.7; }
+.chat-header-actions { display: flex; align-items: center; gap: 0.5rem; }
+.chat-clear {
+    background: none;
+    border: none;
+    color: var(--white);
+    cursor: pointer;
+    padding: 0.15rem;
+    opacity: 0.7;
+}
+.chat-clear:hover { opacity: 1; }
 
 .chat-messages {
     flex: 1;

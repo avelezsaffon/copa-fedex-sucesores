@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Copa Fedex Sucesores 2026{% endblock %}</title>
-    <link rel="stylesheet" href="/static/css/style.css?v=11">
+    <link rel="stylesheet" href="/static/css/style.css?v=12">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 </head>
 <body>
@@ -33,10 +33,15 @@
     <div id="chat-panel" class="chat-panel hidden">
         <div class="chat-header">
             <span class="chat-title">Reglas de Golf</span>
-            <button id="chat-close" class="chat-close">&times;</button>
+            <div class="chat-header-actions">
+                <button id="chat-clear" class="chat-clear" title="Borrar historial">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                </button>
+                <button id="chat-close" class="chat-close">&times;</button>
+            </div>
         </div>
         <div id="chat-messages" class="chat-messages">
-            <div class="chat-msg chat-bot">Que hubo pues parcero! Soy el hijueputa experto en reglas de golf de la Copa Fedex Sucesores. Pregunteme lo que quiera sobre reglas del torneo o reglas de golf en general, y no me salga con maricadas que no sean de golf.</div>
+            <div class="chat-msg chat-bot">Que hubo pues parcero! Soy el hijueputa experto en reglas de golf de la Copa Fedex Sucesores. Pregunteme una situacion y le digo si hay penalidad, cuantos golpes y por cual regla. No me salga con maricadas que no sean de golf.</div>
         </div>
         <form id="chat-form" class="chat-input-area">
             <input type="text" id="chat-input" class="chat-input" placeholder="Escribe tu pregunta..." autocomplete="off">
