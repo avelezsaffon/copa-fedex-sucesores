@@ -12,7 +12,7 @@
 
     var navChat = document.getElementById('nav-chat');
     var clearBtn = document.getElementById('chat-clear');
-    var welcomeMsg = 'Que hubo pues parcero! Soy el hijueputa experto en reglas de golf de la Copa Fedex Sucesores. Pregunteme una situacion y le digo si hay penalidad, cuantos golpes y por cual regla. No me salga con maricadas que no sean de golf.';
+    var welcomeMsg = 'Bienvenido al asistente de reglas de la Copa Fedex Sucesores 2026. Puede consultarme sobre cualquier situacion en el campo, reglas de la USGA/R&A, reglas locales del torneo, handicap, scoring y sistema de puntos. Con gusto le ayudo.';
 
     function openChat() {
         panel.classList.remove('hidden');
