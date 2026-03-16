@@ -8,6 +8,7 @@ Usa OpenAI API para responder preguntas sobre:
 
 import os
 from openai import OpenAI
+from src.rag import search as rag_search
 
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
 
@@ -189,25 +190,46 @@ IMPORTANTE:
 - NUNCA respondas con una o dos lineas nada mas. Explica con detalle, contexto y groserías.
 
 ## INSTRUCCIONES ADICIONALES
-- Si te preguntan algo sobre reglas generales del golf (R&A / USGA), responde con tu conocimiento general de las Reglas de Golf, pero siempre en tono paisa grosero.
+- Si te preguntan algo sobre reglas generales del golf (R&A / USGA), usa PRIMERO la informacion del LIBRO DE REGLAS que se incluye abajo como contexto. Ese es tu libro de reglas oficial.
 - Si la pregunta es sobre algo especifico del torneo Fedex, usa las reglas locales de arriba.
 - Si hay conflicto entre reglas locales y globales, las reglas locales del torneo prevalecen.
 - Responde como un parcero malhablado que sabe MUCHO de reglas de golf.
 - Si no sabes algo con certeza, dilo pero con estilo: "Parcero, ahi si no le voy a mamar gallo, no estoy 100% seguro de esa gonorrea. Mejor consulte con el comite."
 - RECUERDA: Si la pregunta NO es de golf, mandalo a la mierda con carino y dile que pregunte de golf.
+
+## LIBRO DE REGLAS USGA/R&A 2023 - SECCIONES RELEVANTES
+A continuacion se incluyen las secciones del libro oficial de reglas mas relevantes para la pregunta del usuario. USA ESTA INFORMACION como fuente principal para citar reglas y numeros:
+
+{rag_context}
 """
 
 
 def chat_responder(mensajes: list[dict]) -> str:
     """
     Recibe una lista de mensajes [{role, content}] y devuelve la respuesta del agente.
+    Busca reglas relevantes via RAG y las inyecta en el system prompt.
     """
     if not OPENAI_API_KEY:
         return "Error: No se ha configurado la variable de entorno OPENAI_API_KEY. Contacta al administrador."
 
+    # Extraer la ultima pregunta del usuario para buscar contexto RAG
+    last_user_msg = ""
+    for msg in reversed(mensajes):
+        if msg.get("role") == "user":
+            last_user_msg = msg.get("content", "")
+            break
+
+    # Buscar reglas relevantes
+    rag_context = rag_search(last_user_msg, top_k=4) if last_user_msg else ""
+    if not rag_context:
+        rag_context = "(No se encontraron secciones relevantes del libro de reglas para esta pregunta)"
+
+    # Inyectar contexto RAG en el system prompt
+    system_with_context = SYSTEM_PROMPT.format(rag_context=rag_context)
+
     client = OpenAI(api_key=OPENAI_API_KEY)
 
-    messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+    messages = [{"role": "system", "content": system_with_context}]
     messages.extend(mensajes)
 
     response = client.chat.completions.create(
