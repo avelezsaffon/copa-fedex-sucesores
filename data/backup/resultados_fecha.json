@@ -360,7 +360,7 @@
     "handicap_aplicado": 13.0,
     "score_neto": 75.0,
     "posicion": 2,
-    "puntos": 175.0
+    "puntos": 215.0
   },
   {
     "id": 44,
@@ -368,10 +368,10 @@
     "jugador_id": 8,
     "ronda_id": 412,
     "score_gross": 81,
-    "handicap_aplicado": 6.0,
-    "score_neto": 75.0,
-    "posicion": 2,
-    "puntos": 175.0
+    "handicap_aplicado": 5.0,
+    "score_neto": 76.0,
+    "posicion": 4,
+    "puntos": 123.33
   },
   {
     "id": 45,
@@ -401,10 +401,10 @@
     "jugador_id": 7,
     "ronda_id": 419,
     "score_gross": 75,
-    "handicap_aplicado": 0.0,
-    "score_neto": 75.0,
-    "posicion": 2,
-    "puntos": 175.0
+    "handicap_aplicado": -1.0,
+    "score_neto": 76.0,
+    "posicion": 4,
+    "puntos": 123.33
   },
   {
     "id": 48,
@@ -425,8 +425,8 @@
     "score_gross": 78,
     "handicap_aplicado": 2.0,
     "score_neto": 76.0,
-    "posicion": 6,
-    "puntos": 100.0
+    "posicion": 4,
+    "puntos": 123.33
   },
   {
     "id": 50,
@@ -459,6 +459,6 @@
     "handicap_aplicado": 8.0,
     "score_neto": 75.0,
     "posicion": 2,
-    "puntos": 175.0
+    "puntos": 215.0
   }
 ]
