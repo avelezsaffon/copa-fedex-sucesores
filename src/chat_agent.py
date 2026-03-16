@@ -1,16 +1,16 @@
 """
 Agente de chat para reglas de golf - Copa Fedex Sucesores 2026.
 
-Usa OpenAI API para responder preguntas sobre:
+Usa Anthropic Claude API para responder preguntas sobre:
 - Reglas locales del torneo Copa Fedex Sucesores
 - Reglas globales del golf (R&A / USGA)
 """
 
 import os
-from openai import OpenAI
+from anthropic import Anthropic
 from src.rag import search as rag_search
 
-OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
+ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 
 SYSTEM_PROMPT = """Eres El Comisario de la Copa Fedex Sucesores 2026, el arbitro oficial del torneo de golf que se juega en el Club de Golf de Manizales, Colombia.
 
@@ -136,8 +136,8 @@ def chat_responder(mensajes: list[dict]) -> str:
     Recibe una lista de mensajes [{role, content}] y devuelve la respuesta del agente.
     Busca reglas relevantes via RAG y las inyecta en el system prompt.
     """
-    if not OPENAI_API_KEY:
-        return "Error: No se ha configurado la variable de entorno OPENAI_API_KEY. Contacta al administrador."
+    if not ANTHROPIC_API_KEY:
+        return "Error: No se ha configurado la variable de entorno ANTHROPIC_API_KEY. Contacta al administrador."
 
     # Extraer la ultima pregunta del usuario para buscar contexto RAG
     last_user_msg = ""
@@ -154,16 +154,15 @@ def chat_responder(mensajes: list[dict]) -> str:
     # Inyectar contexto RAG en el system prompt
     system_with_context = SYSTEM_PROMPT.format(rag_context=rag_context)
 
-    client = OpenAI(api_key=OPENAI_API_KEY)
+    client = Anthropic(api_key=ANTHROPIC_API_KEY)
 
-    messages = [{"role": "system", "content": system_with_context}]
-    messages.extend(mensajes)
-
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=messages,
+    # Anthropic API: system prompt va separado, mensajes solo user/assistant
+    response = client.messages.create(
+        model="claude-sonnet-4-20250514",
+        system=system_with_context,
+        messages=mensajes,
         max_tokens=2000,
         temperature=0.5,
     )
 
-    return response.choices[0].message.content
+    return response.content[0].text
