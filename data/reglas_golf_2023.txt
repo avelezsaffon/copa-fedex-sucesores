@@ -1,0 +1,685 @@
+REGLAS DE GOLF 2023 - R&A / USGA
+Efectivas a partir de Enero 2023
+=====================================
+
+SECCION I - FUNDAMENTOS DEL JUEGO (Reglas 1-4)
+
+========================================
+REGLA 1 - EL JUEGO, CONDUCTA DEL JUGADOR Y LAS REGLAS
+========================================
+
+1.1 El Juego de Golf
+El golf se juega en una ronda de 18 (o menos) hoyos en un campo, golpeando una bola con un palo desde el area de salida hasta embocarla en el hoyo del green, en el menor numero de golpes posible.
+
+1.2 Estandares de Conducta del Jugador
+Se espera que todos los jugadores jueguen con el espiritu del juego: actuando con integridad, mostrando consideracion hacia los demas y cuidando el campo. Los jugadores deben:
+- Jugar con honestidad y seguir las reglas.
+- Actuar con integridad: reportar sus propias infracciones.
+- Respetar a otros jugadores: no distraer, mantener buen ritmo de juego.
+- Cuidar el campo: reparar divots, rastrillar bunkers, reparar piques en green.
+- El Comite puede descalificar a un jugador por conducta grave contraria al espiritu del juego.
+
+1.3 Jugar de Acuerdo con las Reglas
+1.3a Significado de las Reglas: Las "Reglas" incluyen las Reglas 1-24, las Reglas de los equipos de competicion, las reglas locales establecidas por el Comite.
+1.3b Aplicacion de las Reglas: Los jugadores son responsables de aplicar las Reglas a su propio juego. Si no estan seguros de como aplicar una Regla, pueden proteger sus derechos jugando dos bolas en stroke play (Regla 20.1c).
+1.3c Penalidades: Las penalidades existen para contrarrestar cualquier ventaja potencial obtenida por un jugador que infrinja una Regla.
+- Match play: generalmente perdida del hoyo.
+- Stroke play: generalmente dos golpes de penalidad.
+- Descalificacion: por infracciones graves o repetidas.
+
+========================================
+REGLA 2 - EL CAMPO
+========================================
+
+2.1 Limites del Campo y Fuera de Limites
+El campo es toda el area de juego dentro de los limites establecidos por el Comite. Fuera de limites esta definido por estacas blancas o lineas en el suelo. La linea de fuera de limites se define por los puntos mas interiores de las estacas a nivel del suelo.
+
+2.2 Areas Definidas del Campo
+El campo tiene cinco areas definidas:
+a) Area General: todo el campo excepto las otras cuatro areas. Incluye fairway, rough, y arboles.
+b) Area de Salida (Tee): el area rectangular desde la que se debe jugar al comenzar un hoyo. Se define por los marcadores de salida, dos palos de profundidad.
+c) Areas de Penalidad: cuerpos de agua u otras areas marcadas con estacas o lineas rojas (area de penalidad lateral) o amarillas (area de penalidad regular). Incluyen el terreno dentro de sus limites.
+d) Bunkers: areas de arena especialmente preparadas, generalmente depresiones de las que se ha removido el cesped.
+e) Green: el area especialmente preparada para jugar con el putter, donde se encuentra el hoyo con la bandera.
+
+2.3 Objetos y Condiciones del Campo
+a) Obstrucciones: cualquier objeto artificial, excepto objetos que definen limites y partes integrantes del campo.
+  - Obstrucciones movibles: se pueden mover sin esfuerzo irrazonable (Regla 15.2).
+  - Obstrucciones inamovibles: no se pueden mover facilmente. Se concede alivio sin penalidad (Regla 16.1).
+b) Impedimentos sueltos: objetos naturales no fijos como piedras, hojas, ramas, insectos muertos. Se pueden quitar en cualquier parte del campo (Regla 15.1).
+c) Condiciones anormales del campo: agujeros de animales, terreno en reparacion (GUR), obstrucciones inamovibles y agua temporal.
+
+2.4 Zonas de No Juego
+Areas del campo donde el Comite ha prohibido el juego. Si la bola esta en una zona de no juego o la zona interfiere con el stance o swing, se debe tomar alivio obligatorio.
+
+========================================
+REGLA 3 - LA COMPETICION
+========================================
+
+3.1 Componentes Centrales de Todas las Competiciones
+a) Aplicacion de las Reglas 1-24.
+b) Formatos de juego: match play (hoyo por hoyo) o stroke play (total de golpes).
+
+3.2 Match Play
+a) Resultado de un hoyo y del match: el jugador que completa el hoyo con menos golpes gana el hoyo. El match se gana cuando un jugador lleva mas hoyos ganados que los que quedan por jugar (ejemplo: 3 y 2 = 3 arriba con 2 por jugar).
+b) Concesiones: un jugador puede conceder el siguiente golpe, un hoyo o el match en cualquier momento.
+c) Aplicacion de penalidades: las infracciones conocidas deben comunicarse al oponente oportunamente.
+
+3.3 Stroke Play
+a) El ganador es quien completa todas las rondas con el menor numero total de golpes (golpes totales incluyendo penalidades).
+b) Tarjeta de puntuacion: el jugador es responsable de que la tarjeta refleje el score correcto para cada hoyo. El marcador debe certificar los scores de los hoyos. No es necesario registrar el handicap en la tarjeta (cambio 2023).
+c) Si se registra un score mayor al real en un hoyo, ese score cuenta. Si se registra un score menor, el jugador esta descalificado.
+
+========================================
+REGLA 4 - EQUIPAMIENTO DEL JUGADOR
+========================================
+
+4.1 Palos
+a) Maximo 14 palos durante una ronda. Si comienza con menos de 14, puede agregar palos durante la ronda hasta llegar a 14.
+b) Penalidad por llevar mas de 14: match play = ajustar el resultado deduciendo un hoyo por cada hoyo donde la infraccion ocurrio (maximo 2). Stroke play = 2 golpes por hoyo (maximo 4 golpes).
+c) Un palo danado durante la ronda puede ser reemplazado si no fue danado por abuso (cambio 2023). El palo danado debe ser sacado de juego.
+d) Palos compartidos: no se permite compartir palos entre jugadores si el total combinado excede 14.
+
+4.2 Bolas
+a) Debe usarse una bola que cumpla con la Lista de Bolas Conformes.
+b) La bola no puede ser cambiada intencionalmente durante el juego de un hoyo, excepto cuando las Reglas lo permitan (por ejemplo, bola dañada, bola perdida).
+c) Bola cortada o rajada: si una bola se raja durante el juego de un hoyo, el jugador puede sustituirla sin penalidad. Debe comunicarlo y permitir que el oponente/marcador examine la bola.
+
+4.3 Uso de Equipamiento
+a) Se permite el uso de equipo que sea conforme con las Reglas: tees, guantes, ayudas para el grip, dispositivos de medicion de distancia (si el Comite no lo prohibe).
+b) No se permite usar equipo de manera anormal que de una ventaja artificial.
+c) Dispositivos de distancia: se permite el uso de dispositivos que midan distancia solamente. Si el dispositivo tiene funciones de pendiente/elevacion, el Comite puede prohibirlo con Regla Local.
+
+========================================
+REGLA 5 - JUGAR LA RONDA
+========================================
+
+5.1 Significado de una Ronda
+Una ronda es 18 (o menos) hoyos jugados en el orden establecido por el Comite.
+
+5.2 Practicar en el Campo Antes o Entre Rondas
+a) Match play: se permite practicar en el campo de competicion antes de una ronda.
+b) Stroke play: no se permite practicar en el campo de competicion el dia de la competicion antes de la ronda, a menos que el Comite lo permita. Se permite practicar putting y chipping cerca del tee del primer hoyo.
+
+5.3 Comenzar y Terminar una Ronda
+a) El jugador debe comenzar a la hora de salida establecida, desde el area de salida del primer hoyo (o del hoyo asignado por el Comite).
+b) La ronda termina cuando el jugador emboca en el ultimo hoyo (incluyendo correccion de errores).
+
+5.4 Jugar en Grupos
+a) Stroke play: los jugadores juegan en grupos de 2, 3 o 4 normalmente.
+b) El Comite asigna los grupos y horarios de salida.
+
+5.5 Ritmo de Juego
+Los jugadores deben jugar a un ritmo razonable. El Comite puede establecer politicas de ritmo de juego con penalidades.
+
+5.6 Suspension y Reanudacion del Juego
+a) El Comite puede suspender el juego por condiciones climaticas peligrosas u otras razones.
+b) Cuando el juego se suspende por peligro (por ejemplo, rayos), todos los jugadores deben dejar de jugar inmediatamente.
+c) Si la bola esta en juego cuando se suspende, el jugador puede marcarla y levantarla, o dejarla donde esta.
+
+5.7 Interrupcion del Juego por el Jugador; Retirarse
+a) Un jugador no debe interrumpir el juego a menos que haya peligro de rayos, este buscando una decision del Comite, o por enfermedad/lesion.
+b) Si un jugador se retira, esta descalificado en stroke play.
+
+========================================
+REGLA 6 - JUGAR UN HOYO
+========================================
+
+6.1 Comenzar el Juego de un Hoyo
+El jugador debe comenzar cada hoyo golpeando una bola desde dentro del area de salida.
+
+6.2 Jugar una Bola desde el Area de Salida
+a) Las Reglas del area de salida aplican solo al comienzo de cada hoyo.
+b) La bola debe jugarse desde entre los marcadores de salida y hasta dos palos detras de ellos.
+c) La bola puede colocarse en un tee o en el suelo.
+d) Si se juega desde fuera del area de salida:
+  - Match play: sin penalidad, pero el oponente puede cancelar el golpe.
+  - Stroke play: 2 golpes de penalidad y debe jugar desde el area de salida correcta.
+
+6.3 Bola Usada para Jugar un Hoyo
+a) Embocar con la misma bola: el jugador debe embocar con la misma bola jugada desde el area de salida, excepto cuando sustitucion esta permitida.
+b) Sustitucion de bola: sustituir significa poner otra bola en juego. Si se sustituye incorrectamente: 1 golpe de penalidad.
+c) Bola provisional: se puede jugar una bola provisional cuando la bola original puede estar perdida fuera de un area de penalidad o fuera de limites (Regla 18.3).
+
+6.4 Orden de Juego
+a) Match play: el jugador que gano el hoyo anterior sale primero (tiene el "honor"). Durante un hoyo, el jugador mas lejos del hoyo juega primero.
+b) Stroke play: se recomienda "ready golf" (jugar cuando estes listo) para agilizar el juego. No hay penalidad por jugar fuera de turno.
+c) Bola provisional o segunda bola: se juega antes de que el jugador o cualquier otro jugador haga otro golpe.
+
+6.5 Completar el Juego de un Hoyo
+Un hoyo se completa cuando la bola es embocada (entra al hoyo y queda en reposo dentro de el) o cuando las Reglas indiquen que el hoyo esta completado (como concesion en match play).
+
+========================================
+SECCION II - REGLAS DE JUEGO DE LA BOLA (Reglas 7-11)
+
+========================================
+REGLA 7 - BUSQUEDA DE LA BOLA: ENCONTRAR E IDENTIFICAR LA BOLA
+========================================
+
+7.1 Como Buscar la Bola de Manera Justa
+a) El jugador puede tomar acciones razonables para encontrar su bola, como mover arena, agua, vegetacion, etc.
+b) Si se mueve la bola accidentalmente durante la busqueda, no hay penalidad (Regla 7.4). La bola debe reponerse.
+c) Si se mejora la posicion de la bola durante la busqueda, no hay penalidad si las acciones fueron razonables.
+
+7.2 Como Identificar la Bola
+Un jugador puede identificar su bola al verla en una situacion donde es su bola, por la marca del jugador en la bola, o por verificacion en el lugar donde se espera que este.
+
+7.3 Levantar la Bola para Identificarla
+Si la bola no puede ser identificada visualmente, el jugador puede levantarla para identificarla (sin penalidad), pero debe:
+a) Marcar el lugar de la bola antes de levantarla.
+b) No limpiarla mas de lo necesario para identificarla (excepto en el green).
+
+7.4 Bola Movida Accidentalmente Durante la Busqueda
+Si la bola es movida accidentalmente por el jugador, oponente o cualquier persona durante la busqueda, no hay penalidad. La bola debe reponerse en su lugar original (estimado si no se conoce).
+
+========================================
+REGLA 8 - JUGAR EL CAMPO COMO SE ENCUENTRA
+========================================
+
+8.1 Acciones del Jugador que Mejoran Condiciones
+a) El jugador NO debe mejorar:
+  - El lie de la bola.
+  - El area del swing pretendido.
+  - La linea de juego.
+  - El area donde va a dropear o colocar una bola.
+  Penalidad: 2 golpes en stroke play / perdida del hoyo en match play.
+
+b) Acciones NO permitidas:
+  - Mover, doblar o romper objetos que crecen o estan fijos (arboles, arbustos, estacas).
+  - Mover o presionar la superficie del terreno.
+  - Remover o presionar arena o tierra suelta (excepto en el green y area de salida).
+  - Remover rocio, escarcha o agua.
+
+c) Excepciones permitidas:
+  - Colocar el palo ligeramente en el suelo justo delante o detras de la bola.
+  - Pararse normalmente.
+  - Hacer un golpe o el backswing para un golpe.
+
+8.2 Acciones Deliberadas para Alterar Condiciones Fisicas
+a) Un jugador NO debe alterar deliberadamente las condiciones fisicas del campo para afectar su propio juego o el de otro jugador.
+b) Excepcion: cuidado del campo (reparar divots, rastrillar bunkers) y acciones en el green (Regla 13).
+
+8.3 Acciones del Jugador que Empeoran Condiciones
+Si un jugador empeora condiciones que afectan su golpe, generalmente no puede restaurarlas. Excepcion: si fue causado por otro jugador, animal, o persona, puede restaurarse.
+
+========================================
+REGLA 9 - BOLA JUGADA COMO REPOSA; BOLA EN REPOSO LEVANTADA O MOVIDA
+========================================
+
+9.1 Bola Jugada Como Reposa
+La bola debe jugarse como reposa, excepto cuando las Reglas permitan o requieran otra cosa.
+
+9.2 Decidir si la Bola se Ha Movido y Que la Causo
+a) Una bola se considera que se ha movido solo si se sabe o es virtualmente cierto que se movio. Si no hay certeza, se trata como que no se movio.
+b) Causas posibles: fuerzas naturales, el jugador, el oponente, influencia externa.
+
+9.3 Bola Movida por Fuerzas Naturales
+Si una bola en reposo se mueve por viento, agua u otra fuerza natural, generalmente debe jugarse desde su nueva posicion.
+Excepcion: si la bola en el green se mueve despues de haber sido levantada y repuesta, debe reponerse (Regla 13.1d).
+
+9.4 Bola Levantada o Movida por el Jugador
+a) Si el jugador levanta o mueve su bola en reposo intencionalmente sin que una Regla lo permita: 1 golpe de penalidad y debe reponerse.
+b) Excepciones sin penalidad:
+  - Bola en el green (Regla 13.1b).
+  - Busqueda razonable (Regla 7.1a).
+  - Aplicando una Regla que permite levantar.
+
+9.5 Bola Levantada o Movida por Oponente en Match Play
+Si el oponente levanta o mueve la bola en reposo del jugador: 1 golpe de penalidad para el oponente y la bola debe reponerse.
+Excepcion: no hay penalidad al conceder un golpe o durante busqueda razonable.
+
+9.6 Bola Levantada o Movida por Influencia Externa
+Si una influencia externa (animal, espectador, otra bola) levanta o mueve la bola del jugador: sin penalidad, la bola debe reponerse.
+
+9.7 Marca-Bola Levantado o Movido
+Si un marca-bola es levantado o movido antes de reponer la bola, debe reponerse el marca-bola o la bola en el lugar original.
+
+========================================
+REGLA 10 - PREPARARSE Y EJECUTAR UN GOLPE; CONSEJO E INFORMACION; CADDIES
+========================================
+
+10.1 Ejecutar un Golpe
+a) Golpear la bola limpiamente: el palo debe golpear la bola. No se permite empujar, raspar o cuchearear la bola.
+b) Anclar el palo: no se permite anclar el palo directamente al cuerpo o usar un "punto de anclaje" al hacer un golpe (penalidad de putting con palo largo anclado al pecho esta prohibido).
+
+10.2 Consejo e Informacion
+a) Consejo: no se puede dar ni pedir consejo a nadie excepto al caddie del jugador, al companero del jugador o al caddie del companero.
+  - Consejo incluye: sugerencias sobre seleccion de palo, como jugar un golpe, como jugar un hoyo.
+  - Penalidad: 2 golpes / perdida del hoyo.
+b) Informacion sobre las Reglas: cualquiera puede dar o pedir informacion sobre las Reglas sin penalidad.
+c) Informacion publica: se puede pedir o dar informacion que sea de conocimiento publico (distancias, posicion de cosas en el campo).
+
+10.3 Caddies
+a) Un jugador puede tener un caddie para que lleve palos, de consejo y ayude durante la ronda.
+b) El jugador es responsable de las acciones de su caddie.
+c) Restricciones del caddie:
+  - No puede pararse detras del jugador en la linea de juego mientras el jugador toma su stance (Regla 10.2b(4)).
+  - No puede levantar la bola sin autorizacion del jugador.
+
+========================================
+REGLA 11 - BOLA EN MOVIMIENTO GOLPEA ACCIDENTALMENTE A PERSONA, ANIMAL U OBJETO; ACCIONES DELIBERADAS PARA AFECTAR BOLA EN MOVIMIENTO
+========================================
+
+11.1 Bola en Movimiento Golpea Accidentalmente a Persona u Objeto
+a) Si la bola en movimiento golpea accidentalmente a cualquier persona (incluyendo al jugador) o influencia externa: sin penalidad para nadie.
+b) La bola se juega como reposa, excepto:
+  - Bola en el green: si golpea a otra bola en reposo en el green, el golpe no cuenta en stroke play si ambas bolas estaban en el green antes del golpe. El jugador debe repetir el golpe (Regla 11.1a excepcion en stroke play cancelada en la edicion 2023 - la penalidad de 2 golpes se mantiene solo si estaba en el green y golpea a otra bola en el green).
+
+11.2 Bola en Movimiento Deliberadamente Desviada o Detenida
+a) Si cualquier persona deliberadamente desvía o detiene una bola en movimiento:
+  - Penalidad: 2 golpes / perdida del hoyo para el jugador cuya bola fue afectada (si fue el propio jugador o su caddie).
+  - Si un oponente o influencia externa lo hace, se estima donde habria quedado la bola.
+b) Excepcion: un jugador puede detener su propia bola cuando es claro que no tiene posibilidad razonable de golpear algo.
+
+========================================
+SECCION III - REGLAS DE JUEGO EN AREAS ESPECIFICAS (Reglas 12-13)
+
+========================================
+REGLA 12 - BUNKERS
+========================================
+
+12.1 Cuando la Bola Esta en un Bunker
+Una bola esta en un bunker cuando cualquier parte de la bola toca la arena en la superficie del bunker o esta dentro de los limites del bunker.
+
+12.2 Jugar la Bola en un Bunker
+a) Restriccion: antes de hacer un golpe a una bola en un bunker, el jugador NO debe:
+  - Tocar la arena del bunker con la mano, un palo, un rastrillo u otro objeto para probar la condicion de la arena.
+  - Tocar la arena con el palo en el area justo delante o detras de la bola, en el backswing o en un swing de practica.
+b) Excepciones permitidas:
+  - Buscar la bola en la arena: cavar o remover arena con los pies o un palo.
+  - Remover impedimentos sueltos y obstrucciones movibles.
+  - Apoyarse en el palo para descansar (no como practica de swing).
+  - Alisar la arena para cuidado del campo cuando no mejore la posicion para el siguiente golpe.
+  - Colocar palos, equipamiento u otros objetos en el bunker.
+
+12.3 Reglas Especificas para Alivio en Bunkers
+Cuando se toma alivio de una condicion anormal del campo (Regla 16.1), obstruccion, o bola no jugable en un bunker:
+a) Alivio sin penalidad: la bola debe ser dropeada y quedar en reposo dentro del bunker.
+b) Alivio con penalidad (1 golpe): el jugador puede tomar alivio fuera del bunker, en linea con el hoyo y el punto donde la bola estaba (alivio back-on-the-line fuera del bunker).
+
+========================================
+REGLA 13 - GREENS
+========================================
+
+13.1 Acciones Permitidas y Requeridas en los Greens
+a) Cuando la bola esta en el green:
+  - El jugador puede marcar, levantar y limpiar la bola (Regla 13.1b).
+  - Puede reparar dano en el green (Regla 13.1c).
+  - Puede remover arena e impedimentos sueltos sin penalidad.
+
+b) Marcar, Levantar y Reponer la Bola:
+  - Se debe marcar el lugar antes de levantar la bola.
+  - La bola se repone en el lugar original exacto.
+  - Penalidad por no marcar o levantar incorrectamente: 1 golpe.
+
+c) Mejoras Permitidas en el Green:
+  - Reparar dano: piques de bola, marcas de zapatos, indentaciones de equipamiento, dano de animales, marcas de tee insertados.
+  - NO se puede reparar: desgaste natural, aireacion, imperfecciones de la superficie, dano natural de enfermedad o crecimiento.
+  - Se puede usar cualquier objeto para reparar (tee, herramienta, palo).
+
+d) Bola o Marca-Bola Movida en el Green:
+  - Si la bola en el green se mueve despues de ser levantada y repuesta: reponerla sin penalidad.
+  - Si la bola en el green se mueve por fuerzas naturales (no fue levantada previamente): jugarla desde su nueva posicion.
+
+13.2 La Bandera
+a) Bandera en el hoyo: el jugador puede dejar la bandera en el hoyo o sacarla. Si la bola golpea la bandera dejada en el hoyo: sin penalidad (cambio desde 2019).
+b) Bandera fuera del hoyo: si alguien saca la bandera, no debe reponerse mientras una bola esta en movimiento, a menos que haya sido sacada sin autorizacion del jugador.
+
+13.3 Bola Que Sobresale del Borde del Hoyo
+Si alguna parte de la bola esta sobre el borde del hoyo, el jugador tiene un tiempo razonable para llegar al hoyo mas 10 segundos para ver si la bola cae. Si cae dentro de ese tiempo, el jugador ha embocado con su ultimo golpe. Si no cae, se considera en reposo y si luego cae, se emboco pero se anade 1 golpe de penalidad.
+
+========================================
+SECCION IV - ALIVIO Y PENALIDADES (Reglas 14-19)
+
+========================================
+REGLA 14 - PROCEDIMIENTOS CON LA BOLA: MARCAR, LEVANTAR, LIMPIAR; REPONER EN UN LUGAR; DROPEAR EN UN AREA DE ALIVIO; JUGAR DESDE LUGAR EQUIVOCADO
+========================================
+
+14.1 Marcar, Levantar y Limpiar la Bola
+a) Marcar el lugar: antes de levantar la bola, se debe marcar su posicion con un marca-bola o un palo pequeno.
+b) Quien puede levantar: el jugador, su caddie, o cualquier persona autorizada.
+c) Limpiar: la bola puede limpiarse cuando se levanta, excepto:
+  - Para ver si esta cortada: no limpiar mas de lo necesario.
+  - Para identificarla: no limpiar mas de lo necesario.
+  - Cuando interfiere con el juego: no limpiar.
+
+14.2 Reponer la Bola
+a) La bola debe reponerse en su lugar original exacto (estimado si no se conoce).
+b) Si el lie original fue alterado (por ejemplo, alguien piso donde estaba la bola): recrear el lie original lo mejor posible.
+c) Si la bola no se queda en reposo en el lugar: intentar reponerla una segunda vez. Si aun no se queda: colocarla en el punto mas cercano donde se quede.
+
+14.3 Dropear la Bola en un Area de Alivio
+a) Procedimiento de drop: la bola debe dropearse desde la altura de la rodilla, en linea recta hacia abajo, sin efecto ni direccion. La bola debe ser dropeada por el jugador.
+b) Area de alivio: la bola dropeada debe quedar en reposo dentro del area de alivio definida. Si sale del area de alivio, se dropea una segunda vez. Si vuelve a salir, se coloca donde toco el suelo la segunda vez.
+c) Cambio 2023 - Alivio back-on-the-line: cuando se toma alivio en linea (back-on-the-line), el jugador dropea la bola en la linea y la bola debe quedar en reposo dentro de un palo de distancia del punto donde fue dropeada, no mas cerca del hoyo.
+
+14.4 Reponer la Bola que se Mueve Despues de Haber Sido Dropeada/Colocada
+Cambio 2023: si una bola en reposo que fue dropeada, colocada o repuesta se mueve a otra area del campo o queda fuera de limites, debe ser repuesta en su posicion original.
+
+14.5 Corregir Error al Sustituir, Reponer, Dropear o Colocar
+Si un jugador sustituye una bola incorrectamente o la dropea/coloca de manera incorrecta, puede corregir el error antes de jugar, levantando la bola y procediendo correctamente.
+
+14.6 Hacer un Golpe Desde Lugar Equivocado
+Si un jugador hace un golpe desde un lugar equivocado: 2 golpes de penalidad en stroke play. Debe corregir si es una infraccion grave; si no es grave, el score cuenta.
+
+14.7 Jugar Desde Lugar Equivocado en Stroke Play
+Si un jugador juega desde un lugar equivocado que es una infraccion grave, debe corregir el error antes de salir del area de salida del siguiente hoyo (o antes de entregar la tarjeta en el ultimo hoyo).
+
+========================================
+REGLA 15 - ALIVIO POR IMPEDIMENTOS SUELTOS Y OBSTRUCCIONES MOVIBLES
+========================================
+
+15.1 Impedimentos Sueltos
+a) Un jugador puede remover impedimentos sueltos (piedras, hojas, ramas, gusanos, insectos, etc.) en cualquier parte del campo sin penalidad.
+b) Si la bola se mueve al remover un impedimento suelto fuera del green: 1 golpe de penalidad y la bola debe reponerse.
+c) Si la bola esta en el green y se mueve al remover un impedimento: sin penalidad, reponer la bola.
+
+15.2 Obstrucciones Movibles
+a) Un jugador puede remover obstrucciones movibles (botellas, latas, rastrillos, estacas de distancia removibles, etc.) en cualquier lugar del campo sin penalidad.
+b) Si la bola se mueve al remover la obstruccion: sin penalidad, reponer la bola.
+c) Si la bola esta en o sobre la obstruccion: levantar la bola, remover la obstruccion, y dropear (o colocar en el green) en el punto directamente debajo de donde estaba la bola.
+
+15.3 Bola que No Se Encuentra y Esta en o Sobre una Obstruccion Movible o Condicion Anormal
+Si es conocido o virtualmente cierto que la bola esta perdida en una obstruccion movible o condicion anormal, el jugador puede tomar alivio sin penalidad.
+
+========================================
+REGLA 16 - ALIVIO POR CONDICIONES ANORMALES DEL CAMPO
+========================================
+
+16.1 Condiciones Anormales del Campo (Incluye Obstrucciones Inamovibles)
+Condiciones anormales son: agujeros de animales, terreno en reparacion (GUR), obstrucciones inamovibles, y agua temporal.
+
+a) Cuando hay alivio:
+  - La bola toca o esta en la condicion anormal.
+  - La condicion interfiere fisicamente con el area del stance o swing pretendido.
+  - Solo en el green: la condicion interfiere con la linea de putt.
+
+b) Alivio en el Area General:
+  - Punto de referencia: el punto de alivio completo mas cercano (donde ya no hay interferencia).
+  - Area de alivio: un palo de longitud desde el punto de referencia, no mas cerca del hoyo, en el Area General.
+  - Procedimiento: dropear la bola en el area de alivio.
+
+c) Alivio en un Bunker:
+  - Alivio sin penalidad dentro del bunker (como b).
+  - Alivio con 1 golpe de penalidad: dropear fuera del bunker en linea con el hoyo.
+
+d) Alivio en el Green:
+  - Punto de alivio completo mas cercano (puede estar fuera del green en el Area General).
+  - La bola se coloca (no se dropea) en el punto de alivio.
+
+e) No hay alivio cuando la interferencia es solo por la posicion de la bola y el jugador no podria razonablemente hacer un golpe (por ejemplo, bola contra un arbol).
+
+16.2 Area de Penalidad (Agua Temporal dentro de un Area de Penalidad)
+No se concede alivio por agua temporal en un area de penalidad. El jugador debe jugar la bola como reposa o tomar alivio de area de penalidad (Regla 17).
+
+16.3 Bola Empotrada
+a) Si la bola esta empotrada en su propio pique en el Area General: alivio sin penalidad. La bola se levanta, se dropea desde la altura de la rodilla en un punto justo detras del pique.
+b) Regla Local: el Comite puede limitar el alivio por bola empotrada solo a areas segadas a la altura del fairway.
+c) No hay alivio si la bola esta empotrada en arena en un area que no esta segada a la altura del fairway.
+
+16.4 Levantar la Bola para Ver si Esta en una Condicion que Permite Alivio
+Si el jugador tiene razon para creer que la bola esta en una condicion que permite alivio, puede levantarla para verificar. Debe marcar primero. Si la condicion existe, puede tomar alivio. Si no existe, debe reponer la bola.
+
+========================================
+REGLA 17 - AREAS DE PENALIDAD
+========================================
+
+17.1 Opciones para Bola en Area de Penalidad
+a) Jugar la bola como reposa: el jugador puede jugar la bola sin penalidad desde el area de penalidad. Puede tocar el suelo y mover impedimentos sueltos.
+b) Alivio con penalidad (1 golpe): el jugador tiene las siguientes opciones:
+
+  Para CUALQUIER area de penalidad (amarilla o roja):
+  i) Alivio de golpe y distancia: jugar desde donde se hizo el ultimo golpe.
+  ii) Alivio back-on-the-line: dropear una bola en la linea que va desde el hoyo a traves del punto estimado donde la bola cruzo por ultima vez el limite del area de penalidad. No hay limite de distancia hacia atras en esa linea.
+
+  Solo para area de penalidad LATERAL (roja):
+  iii) Alivio lateral: dropear dentro de 2 palos del punto donde la bola cruzo por ultima vez el limite del area de penalidad, no mas cerca del hoyo.
+
+17.2 Opciones Despues de Jugar desde un Area de Penalidad
+Si la bola jugada desde un area de penalidad queda en la misma u otra area de penalidad, el jugador puede:
+a) Tomar alivio con penalidad como en 17.1.
+b) Como opcion adicional: tomar alivio por 1 golpe de penalidad basado en el punto donde el golpe anterior fue hecho (antes de entrar al area de penalidad por primera vez).
+
+17.3 No Hay Alivio Bajo Otras Reglas para Bola en Area de Penalidad
+Cuando la bola esta en un area de penalidad, no se puede tomar alivio por condiciones anormales (16.1), bola empotrada (16.3) o bola injugable (19).
+
+========================================
+REGLA 18 - GOLPE Y DISTANCIA; BOLA PERDIDA; BOLA FUERA DE LIMITES; BOLA PROVISIONAL
+========================================
+
+18.1 Alivio con Penalidad de Golpe y Distancia
+En cualquier momento, el jugador puede tomar alivio de golpe y distancia (1 golpe de penalidad) jugando desde donde se hizo el ultimo golpe.
+
+18.2 Bola Perdida o Fuera de Limites
+a) Bola perdida: una bola se considera perdida si no se encuentra en 3 minutos despues de que el jugador comienza a buscarla.
+b) Fuera de limites: si la bola entera esta fuera de limites.
+c) Penalidad: golpe y distancia (1 golpe de penalidad + el golpe original). El jugador debe jugar otra bola desde donde se hizo el ultimo golpe.
+
+18.3 Bola Provisional
+a) Cuando se permite: si el jugador cree que su bola puede estar perdida fuera de un area de penalidad o fuera de limites, puede jugar una bola provisional para ahorrar tiempo.
+b) Procedimiento:
+  - Anunciar: debe anunciar que va a jugar una bola provisional antes de jugarla.
+  - Se juega desde donde se hizo el golpe anterior.
+c) Cuando la bola provisional se convierte en bola en juego:
+  - Si la bola original no se encuentra en 3 minutos.
+  - Si la bola original esta fuera de limites.
+  - Si el jugador hace un golpe con la bola provisional desde un punto mas cercano al hoyo que donde se estima esta la bola original.
+d) Cuando se abandona la bola provisional:
+  - Si la bola original se encuentra en el campo dentro de los 3 minutos.
+  - Si la bola original esta en un area de penalidad.
+
+========================================
+REGLA 19 - BOLA INJUGABLE
+========================================
+
+19.1 Opciones de Alivio para Bola Injugable (Excepto en Area de Penalidad)
+El jugador puede declarar su bola injugable en cualquier lugar del campo excepto en un area de penalidad. El jugador es el unico juez. Las opciones son (todas con 1 golpe de penalidad):
+
+a) Alivio de golpe y distancia: jugar desde donde se hizo el ultimo golpe.
+b) Alivio back-on-the-line: dropear en la linea desde el hoyo a traves de donde esta la bola. Sin limite de distancia hacia atras.
+c) Alivio lateral: dropear dentro de 2 palos desde donde esta la bola, no mas cerca del hoyo.
+
+19.2 Opciones de Alivio para Bola Injugable en Bunker
+Si la bola esta en un bunker, las opciones a, b y c aplican pero:
+- Opciones b y c: la bola debe dropearse y quedar en reposo dentro del bunker.
+- Opcion adicional (2 golpes de penalidad total): alivio back-on-the-line fuera del bunker.
+
+19.3 Opciones de Alivio para Bola Provisional Injugable
+Si una bola provisional es injugable, el jugador tiene las mismas opciones que para la bola original.
+
+========================================
+SECCION V - OTRAS FORMAS DE JUEGO (Reglas 20-24)
+
+========================================
+REGLA 20 - RESOLVER CUESTIONES DE REGLAS DURANTE LA RONDA; DETERMINACIONES DEL ARBITRO Y DEL COMITE
+========================================
+
+20.1 Resolver Cuestiones de Reglas Durante la Ronda
+a) Los jugadores no deben acordar ignorar una Regla. Si lo hacen: descalificacion.
+b) Match play: los jugadores pueden resolver una cuestion entre ellos si ambos estan de acuerdo. Si quieren, pueden pedir una determinacion al arbitro o Comite.
+c) Stroke play - jugar dos bolas: si un jugador no esta seguro del procedimiento correcto, puede jugar dos bolas y anotar los scores con ambas. Debe reportar la situacion al Comite antes de entregar la tarjeta.
+
+20.2 Determinaciones Bajo las Reglas
+a) Determinaciones del arbitro: la determinacion de un arbitro es final.
+b) Determinaciones del Comite: el Comite es la autoridad final para resolver cuestiones de Reglas.
+c) Uso de video: el estandar de "a simple vista" aplica. No se usara video de alta definicion para determinar hechos que no eran razonablemente visibles a simple vista.
+
+20.3 Situaciones No Cubiertas por las Reglas
+Si una situacion no esta cubierta por las Reglas, el Comite debe resolver basandose en lo que sea razonable, justo y consistente con la manera en que situaciones similares se tratan bajo las Reglas.
+
+========================================
+REGLA 21 - OTRAS FORMAS DE STROKE PLAY INDIVIDUAL Y STROKE PLAY CON HANDICAP
+========================================
+
+21.1 Stableford
+a) El scoring se basa en puntos por hoyo comparados con un score fijo (normalmente el par):
+  - Mas de 1 sobre el score fijo o sin score: 0 puntos
+  - 1 sobre el score fijo (bogey): 1 punto
+  - Score fijo (par): 2 puntos
+  - 1 bajo el score fijo (birdie): 3 puntos
+  - 2 bajo (eagle): 4 puntos
+  - 3 bajo (albatros/doble eagle): 5 puntos
+b) El ganador es quien acumula mas puntos.
+
+21.2 Score Maximo (Maximum Score)
+a) El Comite establece un score maximo por hoyo (por ejemplo, doble par, triple bogey, un numero fijo).
+b) Si el jugador no emboca antes de alcanzar el score maximo, puede levantar la bola y anotar el score maximo para ese hoyo.
+
+21.3 Par/Bogey
+a) Se usa el scoring de match play pero contra el campo: cada hoyo se compara con un score fijo (par o bogey).
+  - Ganado: score del jugador es menor que el score fijo.
+  - Empatado: score del jugador iguala el score fijo.
+  - Perdido: score del jugador es mayor que el score fijo o no emboca.
+b) El ganador es quien gana mas hoyos que pierde.
+
+========================================
+REGLA 22 - FOURSOMES
+========================================
+
+22.1 Resumen de Foursomes
+En Foursomes, dos companeros juegan como un bando, alternando golpes en cada hoyo con una sola bola.
+
+22.2 Un Companero Puede Actuar por el Bando
+Cualquiera de los dos companeros puede actuar en nombre del bando (marcar, levantar, dropear, etc.).
+
+22.3 El Bando Debe Alternar Golpes
+a) En cada hoyo, los companeros deben alternar los golpes de salida (uno sale en hoyos pares, el otro en hoyos impares, por ejemplo).
+b) Si juegan fuera de orden: penalidad y correccion.
+
+22.4 Comenzar la Ronda
+El orden de juego (quien sale en que hoyo) se decide antes de la ronda.
+
+22.5 Los Companeros Pueden Compartir Palos
+Si los dos companeros tienen un total de 14 palos o menos entre ambos, no hay problema. Si el total excede 14, deben designar antes de la ronda que palos estan disponibles para uso compartido.
+
+========================================
+REGLA 23 - FOUR-BALL
+========================================
+
+23.1 Resumen de Four-Ball
+En Four-Ball, dos companeros compiten como un bando, cada uno jugando su propia bola. El score del bando para cada hoyo es el mejor (mas bajo) score neto de los dos companeros.
+
+23.2 Scoring en Four-Ball
+a) El score del bando es el mejor score de los dos companeros en cada hoyo.
+b) Al menos uno de los companeros debe embocar (o registrar un score valido) para que el bando tenga un score en ese hoyo.
+
+23.3 Cuando la Ronda Comienza y Termina
+Cada companero puede comenzar su ronda y no es necesario que ambos jueguen todos los hoyos.
+
+23.4 Uno o Ambos Companeros Pueden Representar al Bando
+Un companero puede jugar solo mientras el otro descansa o se ausenta. El bando no esta descalificado solo porque un companero no este presente.
+
+23.5 Acciones del Companero que Afectan al Otro Companero
+Si un companero infringe una Regla que afecta el juego del otro companero, la penalidad puede aplicarse a ambos o solo al infractor, dependiendo de la naturaleza de la infraccion.
+
+23.6 Orden de Juego del Bando
+Los companeros pueden jugar en el orden que consideren mejor (no necesitan alternar).
+
+========================================
+REGLA 24 - COMPETICIONES POR EQUIPOS
+========================================
+
+24.1 Resumen de Competiciones por Equipos
+Una competicion por equipos involucra equipos de jugadores que compiten como individuos o en bandos (foursomes o four-ball) contra otros equipos.
+
+24.2 Condiciones de las Competiciones por Equipos
+El Comite establece las condiciones: formato, numero de jugadores por equipo, como se determinan los resultados del equipo.
+
+24.3 Capitan del Equipo
+Cada equipo puede tener un capitan que toma decisiones de estrategia y da consejo a los miembros del equipo.
+
+24.4 Reglas Especiales en Competiciones por Equipos
+a) El Comite puede establecer Reglas Locales especificas para la competicion por equipos.
+b) Consejo entre companeros de equipo: el Comite puede permitir que los miembros del equipo se den consejo mutuamente.
+
+========================================
+REGLA 25 - MODIFICACIONES PARA JUGADORES CON DISCAPACIDAD
+========================================
+
+25.1 Resumen (Nuevo en 2023 - incorporado completamente en las Reglas)
+Las Reglas de Golf se aplican a todos los jugadores, incluidos los que tienen discapacidad. La Regla 25 proporciona modificaciones para jugadores con discapacidades especificas.
+
+25.2 Modificaciones para Jugadores Ciegos
+a) Puede recibir asistencia de su caddie o companero para alinearse.
+b) El caddie puede posicionar al jugador y ayudarlo con la direccion del golpe.
+
+25.3 Modificaciones para Jugadores Amputados
+a) Pueden usar dispositivos de asistencia para la movilidad.
+b) Modificaciones en el anclaje del palo para prótesis.
+
+25.4 Modificaciones para Jugadores que Usan Dispositivos de Asistencia para la Movilidad
+a) Sillas de ruedas, muletas, etc. son permitidos.
+b) Las areas de stance se modifican para acomodar los dispositivos.
+c) Alivio modificado para dropear y colocar la bola.
+
+25.5 Modificaciones para Jugadores con Discapacidad Intelectual
+a) Pueden recibir asistencia adicional para entender las Reglas.
+b) El caddie o un companero puede ayudarlos con procedimientos de las Reglas.
+
+25.6 El Comite Puede Hacer Modificaciones Adicionales
+El Comite tiene discrecion para hacer modificaciones razonables adicionales para acomodar a jugadores con discapacidad no cubiertas especificamente por la Regla 25.
+
+========================================
+DEFINICIONES IMPORTANTES
+========================================
+
+Area de Penalidad: Un cuerpo de agua u otra area definida por el Comite donde se aplica un golpe de penalidad si la bola esta perdida o no puede jugarse. Marcada con estacas o lineas rojas (lateral) o amarillas (regular).
+
+Area General: Toda el area del campo excepto las otras cuatro areas definidas (area de salida del hoyo en juego, areas de penalidad, bunkers y green del hoyo en juego).
+
+Bunker: Un area de arena especialmente preparada, generalmente una depresion de la que se ha removido pasto o tierra.
+
+Caddie: Persona que ayuda al jugador durante la ronda cargando, transportando o manejando los palos del jugador, y/o dandole consejo.
+
+Condiciones Anormales del Campo: Agujeros de animales, terreno en reparacion (GUR), obstrucciones inamovibles, y agua temporal.
+
+Dropear: Sostener la bola a la altura de la rodilla y soltarla para que caiga sin imprimirle giro o direccion.
+
+Embocada: Cuando la bola esta en reposo dentro del hoyo y toda la bola esta por debajo del nivel de la superficie del green.
+
+Fuera de Limites: Toda el area mas alla de los limites del campo definidos por el Comite. Marcada con estacas blancas o lineas.
+
+Green: El area del hoyo especialmente preparada para jugar con el putter, o que el Comite defina como green.
+
+Impedimento Suelto: Cualquier objeto natural suelto como piedras, hojas, ramas, y animales muertos.
+
+Obstruccion: Cualquier objeto artificial excepto partes integrantes del campo y objetos de limites.
+
+Obstruccion Inamovible: Una obstruccion que no puede ser movida sin esfuerzo irrazonable o sin danar el campo.
+
+Obstruccion Movible: Una obstruccion que puede ser movida con esfuerzo razonable y sin danar el campo.
+
+Punto de Alivio Completo Mas Cercano: El punto de referencia para tomar alivio sin penalidad de condiciones anormales. Es el punto estimado mas cercano donde la condicion no interfiere con el lie, stance, y area de swing.
+
+Terreno en Reparacion (GUR): Cualquier parte del campo que el Comite defina como terreno en reparacion (marcado con lineas azules o estacas azules). Incluye cualquier material apilado para ser removido y cualquier hoyo hecho por personal de mantenimiento.
+
+Agua Temporal: Cualquier acumulacion temporal de agua en la superficie del terreno que no esta en un area de penalidad. Incluye charcos de lluvia, desbordamientos de cuerpos de agua, etc.
+
+========================================
+PENALIDADES RESUMEN
+========================================
+
+1 golpe de penalidad:
+- Bola perdida o fuera de limites (golpe y distancia)
+- Alivio de area de penalidad
+- Bola injugable (opciones laterales o back-on-the-line)
+- Mover bola propia en reposo sin autorizacion (Regla 9.4)
+- Sustitucion incorrecta de bola
+- No marcar antes de levantar bola
+- Bola empotrada (si se toma alivio incorrecto)
+
+2 golpes de penalidad (stroke play) / Perdida del hoyo (match play):
+- Jugar desde lugar equivocado
+- Mejorar condiciones de juego
+- Dar o pedir consejo
+- Tocar arena del bunker antes del golpe (cuando no esta permitido)
+- Jugar bola equivocada
+- Bola injugable fuera del bunker (opcion adicional)
+- No jugar en orden correcto en foursomes
+
+Descalificacion:
+- Acordar ignorar las Reglas
+- Conducta grave contraria al espiritu del juego
+- Entregar tarjeta con score menor al real en algun hoyo (stroke play)
+- No corregir error grave de lugar equivocado
+- Infraccion repetida de reglas sin correccion
