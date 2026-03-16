@@ -12,7 +12,36 @@
 
     var navChat = document.getElementById('nav-chat');
     var clearBtn = document.getElementById('chat-clear');
-    var welcomeMsg = 'Bienvenido al asistente de reglas de la Copa Fedex Sucesores 2026. Puede consultarme sobre cualquier situacion en el campo, reglas de la USGA/R&A, reglas locales del torneo, handicap, scoring y sistema de puntos. Con gusto le ayudo.';
+    var welcomeMsg = 'Soy el Comisario de la Copa Fedex Sucesores 2026. Consulteme sobre cualquier situacion de reglas en el campo y le doy el veredicto con la regla oficial. Use los botones rapidos o escriba su pregunta.';
+
+    // Botones de respuesta rapida
+    var quickButtons = [
+        { label: 'Bola perdida', text: 'Mi bola se perdio, no la encuentro. ¿Que hago?' },
+        { label: 'Bola en agua', text: 'Mi bola cayo en un area de penalidad (agua). ¿Cuales son mis opciones?' },
+        { label: 'Asiento mejorado', text: '¿Hoy aplica asiento mejorado? ¿Como funciona?' },
+        { label: 'Bola injugable', text: 'Mi bola quedo en una posicion injugable. ¿Que opciones tengo?' },
+        { label: 'Hoyo en uno', text: 'Alguien hizo hoyo en uno. ¿Cuanto se paga y como funciona?' },
+        { label: 'Drop correcto', text: '¿Como se hace un drop correctamente?' }
+    ];
+
+    function addQuickButtons() {
+        var container = document.createElement('div');
+        container.className = 'chat-quick-buttons';
+        quickButtons.forEach(function(btn) {
+            var button = document.createElement('button');
+            button.className = 'chat-quick-btn';
+            button.textContent = btn.label;
+            button.addEventListener('click', function() {
+                sendMessage(btn.text);
+                // Remover botones despues de usar uno
+                var existing = messages.querySelector('.chat-quick-buttons');
+                if (existing) existing.remove();
+            });
+            container.appendChild(button);
+        });
+        messages.appendChild(container);
+        messages.scrollTop = messages.scrollHeight;
+    }
 
     function openChat() {
         panel.classList.remove('hidden');
@@ -44,9 +73,14 @@
         div.className = 'chat-msg chat-bot';
         div.textContent = welcomeMsg;
         messages.appendChild(div);
+        addQuickButtons();
     });
 
     function addMessage(text, role) {
+        // Remover botones rapidos si existen
+        var existing = messages.querySelector('.chat-quick-buttons');
+        if (existing) existing.remove();
+
         var div = document.createElement('div');
         div.className = 'chat-msg ' + (role === 'user' ? 'chat-user' : 'chat-bot');
         div.textContent = text;
@@ -68,9 +102,7 @@
         if (el) el.remove();
     }
 
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        var text = input.value.trim();
+    function sendMessage(text) {
         if (!text) return;
 
         addMessage(text, 'user');
@@ -100,9 +132,17 @@
         })
         .catch(function(err) {
             removeTypingIndicator();
-            addMessage('Error de conexion. Intenta de nuevo.', 'bot');
+            addMessage('Error de conexion. Intente de nuevo.', 'bot');
             input.disabled = false;
             input.focus();
         });
+    }
+
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        sendMessage(input.value.trim());
     });
+
+    // Mostrar botones rapidos al inicio
+    addQuickButtons();
 })();

@@ -1064,6 +1064,29 @@ h2 { margin: 1.5rem 0 0.75rem; font-size: 1.2rem; }
 .dot-pulse::before { animation-delay: 0s; }
 .dot-pulse::after { animation-delay: 0.4s; }
 
+/* Quick buttons */
+.chat-quick-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 8px 12px;
+}
+.chat-quick-btn {
+    background: var(--green-light);
+    color: var(--green-dark);
+    border: 1px solid var(--green);
+    border-radius: 16px;
+    padding: 5px 12px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+.chat-quick-btn:hover {
+    background: var(--green);
+    color: var(--white);
+}
+
 /* Chat responsive */
 @media (max-width: 768px) {
     .chat-panel {
