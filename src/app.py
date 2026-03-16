@@ -204,6 +204,15 @@ async def reglas_page(request: Request):
     return templates.TemplateResponse("reglas.html", {"request": request})
 
 
+@app.get("/liquidar", response_class=HTMLResponse)
+async def liquidar_page(request: Request):
+    fechas = obtener_fechas_torneo(DB_PATH)
+    return templates.TemplateResponse("liquidar.html", {
+        "request": request,
+        "fechas": fechas,
+    })
+
+
 @app.get("/reporte", response_class=HTMLResponse)
 async def reporte_page(request: Request):
     from src.database import get_db
@@ -338,6 +347,145 @@ async def api_eliminar_jugador(jugador_id: int):
     return JSONResponse({
         "status": "ok",
         "nombre": jugador['nombre'] + " " + jugador['apellido'],
+    })
+
+
+class LiquidarRequest(BaseModel):
+    fecha: str  # formato YYYY-MM-DD (sabado del fin de semana)
+
+
+@app.post("/api/liquidar")
+async def api_liquidar(req: LiquidarRequest):
+    """
+    Endpoint de auto-liquidacion: sincroniza, asigna y calcula todo de un golpe.
+    1. Sync rondas de todos los jugadores
+    2. Detecta quien jugo en Manizales ese fin de semana
+    3. Obtiene handicap de la federacion para cada tarjeta
+    4. Asigna jugadores a la fecha
+    5. Recalcula posiciones y puntos
+    """
+    from datetime import date as dt_date, timedelta
+    from src.database import get_db, guardar_resultados_fecha
+    from src.ranking import recalcular_fecha
+
+    sabado_str = req.fecha
+    try:
+        sabado = dt_date.fromisoformat(sabado_str)
+    except ValueError:
+        return JSONResponse({"error": "Formato de fecha invalido. Use YYYY-MM-DD"}, status_code=400)
+
+    domingo = sabado + timedelta(days=1)
+    log = []
+
+    # Paso 1: Sync
+    log.append("Paso 1: Sincronizando rondas...")
+    try:
+        sync_result = sync_all(DB_PATH)
+        log.append(f"  Sincronizados: {sync_result['jugadores_sincronizados']} jugadores, {sync_result['rondas_nuevas']} rondas nuevas")
+    except Exception as e:
+        log.append(f"  Error en sync: {str(e)}")
+
+    # Paso 2: Buscar/crear fecha del torneo
+    with get_db(DB_PATH) as conn:
+        fecha_row = conn.execute(
+            'SELECT id FROM fechas_torneo WHERE fecha = ?', (sabado_str,)
+        ).fetchone()
+        if fecha_row:
+            fecha_torneo_id = fecha_row['id']
+        else:
+            cursor = conn.execute(
+                'INSERT INTO fechas_torneo (fecha) VALUES (?)', (sabado_str,)
+            )
+            fecha_torneo_id = cursor.lastrowid
+    log.append(f"Paso 2: Fecha torneo ID={fecha_torneo_id} ({sabado_str})")
+
+    # Paso 3: Detectar quien jugo en Manizales este fin de semana
+    log.append("Paso 3: Detectando jugadores del fin de semana...")
+    with get_db(DB_PATH) as conn:
+        rondas_finde = conn.execute('''
+            SELECT r.id as ronda_id, r.jugador_id, j.nombre, j.apellido,
+                   r.fecha, r.club, r.score_gross, r.tarjeta_id, r.handicap_cancha
+            FROM rondas r
+            JOIN jugadores j ON r.jugador_id = j.id
+            WHERE r.fecha IN (?, ?)
+            AND r.club LIKE '%Manizales%'
+            AND r.score_gross IS NOT NULL
+            AND r.score_gross >= 60
+            ORDER BY r.jugador_id, r.fecha
+        ''', (sabado_str, domingo.isoformat())).fetchall()
+        rondas_finde = [dict(r) for r in rondas_finde]
+
+    if not rondas_finde:
+        log.append("  No se encontraron rondas en Manizales para este fin de semana")
+        return JSONResponse({"log": log, "error": "No hay rondas para liquidar"})
+
+    # Elegir ronda por jugador: preferir sabado sobre domingo
+    mejores = {}
+    for r in rondas_finde:
+        jid = r['jugador_id']
+        if jid not in mejores:
+            mejores[jid] = r
+        elif r['fecha'] == sabado_str:
+            mejores[jid] = r  # Preferir sabado
+
+    log.append(f"  {len(mejores)} jugadores detectados:")
+    for jid, r in mejores.items():
+        log.append(f"    {r['nombre']} {r['apellido']} | {r['fecha']} | Gross:{r['score_gross']} | HCP:{r['handicap_cancha']}")
+
+    # Paso 4: Obtener handicap de federacion para rondas sin handicap_cancha
+    log.append("Paso 4: Obteniendo handicaps de la federacion...")
+    import time
+    collector = FedegolfScoresCollector()
+    for jid, r in mejores.items():
+        if r['handicap_cancha'] is None and r['tarjeta_id']:
+            try:
+                detalle = collector.get_scorecard_detail(r['tarjeta_id'])
+                if detalle and detalle.get('handicap_cancha') is not None:
+                    with get_db(DB_PATH) as conn:
+                        conn.execute(
+                            'UPDATE rondas SET handicap_cancha=?, indice_al_momento=? WHERE id=?',
+                            (detalle['handicap_cancha'], detalle.get('indice_al_momento'), r['ronda_id'])
+                        )
+                    r['handicap_cancha'] = detalle['handicap_cancha']
+                    log.append(f"    {r['nombre']} {r['apellido']}: HCP={detalle['handicap_cancha']}")
+                time.sleep(0.3)
+            except Exception as e:
+                log.append(f"    Error obteniendo HCP de {r['nombre']}: {str(e)}")
+
+    # Paso 5: Asignar jugadores a la fecha (limpiar asignaciones previas)
+    log.append("Paso 5: Asignando jugadores a la fecha...")
+    with get_db(DB_PATH) as conn:
+        conn.execute('DELETE FROM resultados_fecha WHERE fecha_torneo_id = ?', (fecha_torneo_id,))
+        for jid, r in mejores.items():
+            conn.execute('''
+                INSERT INTO resultados_fecha (fecha_torneo_id, jugador_id, ronda_id, score_gross)
+                VALUES (?, ?, ?, ?)
+            ''', (fecha_torneo_id, jid, r['ronda_id'], r['score_gross']))
+        num = len(mejores)
+        conn.execute(
+            'UPDATE fechas_torneo SET num_jugadores = ?, valida = ? WHERE id = ?',
+            (num, num >= 2, fecha_torneo_id)
+        )
+
+    # Paso 6: Recalcular
+    log.append("Paso 6: Recalculando posiciones y puntos...")
+    recalcular_fecha(DB_PATH, fecha_torneo_id)
+
+    # Paso 7: Leer resultados finales
+    resultados_finales = obtener_resultados_fecha(DB_PATH, fecha_torneo_id)
+    log.append(f"\nRESULTADOS FECHA {sabado_str}:")
+    log.append(f"{'Pos':>3} | {'Jugador':<30} | {'Gross':>5} | {'HCP':>5} | {'Neto':>5} | {'Puntos':>6}")
+    log.append("-" * 80)
+    for r in resultados_finales:
+        log.append(f"{r['posicion']:>3} | {r['nombre']} {r['apellido']:<25} | {r['score_gross'] or '-':>5} | {r['handicap_aplicado'] or '-':>5} | {r['score_neto'] or '-':>5} | {r['puntos'] or 0:>6}")
+
+    return JSONResponse({
+        "status": "ok",
+        "fecha": sabado_str,
+        "fecha_torneo_id": fecha_torneo_id,
+        "jugadores": len(mejores),
+        "resultados": resultados_finales,
+        "log": log,
     })
 
 

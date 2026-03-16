@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Liquidar Fecha - Copa Fedex Sucesores{% endblock %}
+{% block content %}
+<h1>Liquidar Fecha</h1>
+<p>Seleccione el sabado del fin de semana a liquidar. El sistema sincroniza, asigna y calcula automaticamente.</p>
+
+<div style="display:flex;gap:12px;align-items:center;margin:20px 0">
+    <label for="fecha-input"><strong>Fecha (sabado):</strong></label>
+    <input type="date" id="fecha-input" style="padding:8px;font-size:1rem;border:1px solid #ccc;border-radius:6px">
+    <button id="btn-liquidar" style="padding:8px 24px;font-size:1rem;background:var(--green);color:white;border:none;border-radius:6px;cursor:pointer">
+        Liquidar
+    </button>
+</div>
+
+<div id="status" style="margin:12px 0;font-weight:bold"></div>
+
+<pre id="log-output" style="background:#1a1a2e;color:#e0e0e0;padding:16px;border-radius:8px;font-size:0.85rem;overflow-x:auto;white-space:pre-wrap;display:none;max-height:600px;overflow-y:auto"></pre>
+
+<div id="resultados-tabla" style="display:none;margin-top:20px">
+    <h2>Resultados</h2>
+    <table class="ranking-table" id="res-table">
+        <thead>
+            <tr><th>Pos</th><th>Jugador</th><th>Gross</th><th>HCP</th><th>Neto</th><th>Puntos</th></tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<script>
+document.getElementById('btn-liquidar').addEventListener('click', function() {
+    var fecha = document.getElementById('fecha-input').value;
+    if (!fecha) { alert('Seleccione una fecha'); return; }
+
+    var status = document.getElementById('status');
+    var logEl = document.getElementById('log-output');
+    var tablaDiv = document.getElementById('resultados-tabla');
+    var tbody = document.querySelector('#res-table tbody');
+
+    status.textContent = 'Liquidando... (esto puede tardar 1-2 minutos)';
+    logEl.style.display = 'block';
+    logEl.textContent = 'Iniciando proceso de liquidacion...\n';
+    tablaDiv.style.display = 'none';
+
+    fetch('/api/liquidar', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({fecha: fecha})
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (data.log) {
+            logEl.textContent = data.log.join('\n');
+        }
+        if (data.error) {
+            status.textContent = 'Error: ' + data.error;
+            return;
+        }
+        status.textContent = 'Liquidacion completada: ' + data.jugadores + ' jugadores';
+
+        if (data.resultados && data.resultados.length > 0) {
+            tbody.innerHTML = '';
+            data.resultados.forEach(function(r) {
+                var tr = document.createElement('tr');
+                tr.innerHTML = '<td>' + (r.posicion || '-') + '</td>' +
+                    '<td>' + r.nombre + ' ' + r.apellido + '</td>' +
+                    '<td>' + (r.score_gross || '-') + '</td>' +
+                    '<td>' + (r.handicap_aplicado != null ? r.handicap_aplicado : '-') + '</td>' +
+                    '<td>' + (r.score_neto || '-') + '</td>' +
+                    '<td>' + (r.puntos || 0) + '</td>';
+                tbody.appendChild(tr);
+            });
+            tablaDiv.style.display = 'block';
+        }
+    })
+    .catch(function(err) {
+        status.textContent = 'Error de conexion: ' + err.message;
+    });
+});
+</script>
+{% endblock %}

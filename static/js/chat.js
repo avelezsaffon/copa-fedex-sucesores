@@ -12,6 +12,7 @@
 
     var navChat = document.getElementById('nav-chat');
     var clearBtn = document.getElementById('chat-clear');
+    var copyBtn = document.getElementById('chat-copy');
     var welcomeMsg = 'Soy el Comisario de la Copa Fedex Sucesores 2026. Consulteme sobre cualquier situacion de reglas en el campo y le doy el veredicto con la regla oficial. Use los botones rapidos o escriba su pregunta.';
 
     // Botones de respuesta rapida
@@ -64,6 +65,40 @@
 
     closeBtn.addEventListener('click', function() {
         panel.classList.add('hidden');
+    });
+
+    copyBtn.addEventListener('click', function() {
+        var text = '';
+        var msgs = messages.querySelectorAll('.chat-msg');
+        msgs.forEach(function(msg) {
+            if (msg.classList.contains('chat-typing')) return;
+            if (msg.classList.contains('chat-user')) {
+                text += 'Jugador: ' + msg.textContent + '\n\n';
+            } else if (msg.classList.contains('chat-bot')) {
+                text += 'Comisario: ' + msg.textContent + '\n\n';
+            }
+        });
+        if (!text.trim()) return;
+        text = '--- El Comisario - Copa Fedex Sucesores 2026 ---\n\n' + text;
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(text).then(function() {
+                copyBtn.title = 'Copiado!';
+                copyBtn.style.color = '#4caf50';
+                setTimeout(function() {
+                    copyBtn.title = 'Copiar conversacion';
+                    copyBtn.style.color = '';
+                }, 2000);
+            });
+        } else {
+            var ta = document.createElement('textarea');
+            ta.value = text;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            copyBtn.title = 'Copiado!';
+            setTimeout(function() { copyBtn.title = 'Copiar conversacion'; }, 2000);
+        }
     });
 
     clearBtn.addEventListener('click', function() {
