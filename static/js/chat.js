@@ -13,16 +13,16 @@
     var navChat = document.getElementById('nav-chat');
     var clearBtn = document.getElementById('chat-clear');
     var copyBtn = document.getElementById('chat-copy');
-    var welcomeMsg = 'Soy el Comisario de la Copa Fedex Sucesores 2026. Consulteme sobre cualquier situacion de reglas en el campo y le doy el veredicto con la regla oficial. Use los botones rapidos o escriba su pregunta.';
+    var welcomeMsg = 'Soy El Comisario de la Copa Fedex Sucesores 2026. Abra una audiencia para resolver cualquier situacion de reglas en el campo. Voy a recoger los hechos paso a paso y emitire un veredicto oficial. Seleccione el tipo de incidente o describamelo directamente.';
 
     // Botones de respuesta rapida
     var quickButtons = [
-        { label: 'Bola perdida', text: 'Mi bola se perdio, no la encuentro. ¿Que hago?' },
-        { label: 'Bola en agua', text: 'Mi bola cayo en un area de penalidad (agua). ¿Cuales son mis opciones?' },
-        { label: 'Asiento mejorado', text: '¿Hoy aplica asiento mejorado? ¿Como funciona?' },
-        { label: 'Bola injugable', text: 'Mi bola quedo en una posicion injugable. ¿Que opciones tengo?' },
-        { label: 'Hoyo en uno', text: 'Alguien hizo hoyo en uno. ¿Cuanto se paga y como funciona?' },
-        { label: 'Drop correcto', text: '¿Como se hace un drop correctamente?' }
+        { label: 'Bola perdida', text: 'Necesito abrir audiencia. Tengo un caso de bola perdida.' },
+        { label: 'Bola en agua', text: 'Necesito abrir audiencia. Tengo un caso de bola en area de penalidad.' },
+        { label: 'Bola injugable', text: 'Necesito abrir audiencia. Tengo un caso de bola injugable.' },
+        { label: 'Asiento mejorado', text: 'Necesito abrir audiencia. Tengo una duda sobre asiento mejorado.' },
+        { label: 'Hoyo en uno', text: 'Necesito abrir audiencia. Alguien hizo hoyo en uno y necesito saber el protocolo.' },
+        { label: 'Drop / Alivio', text: 'Necesito abrir audiencia. Tengo una duda sobre como tomar alivio o hacer un drop.' }
     ];
 
     function addQuickButtons() {
