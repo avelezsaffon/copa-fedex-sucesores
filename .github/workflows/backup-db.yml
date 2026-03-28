@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   liquidar:
-    name: Liquidar Fecha 5 y Backup
+    name: Liquidar Fecha 5 via SSH
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -28,20 +28,144 @@ jobs:
           done
           sleep 5
 
-      - name: Run liquidacion via API
+      - name: Run liquidation via SSH
         run: |
-          echo "=== Calling /api/liquidar with fecha=2026-03-21 ==="
-          RESPONSE=$(curl -s -X POST https://copa-fedex-sucesores.fly.dev/api/liquidar \
-            -H "Content-Type: application/json" \
-            -d '{"fecha": "2026-03-21"}' \
-            --max-time 300)
-          echo "$RESPONSE" | python3 -m json.tool 2>/dev/null || echo "$RESPONSE"
-          echo ""
-          echo "=== API call complete ==="
+          flyctl ssh console -a copa-fedex-sucesores -C "python3 -c \"
+          import sqlite3, sys, time
+          sys.path.insert(0, '/app')
+          
+          DB = '/data/torneo.db'
+          conn = sqlite3.connect(DB)
+          conn.row_factory = sqlite3.Row
+          
+          SABADO = '2026-03-21'
+          DOMINGO = '2026-03-22'
+          
+          # Step 1: Check existing rounds
+          print('=== RONDAS EN DB ===')
+          for fecha in [SABADO, DOMINGO, '2026-03-20', '2026-03-23']:
+              rondas = conn.execute('SELECT COUNT(*) c FROM rondas WHERE fecha=? AND club LIKE \\'%Manizales%\\'', (fecha,)).fetchone()
+              print(f'  {fecha}: {rondas[0]} rondas en Manizales')
+          
+          # Step 2: Get rounds for the weekend (March 21 or 22)
+          rondas_finde = conn.execute('''
+              SELECT r.id as ronda_id, r.jugador_id, j.nombre, j.apellido,
+                     r.fecha, r.club, r.score_gross, r.tarjeta_id, r.handicap_cancha
+              FROM rondas r
+              JOIN jugadores j ON r.jugador_id = j.id
+              WHERE r.fecha IN (?, ?)
+              AND r.club LIKE \\'%Manizales%\\'
+              AND r.score_gross IS NOT NULL
+              AND r.score_gross >= 60
+              ORDER BY r.jugador_id, r.fecha
+          ''', (SABADO, DOMINGO)).fetchall()
+          rondas_finde = [dict(r) for r in rondas_finde]
+          print(f'\\nRondas encontradas para {SABADO}/{DOMINGO}: {len(rondas_finde)}')
+          
+          if not rondas_finde:
+              print('ERROR: No se encontraron rondas. Intentando con fechas alternativas...')
+              # Try March 20 (possible -1 offset)
+              rondas_finde = conn.execute('''
+                  SELECT r.id as ronda_id, r.jugador_id, j.nombre, j.apellido,
+                         r.fecha, r.club, r.score_gross, r.tarjeta_id, r.handicap_cancha
+                  FROM rondas r
+                  JOIN jugadores j ON r.jugador_id = j.id
+                  WHERE r.fecha IN ('2026-03-20', ?, ?)
+                  AND r.club LIKE \\'%Manizales%\\'
+                  AND r.score_gross IS NOT NULL
+                  AND r.score_gross >= 60
+                  ORDER BY r.jugador_id, r.fecha
+              ''', (SABADO, DOMINGO)).fetchall()
+              rondas_finde = [dict(r) for r in rondas_finde]
+              print(f'Con fecha 2026-03-20 incluida: {len(rondas_finde)}')
+          
+          if not rondas_finde:
+              print('FATAL: No hay rondas para liquidar')
+              sys.exit(1)
+          
+          # Step 3: Pick best round per player (prefer Saturday)
+          mejores = {}
+          for r in rondas_finde:
+              jid = r['jugador_id']
+              if jid not in mejores:
+                  mejores[jid] = r
+              elif r['fecha'] == SABADO:
+                  mejores[jid] = r
+          
+          print(f'\\n{len(mejores)} jugadores detectados:')
+          for jid, r in sorted(mejores.items()):
+              print(f'  {r[\"nombre\"]} {r[\"apellido\"]} | {r[\"fecha\"]} | Gross:{r[\"score_gross\"]} | HCP:{r[\"handicap_cancha\"]} | tarjeta:{r[\"tarjeta_id\"]}')
+          
+          # Step 4: Get handicaps from federation
+          print('\\n=== Obteniendo handicaps de la federacion ===')
+          from src.fedegolf_collector import FedegolfScoresCollector
+          collector = FedegolfScoresCollector()
+          for jid, r in mejores.items():
+              if r['handicap_cancha'] is None and r['tarjeta_id']:
+                  try:
+                      detalle = collector.get_scorecard_detail(r['tarjeta_id'])
+                      if detalle and detalle.get('handicap_cancha') is not None:
+                          conn.execute('UPDATE rondas SET handicap_cancha=?, indice_al_momento=? WHERE id=?',
+                              (detalle['handicap_cancha'], detalle.get('indice_al_momento'), r['ronda_id']))
+                          r['handicap_cancha'] = detalle['handicap_cancha']
+                          print(f'  {r[\"nombre\"]} {r[\"apellido\"]}: HCP={detalle[\"handicap_cancha\"]}')
+                      else:
+                          print(f'  {r[\"nombre\"]} {r[\"apellido\"]}: No se pudo obtener HCP')
+                      time.sleep(0.3)
+                  except Exception as e:
+                      print(f'  Error {r[\"nombre\"]}: {e}')
+          conn.commit()
+          
+          # Step 5: Get or create fecha_torneo
+          fecha_row = conn.execute('SELECT id FROM fechas_torneo WHERE fecha = ?', (SABADO,)).fetchone()
+          if fecha_row:
+              fecha_torneo_id = fecha_row['id']
+          else:
+              cursor = conn.execute('INSERT INTO fechas_torneo (fecha) VALUES (?)', (SABADO,))
+              fecha_torneo_id = cursor.lastrowid
+              conn.commit()
+          print(f'\\nFecha torneo ID: {fecha_torneo_id}')
+          
+          # Step 6: Assign players
+          conn.execute('DELETE FROM resultados_fecha WHERE fecha_torneo_id = ?', (fecha_torneo_id,))
+          for jid, r in mejores.items():
+              conn.execute('INSERT INTO resultados_fecha (fecha_torneo_id, jugador_id, ronda_id, score_gross) VALUES (?, ?, ?, ?)',
+                  (fecha_torneo_id, jid, r['ronda_id'], r['score_gross']))
+          num = len(mejores)
+          conn.execute('UPDATE fechas_torneo SET num_jugadores = ?, valida = ? WHERE id = ?', (num, num >= 2, fecha_torneo_id))
+          conn.commit()
+          print(f'Asignados {num} jugadores')
+          
+          # Step 7: Recalculate
+          from src.ranking import recalcular_fecha
+          recalcular_fecha(DB, fecha_torneo_id)
+          print('Recalculado!')
+          
+          # Step 8: Show results
+          results = conn.execute('''
+              SELECT rf.posicion, j.nombre, j.apellido, rf.score_gross,
+                     rf.handicap_aplicado, rf.score_neto, rf.puntos, r.handicap_cancha
+              FROM resultados_fecha rf
+              JOIN jugadores j ON rf.jugador_id = j.id
+              LEFT JOIN rondas r ON rf.ronda_id = r.id
+              WHERE rf.fecha_torneo_id = ?
+              ORDER BY rf.posicion
+          ''', (fecha_torneo_id,)).fetchall()
+          
+          print(f'\\n=== RESULTADOS FECHA 5 ({SABADO}) ===')
+          for r in results:
+              d = dict(r)
+              match = 'OK' if d['handicap_aplicado'] == d['handicap_cancha'] else ('CALC' if d['handicap_cancha'] is None else 'MISMATCH')
+              print(f'  {d[\"posicion\"]:>3} | {d[\"nombre\"]} {d[\"apellido\"]:<25} | G:{d[\"score_gross\"]} | HCP:{d[\"handicap_aplicado\"]} | N:{d[\"score_neto\"]} | Pts:{d[\"puntos\"]} | Fed:{d[\"handicap_cancha\"]} {match}')
+          
+          conn.close()
+          print('\\nLiquidacion completada!')
+          \""
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
       - name: Download production DB
         run: |
-          echo "Downloading production database..."
           flyctl ssh console -a copa-fedex-sucesores -C "cat /data/torneo.db" > data/torneo_prod.db
           ls -la data/torneo_prod.db
         env:
@@ -51,10 +175,8 @@ jobs:
         run: |
           python3 << 'PYEOF'
           import sqlite3, json
-
           conn = sqlite3.connect('data/torneo_prod.db')
           conn.row_factory = sqlite3.Row
-
           tablas = ['jugadores', 'rondas', 'fechas_torneo', 'resultados_fecha', 'tabla_puntos']
           for tabla in tablas:
               rows = [dict(r) for r in conn.execute(f'SELECT * FROM {tabla}').fetchall()]
@@ -62,52 +184,6 @@ jobs:
                   json.dump(rows, f, indent=2, ensure_ascii=False)
               print(f'{tabla}: {len(rows)} registros exportados')
           conn.close()
-          PYEOF
-
-      - name: Show results summary
-        run: |
-          python3 << 'PYEOF'
-          import sqlite3
-          conn = sqlite3.connect('data/torneo_prod.db')
-          conn.row_factory = sqlite3.Row
-
-          print('=== FECHAS TORNEO ===')
-          for ft in conn.execute('SELECT * FROM fechas_torneo WHERE num_jugadores > 0 ORDER BY fecha').fetchall():
-              d = dict(ft)
-              print(f'  {d["fecha"]} | ID:{d["id"]} | Jugadores:{d["num_jugadores"]} | Valida:{d["valida"]}')
-
-          print()
-          print('=== RESULTADOS FECHA 2026-03-21 ===')
-          ft = conn.execute("SELECT * FROM fechas_torneo WHERE fecha = '2026-03-21'").fetchone()
-          if ft:
-              results = conn.execute('''
-                  SELECT rf.posicion, j.nombre, j.apellido, rf.score_gross,
-                         rf.handicap_aplicado, rf.score_neto, rf.puntos, r.handicap_cancha
-                  FROM resultados_fecha rf
-                  JOIN jugadores j ON rf.jugador_id = j.id
-                  LEFT JOIN rondas r ON rf.ronda_id = r.id
-                  WHERE rf.fecha_torneo_id = ?
-                  ORDER BY rf.posicion
-              ''', (dict(ft)['id'],)).fetchall()
-              for r in results:
-                  d = dict(r)
-                  pos = d['posicion']
-                  name = d['nombre'] + ' ' + d['apellido']
-                  gross = d['score_gross']
-                  hcp = d['handicap_aplicado']
-                  neto = d['score_neto']
-                  pts = d['puntos']
-                  fed = d['handicap_cancha']
-                  match = 'OK' if hcp == fed else 'MISMATCH'
-                  print(f'  {pos:>3} | {name:<30} | G:{gross} | HCP:{hcp} | N:{neto} | Pts:{pts} | Fed:{fed} {match}')
-          else:
-              print('  Fecha 2026-03-21 no encontrada o sin resultados')
-
-          print()
-          print('=== RONDAS RECIENTES ===')
-          for r in conn.execute('SELECT fecha, COUNT(*) c FROM rondas GROUP BY fecha ORDER BY fecha DESC LIMIT 10').fetchall():
-              d = dict(r)
-              print(f'  {d["fecha"]}: {d["c"]} rondas')
           PYEOF
 
       - name: Upload backups as artifact
@@ -123,6 +199,6 @@ jobs:
           git pull --rebase origin main || true
           git add data/backup/
           git diff --staged --quiet && echo "No changes to commit" || (
-            git commit -m "Backup DB produccion - Fecha 5 liquidada (2026-03-21)"
+            git commit -m "Backup DB - Fecha 5 liquidada (2026-03-21)"
             git push origin main
           )
