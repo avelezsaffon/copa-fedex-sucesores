@@ -1,0 +1,99 @@
+name: Backup Production DB
+
+on:
+  push:
+    paths:
+      - '.github/workflows/backup-db.yml'
+  workflow_dispatch:
+
+jobs:
+  backup:
+    name: Download DB and Export Backups
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Wake up the app
+        run: |
+          for i in 1 2 3; do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://copa-fedex-sucesores.fly.dev/ || echo "000")
+            echo "Attempt $i: HTTP $STATUS"
+            if [ "$STATUS" = "200" ]; then break; fi
+            sleep 5
+          done
+          sleep 3
+
+      - name: Download production DB
+        run: |
+          echo "Downloading production database..."
+          flyctl ssh console -a copa-fedex-sucesores -C "cat /data/torneo.db" > data/torneo_prod.db
+          ls -la data/torneo_prod.db
+          echo "DB size: $(wc -c < data/torneo_prod.db) bytes"
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+      - name: Export backup JSONs
+        run: |
+          python3 -c "
+import sqlite3, json
+
+conn = sqlite3.connect('data/torneo_prod.db')
+conn.row_factory = sqlite3.Row
+
+tablas = ['jugadores', 'rondas', 'fechas_torneo', 'resultados_fecha', 'tabla_puntos']
+for tabla in tablas:
+    rows = [dict(r) for r in conn.execute(f'SELECT * FROM {tabla}').fetchall()]
+    with open(f'data/backup/{tabla}.json', 'w') as f:
+        json.dump(rows, f, indent=2, ensure_ascii=False)
+    print(f'{tabla}: {len(rows)} registros exportados')
+conn.close()
+"
+
+      - name: Show Fecha 5 results
+        run: |
+          python3 -c "
+import sqlite3
+conn = sqlite3.connect('data/torneo_prod.db')
+conn.row_factory = sqlite3.Row
+
+# Check all fechas
+print('=== FECHAS TORNEO ===')
+for ft in conn.execute('SELECT * FROM fechas_torneo WHERE num_jugadores > 0 ORDER BY fecha').fetchall():
+    print(f'  {ft[\"fecha\"]} | ID:{ft[\"id\"]} | Jugadores:{ft[\"num_jugadores\"]} | Valida:{ft[\"valida\"]}')
+
+print()
+print('=== RESULTADOS FECHA 2026-03-21 ===')
+ft = conn.execute('SELECT * FROM fechas_torneo WHERE fecha = ?', ('2026-03-21',)).fetchone()
+if ft:
+    results = conn.execute('''
+        SELECT rf.posicion, j.nombre, j.apellido, rf.score_gross,
+               rf.handicap_aplicado, rf.score_neto, rf.puntos, r.handicap_cancha
+        FROM resultados_fecha rf
+        JOIN jugadores j ON rf.jugador_id = j.id
+        LEFT JOIN rondas r ON rf.ronda_id = r.id
+        WHERE rf.fecha_torneo_id = ?
+        ORDER BY rf.posicion
+    ''', (ft['id'],)).fetchall()
+    for r in results:
+        hcp_match = 'OK' if r['handicap_aplicado'] == r['handicap_cancha'] else 'MISMATCH'
+        print(f\"  {r['posicion']:>3} | {r['nombre']} {r['apellido']:<25} | G:{r['score_gross']} | HCP:{r['handicap_aplicado']} | N:{r['score_neto']} | Pts:{r['puntos']} | Fed:{r['handicap_cancha']} {hcp_match}\")
+else:
+    print('  Fecha 2026-03-21 no encontrada o sin resultados')
+
+print()
+print('=== RONDAS RECIENTES ===')
+for r in conn.execute('''SELECT r.fecha, COUNT(*) c FROM rondas r GROUP BY r.fecha ORDER BY r.fecha DESC LIMIT 10''').fetchall():
+    print(f'  {r[\"fecha\"]}: {r[\"c\"]} rondas')
+"
+
+      - name: Commit and push backups
+        run: |
+          git config user.name "Claude"
+          git config user.email "noreply@anthropic.com"
+          git add data/backup/
+          git diff --staged --quiet && echo "No changes to commit" || (
+            git commit -m "Backup DB produccion - post liquidacion Fecha 5 (2026-03-21)"
+            git push
+          )
