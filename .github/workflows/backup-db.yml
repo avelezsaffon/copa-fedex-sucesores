@@ -30,63 +30,71 @@ jobs:
           echo "Downloading production database..."
           flyctl ssh console -a copa-fedex-sucesores -C "cat /data/torneo.db" > data/torneo_prod.db
           ls -la data/torneo_prod.db
-          echo "DB size: $(wc -c < data/torneo_prod.db) bytes"
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
       - name: Export backup JSONs
         run: |
-          python3 -c "
-import sqlite3, json
+          python3 << 'PYEOF'
+          import sqlite3, json
 
-conn = sqlite3.connect('data/torneo_prod.db')
-conn.row_factory = sqlite3.Row
+          conn = sqlite3.connect('data/torneo_prod.db')
+          conn.row_factory = sqlite3.Row
 
-tablas = ['jugadores', 'rondas', 'fechas_torneo', 'resultados_fecha', 'tabla_puntos']
-for tabla in tablas:
-    rows = [dict(r) for r in conn.execute(f'SELECT * FROM {tabla}').fetchall()]
-    with open(f'data/backup/{tabla}.json', 'w') as f:
-        json.dump(rows, f, indent=2, ensure_ascii=False)
-    print(f'{tabla}: {len(rows)} registros exportados')
-conn.close()
-"
+          tablas = ['jugadores', 'rondas', 'fechas_torneo', 'resultados_fecha', 'tabla_puntos']
+          for tabla in tablas:
+              rows = [dict(r) for r in conn.execute(f'SELECT * FROM {tabla}').fetchall()]
+              with open(f'data/backup/{tabla}.json', 'w') as f:
+                  json.dump(rows, f, indent=2, ensure_ascii=False)
+              print(f'{tabla}: {len(rows)} registros exportados')
+          conn.close()
+          PYEOF
 
-      - name: Show Fecha 5 results
+      - name: Show results summary
         run: |
-          python3 -c "
-import sqlite3
-conn = sqlite3.connect('data/torneo_prod.db')
-conn.row_factory = sqlite3.Row
+          python3 << 'PYEOF'
+          import sqlite3
+          conn = sqlite3.connect('data/torneo_prod.db')
+          conn.row_factory = sqlite3.Row
 
-# Check all fechas
-print('=== FECHAS TORNEO ===')
-for ft in conn.execute('SELECT * FROM fechas_torneo WHERE num_jugadores > 0 ORDER BY fecha').fetchall():
-    print(f'  {ft[\"fecha\"]} | ID:{ft[\"id\"]} | Jugadores:{ft[\"num_jugadores\"]} | Valida:{ft[\"valida\"]}')
+          print('=== FECHAS TORNEO ===')
+          for ft in conn.execute('SELECT * FROM fechas_torneo WHERE num_jugadores > 0 ORDER BY fecha').fetchall():
+              d = dict(ft)
+              print(f'  {d["fecha"]} | ID:{d["id"]} | Jugadores:{d["num_jugadores"]} | Valida:{d["valida"]}')
 
-print()
-print('=== RESULTADOS FECHA 2026-03-21 ===')
-ft = conn.execute('SELECT * FROM fechas_torneo WHERE fecha = ?', ('2026-03-21',)).fetchone()
-if ft:
-    results = conn.execute('''
-        SELECT rf.posicion, j.nombre, j.apellido, rf.score_gross,
-               rf.handicap_aplicado, rf.score_neto, rf.puntos, r.handicap_cancha
-        FROM resultados_fecha rf
-        JOIN jugadores j ON rf.jugador_id = j.id
-        LEFT JOIN rondas r ON rf.ronda_id = r.id
-        WHERE rf.fecha_torneo_id = ?
-        ORDER BY rf.posicion
-    ''', (ft['id'],)).fetchall()
-    for r in results:
-        hcp_match = 'OK' if r['handicap_aplicado'] == r['handicap_cancha'] else 'MISMATCH'
-        print(f\"  {r['posicion']:>3} | {r['nombre']} {r['apellido']:<25} | G:{r['score_gross']} | HCP:{r['handicap_aplicado']} | N:{r['score_neto']} | Pts:{r['puntos']} | Fed:{r['handicap_cancha']} {hcp_match}\")
-else:
-    print('  Fecha 2026-03-21 no encontrada o sin resultados')
+          print()
+          print('=== RESULTADOS FECHA 2026-03-21 ===')
+          ft = conn.execute("SELECT * FROM fechas_torneo WHERE fecha = '2026-03-21'").fetchone()
+          if ft:
+              results = conn.execute('''
+                  SELECT rf.posicion, j.nombre, j.apellido, rf.score_gross,
+                         rf.handicap_aplicado, rf.score_neto, rf.puntos, r.handicap_cancha
+                  FROM resultados_fecha rf
+                  JOIN jugadores j ON rf.jugador_id = j.id
+                  LEFT JOIN rondas r ON rf.ronda_id = r.id
+                  WHERE rf.fecha_torneo_id = ?
+                  ORDER BY rf.posicion
+              ''', (dict(ft)['id'],)).fetchall()
+              for r in results:
+                  d = dict(r)
+                  pos = d['posicion']
+                  name = d['nombre'] + ' ' + d['apellido']
+                  gross = d['score_gross']
+                  hcp = d['handicap_aplicado']
+                  neto = d['score_neto']
+                  pts = d['puntos']
+                  fed = d['handicap_cancha']
+                  match = 'OK' if hcp == fed else 'MISMATCH'
+                  print(f'  {pos:>3} | {name:<30} | G:{gross} | HCP:{hcp} | N:{neto} | Pts:{pts} | Fed:{fed} {match}')
+          else:
+              print('  Fecha 2026-03-21 no encontrada o sin resultados')
 
-print()
-print('=== RONDAS RECIENTES ===')
-for r in conn.execute('''SELECT r.fecha, COUNT(*) c FROM rondas r GROUP BY r.fecha ORDER BY r.fecha DESC LIMIT 10''').fetchall():
-    print(f'  {r[\"fecha\"]}: {r[\"c\"]} rondas')
-"
+          print()
+          print('=== RONDAS RECIENTES ===')
+          for r in conn.execute('SELECT fecha, COUNT(*) c FROM rondas GROUP BY fecha ORDER BY fecha DESC LIMIT 10').fetchall():
+              d = dict(r)
+              print(f'  {d["fecha"]}: {d["c"]} rondas')
+          PYEOF
 
       - name: Commit and push backups
         run: |
