@@ -1,0 +1,105 @@
+name: Liquidar Fecha del Torneo
+
+on:
+  workflow_dispatch:
+    inputs:
+      fecha:
+        description: 'Fecha del sabado (YYYY-MM-DD)'
+        required: true
+        default: '2026-03-21'
+
+jobs:
+  liquidar:
+    name: Liquidar y Backup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Wake up the app
+        run: |
+          curl -s -o /dev/null -w "%{http_code}" https://copa-fedex-sucesores.fly.dev/ || true
+          sleep 5
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+      - name: Run liquidacion via API
+        id: liquidar
+        run: |
+          echo "Calling liquidar API with fecha=${{ github.event.inputs.fecha }}..."
+          RESPONSE=$(curl -s -X POST https://copa-fedex-sucesores.fly.dev/api/liquidar \
+            -H "Content-Type: application/json" \
+            -d '{"fecha": "${{ github.event.inputs.fecha }}"}' \
+            --max-time 300)
+          echo "Response:"
+          echo "$RESPONSE" | python3 -m json.tool || echo "$RESPONSE"
+          echo "response=$RESPONSE" >> $GITHUB_OUTPUT
+
+      - name: Download production DB
+        run: |
+          echo "Downloading production database..."
+          flyctl ssh console -a copa-fedex-sucesores -C "cat /data/torneo.db" > data/torneo_prod.db
+          ls -la data/torneo_prod.db
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+      - name: Export backup JSONs
+        run: |
+          python3 -c "
+          import sqlite3, json
+
+          conn = sqlite3.connect('data/torneo_prod.db')
+          conn.row_factory = sqlite3.Row
+
+          tablas = ['jugadores', 'rondas', 'fechas_torneo', 'resultados_fecha', 'tabla_puntos']
+          for tabla in tablas:
+              rows = [dict(r) for r in conn.execute(f'SELECT * FROM {tabla}').fetchall()]
+              with open(f'data/backup/{tabla}.json', 'w') as f:
+                  json.dump(rows, f, indent=2, ensure_ascii=False)
+              print(f'{tabla}: {len(rows)} registros exportados')
+          conn.close()
+          "
+
+      - name: Show results summary
+        run: |
+          python3 -c "
+          import sqlite3
+          conn = sqlite3.connect('data/torneo_prod.db')
+          conn.row_factory = sqlite3.Row
+
+          fecha = '${{ github.event.inputs.fecha }}'
+          ft = conn.execute('SELECT * FROM fechas_torneo WHERE fecha = ?', (fecha,)).fetchone()
+          if not ft:
+              print(f'No se encontro fecha {fecha}')
+              exit(0)
+
+          print(f'FECHA {fecha} - ID:{ft[\"id\"]} - Jugadores:{ft[\"num_jugadores\"]} - Valida:{ft[\"valida\"]}')
+          print()
+
+          results = conn.execute('''
+              SELECT rf.posicion, j.nombre, j.apellido, rf.score_gross,
+                     rf.handicap_aplicado, rf.score_neto, rf.puntos, r.handicap_cancha
+              FROM resultados_fecha rf
+              JOIN jugadores j ON rf.jugador_id = j.id
+              LEFT JOIN rondas r ON rf.ronda_id = r.id
+              WHERE rf.fecha_torneo_id = ?
+              ORDER BY rf.posicion
+          ''', (ft['id'],)).fetchall()
+
+          print(f'{\"Pos\":>3} | {\"Jugador\":<30} | {\"Gross\":>5} | {\"HCP\":>5} | {\"Neto\":>5} | {\"Puntos\":>6} | {\"HCP_Fed\":>7}')
+          print('-' * 85)
+          for r in results:
+              hcp_ok = '✓' if r['handicap_aplicado'] == r['handicap_cancha'] else '✗'
+              print(f'{r[\"posicion\"]:>3} | {r[\"nombre\"]} {r[\"apellido\"]:<25} | {r[\"score_gross\"] or \"-\":>5} | {r[\"handicap_aplicado\"] or \"-\":>5} | {r[\"score_neto\"] or \"-\":>5} | {r[\"puntos\"] or 0:>6} | {r[\"handicap_cancha\"] or \"-\":>7} {hcp_ok}')
+          "
+
+      - name: Commit and push backups
+        run: |
+          git config user.name "Claude"
+          git config user.email "noreply@anthropic.com"
+          git add data/backup/
+          git commit -m "Backup DB despues de Fecha 5 - ${{ github.event.inputs.fecha }}" || echo "No changes to commit"
+          git push
