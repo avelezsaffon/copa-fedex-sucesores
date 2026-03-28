@@ -304,17 +304,27 @@ git push origin main
 - Nota: Mideros tenia tarjeta del domingo con pocos hoyos. Se uso la del sabado.
 - Branch: `fecha2-2026-03-01`
 
-### Ranking General (despues de Fecha 2)
-1. Velez Gomez - 490 pts
-2. Valencia Hoyos - 410 pts
-3. Gonzalez Ossa - 375 pts
-4. Mideros Barbossa - 360 pts
-5. Villegas Herrera - 240 pts
-6. Zuluaga Ramirez - 221 pts
-7. Villegas Villegas / Velez Saffon - 181 pts
-9. Millan Ocampo - 166 pts
-10. Millan Hoyos - 151 pts
-11. Uribe Jaramillo - 150 pts
-12. Perez Quintero - 120 pts (1 fecha)
-13. Saenz Merino - 75 pts (1 fecha)
-14. Alvarez Antia - 70 pts (1 fecha)
+### Fecha 3 - 2026-03-07
+- **5 jugadores**
+- Branch: `fecha3-2026-03-07`
+
+### Fecha 4 - 2026-03-14
+- **12 jugadores**
+- Ganador: Mateo Gaviria Gutierrez (Gross 70, HCP -1, Neto 71, 300 pts)
+
+### Fecha 5 - 2026-03-21
+- **11 jugadores**
+- Rondas de la federacion aparecieron con fecha 2026-03-22 (desfase +1 dia)
+- Cada jugador tenia 2 tarjetas en la federacion para ese dia (tarjetas con prefijo "J" y "Ir")
+- Se uso la primera tarjeta de cada jugador (prefijo "J")
+- **NOTA**: Solo 1 de 11 jugadores tenia handicap_cancha de la federacion (Gallo: HCP 11).
+  Los demas usaron handicap calculado desde el indice actual. Verificar con federacion cuando sea posible.
+- Ganador: Santiago Gonzalez Ossa (Gross 73, HCP 2, Neto 71, 300 pts)
+- 2do: Mateo Gaviria Gutierrez (Gross 71, HCP -1, Neto 72, 240 pts)
+- 3ro: Alejandro Saenz Merino (Gross 76, HCP 2, Neto 74, 190 pts)
+- Empate 4to neto 78: Perez Quintero / Gallo Velasquez (135 pts c/u)
+- Empate 8vo neto 82: Millan Hoyos / Villegas Villegas (82.5 pts c/u)
+- Branch: `claude/process-tournament-results-TCauT`
+
+### Ranking General (despues de Fecha 5)
+(Pendiente de actualizar con ranking completo)
