@@ -1,4 +1,4 @@
-name: Backup Production DB
+name: Liquidar y Backup
 
 on:
   push:
@@ -10,8 +10,8 @@ permissions:
   contents: write
 
 jobs:
-  backup:
-    name: Download DB and Export Backups
+  liquidar:
+    name: Liquidar Fecha 5 y Backup
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -20,13 +20,24 @@ jobs:
 
       - name: Wake up the app
         run: |
-          for i in 1 2 3; do
+          for i in 1 2 3 4 5; do
             STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://copa-fedex-sucesores.fly.dev/ || echo "000")
             echo "Attempt $i: HTTP $STATUS"
             if [ "$STATUS" = "200" ]; then break; fi
-            sleep 5
+            sleep 8
           done
-          sleep 3
+          sleep 5
+
+      - name: Run liquidacion via API
+        run: |
+          echo "=== Calling /api/liquidar with fecha=2026-03-21 ==="
+          RESPONSE=$(curl -s -X POST https://copa-fedex-sucesores.fly.dev/api/liquidar \
+            -H "Content-Type: application/json" \
+            -d '{"fecha": "2026-03-21"}' \
+            --max-time 300)
+          echo "$RESPONSE" | python3 -m json.tool 2>/dev/null || echo "$RESPONSE"
+          echo ""
+          echo "=== API call complete ==="
 
       - name: Download production DB
         run: |
@@ -112,6 +123,6 @@ jobs:
           git pull --rebase origin main || true
           git add data/backup/
           git diff --staged --quiet && echo "No changes to commit" || (
-            git commit -m "Backup DB produccion - post liquidacion Fecha 5 (2026-03-21)"
+            git commit -m "Backup DB produccion - Fecha 5 liquidada (2026-03-21)"
             git push origin main
           )
