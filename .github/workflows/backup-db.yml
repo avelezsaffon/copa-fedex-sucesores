@@ -1,0 +1,150 @@
+name: Liquidar y Backup
+
+on:
+  push:
+    paths:
+      - '.github/workflows/backup-db.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  liquidar:
+    name: Liquidar Fecha 5
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Wake up the app
+        run: |
+          for i in 1 2 3 4 5; do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://copa-fedex-sucesores.fly.dev/ || echo "000")
+            echo "Attempt $i: HTTP $STATUS"
+            if [ "$STATUS" = "200" ]; then break; fi
+            sleep 8
+          done
+          sleep 5
+
+      - name: Sync via API first
+        run: |
+          echo "Syncing all players..."
+          RESPONSE=$(curl -s -X POST https://copa-fedex-sucesores.fly.dev/api/sync/all --max-time 300)
+          echo "$RESPONSE" | python3 -m json.tool 2>/dev/null || echo "$RESPONSE"
+
+      - name: Get handicaps via SSH (small commands)
+        run: |
+          echo "Getting tarjeta IDs for March 22 rounds..."
+          TARJETAS=$(flyctl ssh console -a copa-fedex-sucesores -C "python3 -c \"
+          import sqlite3
+          conn = sqlite3.connect('/data/torneo.db')
+          rows = conn.execute(\\\"SELECT id, tarjeta_id FROM rondas WHERE fecha IN ('2026-03-21','2026-03-22') AND club LIKE '%Manizales%' AND handicap_cancha IS NULL AND tarjeta_id IS NOT NULL\\\").fetchall()
+          for r in rows: print(f'{r[0]}|{r[1]}')
+          \"")
+          echo "Tarjetas to process:"
+          echo "$TARJETAS"
+          
+          echo ""
+          echo "Fetching handicaps from federation..."
+          while IFS='|' read -r RONDA_ID TARJETA_ID; do
+            if [ -n "$RONDA_ID" ] && [ -n "$TARJETA_ID" ]; then
+              echo "Processing ronda $RONDA_ID tarjeta $TARJETA_ID..."
+              flyctl ssh console -a copa-fedex-sucesores -C "python3 -c \"
+          import sys; sys.path.insert(0, '/app')
+          from src.fedegolf_collector import FedegolfScoresCollector
+          import sqlite3
+          c = FedegolfScoresCollector()
+          d = c.get_scorecard_detail('$TARJETA_ID')
+          if d and d.get('handicap_cancha') is not None:
+              conn = sqlite3.connect('/data/torneo.db')
+              conn.execute('UPDATE rondas SET handicap_cancha=?, indice_al_momento=? WHERE id=?', (d['handicap_cancha'], d.get('indice_al_momento'), $RONDA_ID))
+              conn.commit()
+              print(f'OK: ronda=$RONDA_ID hcp={d[\\\"handicap_cancha\\\"]}')
+          else:
+              print(f'SKIP: no handicap for $TARJETA_ID')
+          \"" || echo "  Error processing $TARJETA_ID"
+              sleep 1
+            fi
+          done <<< "$TARJETAS"
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+      - name: Run liquidation via SSH (simple)
+        run: |
+          flyctl ssh console -a copa-fedex-sucesores -C "python3 -c \"
+          import sqlite3, sys
+          sys.path.insert(0, '/app')
+          from src.ranking import recalcular_fecha
+          DB = '/data/torneo.db'
+          conn = sqlite3.connect(DB)
+          conn.row_factory = sqlite3.Row
+          SAB = '2026-03-21'
+          DOM = '2026-03-22'
+          rondas = conn.execute(\\\"SELECT r.id, r.jugador_id, r.fecha, r.score_gross, r.handicap_cancha FROM rondas r WHERE r.fecha IN (?,?) AND r.club LIKE '%Manizales%' AND r.score_gross IS NOT NULL AND r.score_gross >= 60 ORDER BY r.jugador_id, r.fecha\\\", (SAB,DOM)).fetchall()
+          print(f'Found {len(rondas)} rounds')
+          mejores = {}
+          for r in rondas:
+              jid = r[1]
+              if jid not in mejores: mejores[jid] = r
+              elif r[2] == SAB: mejores[jid] = r
+          print(f'{len(mejores)} players')
+          ft = conn.execute('SELECT id FROM fechas_torneo WHERE fecha=?', (SAB,)).fetchone()
+          fid = ft[0]
+          conn.execute('DELETE FROM resultados_fecha WHERE fecha_torneo_id=?', (fid,))
+          for jid, r in mejores.items():
+              conn.execute('INSERT INTO resultados_fecha (fecha_torneo_id, jugador_id, ronda_id, score_gross) VALUES (?,?,?,?)', (fid, jid, r[0], r[3]))
+          conn.execute('UPDATE fechas_torneo SET num_jugadores=?, valida=? WHERE id=?', (len(mejores), len(mejores)>=2, fid))
+          conn.commit()
+          recalcular_fecha(DB, fid)
+          res = conn.execute('SELECT rf.posicion, j.nombre, j.apellido, rf.score_gross, rf.handicap_aplicado, rf.score_neto, rf.puntos FROM resultados_fecha rf JOIN jugadores j ON rf.jugador_id=j.id WHERE rf.fecha_torneo_id=? ORDER BY rf.posicion', (fid,)).fetchall()
+          print(f'Results for fecha {fid}:')
+          for r in res: print(f'  {r[0]} {r[1]} {r[2]} G:{r[3]} HCP:{r[4]} N:{r[5]} Pts:{r[6]}')
+          conn.close()
+          \""
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+      - name: Download production DB
+        run: |
+          flyctl ssh console -a copa-fedex-sucesores -C "cat /data/torneo.db" > data/torneo_prod.db
+          ls -la data/torneo_prod.db
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+      - name: Export backup JSONs and show results
+        run: |
+          python3 << 'PYEOF'
+          import sqlite3, json
+          conn = sqlite3.connect('data/torneo_prod.db')
+          conn.row_factory = sqlite3.Row
+          tablas = ['jugadores', 'rondas', 'fechas_torneo', 'resultados_fecha', 'tabla_puntos']
+          for tabla in tablas:
+              rows = [dict(r) for r in conn.execute(f'SELECT * FROM {tabla}').fetchall()]
+              with open(f'data/backup/{tabla}.json', 'w') as f:
+                  json.dump(rows, f, indent=2, ensure_ascii=False)
+              print(f'{tabla}: {len(rows)} registros exportados')
+          
+          print('\n=== FECHAS ===')
+          for ft in conn.execute('SELECT * FROM fechas_torneo WHERE num_jugadores > 0 ORDER BY fecha'):
+              print(f'  {ft["fecha"]} | {ft["num_jugadores"]} jugadores')
+          
+          ft = conn.execute("SELECT id FROM fechas_torneo WHERE fecha='2026-03-21'").fetchone()
+          if ft:
+              print(f'\n=== RESULTADOS FECHA 5 ===')
+              for r in conn.execute('SELECT rf.posicion, j.nombre, j.apellido, rf.score_gross, rf.handicap_aplicado, rf.score_neto, rf.puntos FROM resultados_fecha rf JOIN jugadores j ON rf.jugador_id=j.id WHERE rf.fecha_torneo_id=? ORDER BY rf.posicion', (ft['id'],)):
+                  print(f'  {r["posicion"]:>3} | {r["nombre"]} {r["apellido"]:<25} | G:{r["score_gross"]} HCP:{r["handicap_aplicado"]} N:{r["score_neto"]} Pts:{r["puntos"]}')
+          conn.close()
+          PYEOF
+
+      - name: Commit and push backups
+        run: |
+          git config user.name "Claude"
+          git config user.email "noreply@anthropic.com"
+          git pull --rebase origin main || true
+          git add data/backup/
+          git diff --staged --quiet && echo "No changes to commit" || (
+            git commit -m "Backup DB - Fecha 5 liquidada (2026-03-21)"
+            git push origin main
+          )
