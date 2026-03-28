@@ -6,6 +6,9 @@ on:
       - '.github/workflows/backup-db.yml'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   backup:
     name: Download DB and Export Backups
@@ -96,12 +99,19 @@ jobs:
               print(f'  {d["fecha"]}: {d["c"]} rondas')
           PYEOF
 
+      - name: Upload backups as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: db-backups
+          path: data/backup/
+
       - name: Commit and push backups
         run: |
           git config user.name "Claude"
           git config user.email "noreply@anthropic.com"
+          git pull --rebase origin main || true
           git add data/backup/
           git diff --staged --quiet && echo "No changes to commit" || (
             git commit -m "Backup DB produccion - post liquidacion Fecha 5 (2026-03-21)"
-            git push
+            git push origin main
           )
