@@ -1,4 +1,4 @@
-name: Re-sync with fixed code
+name: Fix Fecha 5 with correct gross scores
 
 on:
   push:
@@ -10,8 +10,8 @@ permissions:
   contents: write
 
 jobs:
-  resync:
-    name: Re-sync all and show March 21
+  fix:
+    name: Fix Fecha 5 correct gross and rondas
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -24,25 +24,66 @@ jobs:
           done
           sleep 5
 
-      - name: Re-sync all players with fixed code
-        run: |
-          echo "Re-syncing with fixed guardar_rondas (now updates dates)..."
-          curl -s -X POST https://copa-fedex-sucesores.fly.dev/api/sync/all --max-time 300 | python3 -m json.tool 2>/dev/null || true
-
-      - name: Show March 21 rounds
+      - name: Fix Fecha 5 with correct rondas and HCPs
         run: |
           flyctl ssh console -a copa-fedex-sucesores -C "python3 -c \"
+          import sqlite3,sys
+          sys.path.insert(0,'/app')
+          from src.database import get_db
+          DB='/data/torneo.db'
+          c=sqlite3.connect(DB)
+          c.execute('DELETE FROM resultados_fecha WHERE fecha_torneo_id=9')
+          data=[(10,464,75,4),(6,480,79,8),(4,439,72,-1),(11,444,76,2),(2,473,76,2),(5,435,86,12),(16,460,78,2),(7,468,78,0),(15,476,82,2),(9,449,98,13),(1,452,76,0)]
+          for jid,rid,gross,hcp in data:
+              neto=gross-hcp
+              c.execute('INSERT INTO resultados_fecha(fecha_torneo_id,jugador_id,ronda_id,score_gross,handicap_aplicado,score_neto) VALUES(9,?,?,?,?,?)',(jid,rid,gross,hcp,neto))
+          n=len(data)
+          c.execute('UPDATE fechas_torneo SET num_jugadores=?,valida=? WHERE id=9',(n,n>=2))
+          c.commit()
+          jugadores=sorted([(gross-hcp,jid,gross,hcp,rid) for jid,rid,gross,hcp in data])
+          tabla={1:300,2:240,3:190,4:150,5:120,6:100,7:90,8:85,9:80,10:75,11:70}
+          i=0
+          while i<len(jugadores):
+              j=i
+              while j<len(jugadores) and jugadores[j][0]==jugadores[i][0]: j+=1
+              pts=round(sum(tabla.get(p+1,0) for p in range(i,j))/(j-i),2)
+              for k in range(i,j):
+                  neto,jid,gross,hcp,rid=jugadores[k]
+                  c.execute('UPDATE resultados_fecha SET posicion=?,puntos=? WHERE fecha_torneo_id=9 AND jugador_id=?',(i+1,pts,jid))
+              i=j
+          c.commit()
+          print('FECHA 5 FIXED (11 jugadores):')
+          for r in c.execute('SELECT rf.posicion,j.nombre,j.apellido,rf.score_gross,rf.handicap_aplicado,rf.score_neto,rf.puntos FROM resultados_fecha rf JOIN jugadores j ON rf.jugador_id=j.id WHERE rf.fecha_torneo_id=9 ORDER BY rf.posicion').fetchall(): print(f'  {r[0]:>2} {r[1]} {r[2]} G:{r[3]} HCP:{r[4]} N:{r[5]} Pts:{r[6]}')
+          \""
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+      - name: Get handicaps from federation for Fecha 5 rondas
+        run: |
+          TARJETAS=$(flyctl ssh console -a copa-fedex-sucesores -C "python3 -c \"
           import sqlite3
           c=sqlite3.connect('/data/torneo.db')
-          print('=== RONDAS MARZO 21 MANIZALES ===')
-          r21=c.execute(\\\"SELECT r.id,j.nombre,j.apellido,r.score_gross,r.handicap_cancha,r.tarjeta_id FROM rondas r JOIN jugadores j ON r.jugador_id=j.id WHERE r.fecha='2026-03-21' AND r.club LIKE '%Manizales%' ORDER BY r.score_gross\\\").fetchall()
-          print(f'{len(r21)} rondas')
-          for r in r21: print(f'  {r[1]} {r[2]}: G:{r[3]} HCP:{r[4]} t:{r[5]}')
-          print()
-          for f in ['2026-03-19','2026-03-20','2026-03-21','2026-03-22','2026-03-23']:
-              cnt=c.execute(\\\"SELECT COUNT(*) FROM rondas WHERE fecha=? AND club LIKE '%Manizales%'\\\",(f,)).fetchone()[0]
-              if cnt: print(f'{f}: {cnt} rondas')
-          \""
+          for r in c.execute('SELECT r.id,r.tarjeta_id FROM rondas r JOIN resultados_fecha rf ON r.id=rf.ronda_id WHERE rf.fecha_torneo_id=9 AND r.handicap_cancha IS NULL AND r.tarjeta_id IS NOT NULL').fetchall(): print(f'{r[0]}|{r[1]}')
+          \"")
+          echo "Fetching handicaps for: $TARJETAS"
+          while IFS='|' read -r RID TID; do
+            if [ -n "$RID" ] && [ -n "$TID" ]; then
+              flyctl ssh console -a copa-fedex-sucesores -C "python3 -c \"
+          import sys;sys.path.insert(0,'/app')
+          from src.fedegolf_collector import FedegolfScoresCollector
+          import sqlite3
+          c=FedegolfScoresCollector()
+          d=c.get_scorecard_detail('$TID')
+          if d and d.get('handicap_cancha') is not None:
+              conn=sqlite3.connect('/data/torneo.db')
+              conn.execute('UPDATE rondas SET handicap_cancha=?,indice_al_momento=? WHERE id=?',(d['handicap_cancha'],d.get('indice_al_momento'),$RID))
+              conn.commit()
+              print(f'ronda=$RID hcp={d[\\\"handicap_cancha\\\"]}')
+          else: print(f'SKIP $TID')
+          \"" || echo "Error $TID"
+              sleep 1
+            fi
+          done <<< "$TARJETAS"
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
@@ -70,6 +111,6 @@ jobs:
           git pull --rebase origin main || true
           git add data/backup/
           git diff --staged --quiet && echo "No changes" || (
-            git commit -m "Re-sync with fixed guardar_rondas - dates updated from federation"
+            git commit -m "Fix Fecha 5: correct gross scores (leaderboard was net), add Perez, link federation rondas"
             git push origin main
           )
