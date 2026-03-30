@@ -226,7 +226,8 @@ def actualizar_jugador(db_path: str, jugador_id: int, data: Dict):
 
 def guardar_rondas(db_path: str, jugador_id: int, rondas: List[Dict]) -> int:
     """Guarda rondas, retorna cantidad de nuevas insertadas.
-    Usa tarjeta_id como clave unica para deduplicar."""
+    Usa tarjeta_id como clave unica para deduplicar.
+    Si la tarjeta ya existe, actualiza fecha y scores (la federacion puede corregir fechas)."""
     count = 0
     with get_db(db_path) as conn:
         for ronda in rondas:
@@ -235,10 +236,21 @@ def guardar_rondas(db_path: str, jugador_id: int, rondas: List[Dict]) -> int:
             # Si tiene tarjeta_id, verificar si ya existe
             if tarjeta_id:
                 existing = conn.execute(
-                    'SELECT id FROM rondas WHERE tarjeta_id = ?', (tarjeta_id,)
+                    'SELECT id, fecha FROM rondas WHERE tarjeta_id = ?', (tarjeta_id,)
                 ).fetchone()
                 if existing:
-                    continue  # Ya existe, skip
+                    # Actualizar fecha y scores si cambiaron (la federacion puede corregir)
+                    conn.execute('''
+                        UPDATE rondas SET fecha = ?, score_gross = ?, score_ajustado = ?,
+                        diferencial = ? WHERE id = ?
+                    ''', (
+                        ronda.get('fecha'),
+                        ronda.get('score_gross'),
+                        ronda.get('score_ajustado'),
+                        ronda.get('diferencial'),
+                        existing['id'],
+                    ))
+                    continue
 
             try:
                 conn.execute('''
