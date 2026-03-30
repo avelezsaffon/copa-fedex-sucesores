@@ -462,139 +462,128 @@
     "puntos": 215.0
   },
   {
-    "id": 53,
-    "fecha_torneo_id": 9,
-    "jugador_id": 1,
-    "ronda_id": 452,
-    "score_gross": 76,
-    "handicap_aplicado": -2.0,
-    "score_neto": 78.0,
-    "posicion": 4,
-    "puntos": 135.0
-  },
-  {
-    "id": 54,
-    "fecha_torneo_id": 9,
-    "jugador_id": 2,
-    "ronda_id": 472,
-    "score_gross": 85,
-    "handicap_aplicado": 2.0,
-    "score_neto": 83.0,
-    "posicion": 10,
-    "puntos": 75.0
-  },
-  {
-    "id": 55,
-    "fecha_torneo_id": 9,
-    "jugador_id": 4,
-    "ronda_id": 438,
-    "score_gross": 71,
-    "handicap_aplicado": -1.0,
-    "score_neto": 72.0,
-    "posicion": 2,
-    "puntos": 240.0
-  },
-  {
-    "id": 56,
-    "fecha_torneo_id": 9,
-    "jugador_id": 5,
-    "ronda_id": 434,
-    "score_gross": 89,
-    "handicap_aplicado": 11.0,
-    "score_neto": 78.0,
-    "posicion": 4,
-    "puntos": 135.0
-  },
-  {
-    "id": 57,
-    "fecha_torneo_id": 9,
-    "jugador_id": 6,
-    "ronda_id": 479,
-    "score_gross": 89,
-    "handicap_aplicado": 8.0,
-    "score_neto": 81.0,
-    "posicion": 7,
-    "puntos": 87.5
-  },
-  {
-    "id": 58,
-    "fecha_torneo_id": 9,
-    "jugador_id": 7,
-    "ronda_id": 467,
-    "score_gross": 85,
-    "handicap_aplicado": 0.0,
-    "score_neto": 85.0,
-    "posicion": 11,
-    "puntos": 70.0
-  },
-  {
-    "id": 59,
-    "fecha_torneo_id": 9,
-    "jugador_id": 9,
-    "ronda_id": 448,
-    "score_gross": 96,
-    "handicap_aplicado": 14.0,
-    "score_neto": 82.0,
-    "posicion": 9,
-    "puntos": 80.0
-  },
-  {
-    "id": 60,
+    "id": 75,
     "fecha_torneo_id": 9,
     "jugador_id": 10,
-    "ronda_id": 463,
-    "score_gross": 83,
+    "ronda_id": null,
+    "score_gross": 71,
     "handicap_aplicado": 4.0,
-    "score_neto": 79.0,
-    "posicion": 6,
-    "puntos": 100.0
-  },
-  {
-    "id": 61,
-    "fecha_torneo_id": 9,
-    "jugador_id": 11,
-    "ronda_id": 443,
-    "score_gross": 73,
-    "handicap_aplicado": 2.0,
-    "score_neto": 71.0,
-    "posicion": 1,
-    "puntos": 300.0
-  },
-  {
-    "id": 62,
-    "fecha_torneo_id": 9,
-    "jugador_id": 15,
-    "ronda_id": 475,
-    "score_gross": 84,
-    "handicap_aplicado": 3.0,
-    "score_neto": 81.0,
-    "posicion": 7,
-    "puntos": 87.5
-  },
-  {
-    "id": 63,
-    "fecha_torneo_id": 9,
-    "jugador_id": 16,
-    "ronda_id": 459,
-    "score_gross": 76,
-    "handicap_aplicado": 2.0,
-    "score_neto": 74.0,
+    "score_neto": 67.0,
     "posicion": 3,
     "puntos": 190.0
   },
   {
-    "id": 64,
+    "id": 76,
+    "fecha_torneo_id": 9,
+    "jugador_id": 6,
+    "ronda_id": null,
+    "score_gross": 71,
+    "handicap_aplicado": 8.0,
+    "score_neto": 63.0,
+    "posicion": 2,
+    "puntos": 240.0
+  },
+  {
+    "id": 77,
+    "fecha_torneo_id": 9,
+    "jugador_id": 4,
+    "ronda_id": null,
+    "score_gross": 73,
+    "handicap_aplicado": -1.0,
+    "score_neto": 74.0,
+    "posicion": 7,
+    "puntos": 87.5
+  },
+  {
+    "id": 78,
+    "fecha_torneo_id": 9,
+    "jugador_id": 11,
+    "ronda_id": null,
+    "score_gross": 74,
+    "handicap_aplicado": 2.0,
+    "score_neto": 72.0,
+    "posicion": 4,
+    "puntos": 123.33
+  },
+  {
+    "id": 79,
+    "fecha_torneo_id": 9,
+    "jugador_id": 2,
+    "ronda_id": null,
+    "score_gross": 74,
+    "handicap_aplicado": 2.0,
+    "score_neto": 72.0,
+    "posicion": 4,
+    "puntos": 123.33
+  },
+  {
+    "id": 80,
+    "fecha_torneo_id": 9,
+    "jugador_id": 5,
+    "ronda_id": null,
+    "score_gross": 74,
+    "handicap_aplicado": 12.0,
+    "score_neto": 62.0,
+    "posicion": 1,
+    "puntos": 300.0
+  },
+  {
+    "id": 81,
+    "fecha_torneo_id": 9,
+    "jugador_id": 16,
+    "ronda_id": null,
+    "score_gross": 76,
+    "handicap_aplicado": 2.0,
+    "score_neto": 74.0,
+    "posicion": 7,
+    "puntos": 87.5
+  },
+  {
+    "id": 82,
+    "fecha_torneo_id": 9,
+    "jugador_id": 7,
+    "ronda_id": null,
+    "score_gross": 78,
+    "handicap_aplicado": 0.0,
+    "score_neto": 78.0,
+    "posicion": 9,
+    "puntos": 77.5
+  },
+  {
+    "id": 83,
+    "fecha_torneo_id": 9,
+    "jugador_id": 15,
+    "ronda_id": null,
+    "score_gross": 80,
+    "handicap_aplicado": 2.0,
+    "score_neto": 78.0,
+    "posicion": 9,
+    "puntos": 77.5
+  },
+  {
+    "id": 84,
+    "fecha_torneo_id": 9,
+    "jugador_id": 9,
+    "ronda_id": null,
+    "score_gross": 85,
+    "handicap_aplicado": 13.0,
+    "score_neto": 72.0,
+    "posicion": 4,
+    "puntos": 123.33
+  },
+  {
+    "id": 85,
     "fecha_torneo_id": 11,
     "jugador_id": 1,
     "ronda_id": 488,
     "score_gross": 75,
     "handicap_aplicado": 0.0,
     "score_neto": 75.0,
-    "posicion": 3,
-    "puntos": 140.0
+    "posicion": 5,
+    "puntos": 103.33
   },
   {
-    "id": 65,
+    "id": 86,
     "fecha_torneo_id": 11,
     "jugador_id": 2,
     "ronda_id": 497,
@@ -605,18 +594,18 @@
     "puntos": 85.0
   },
   {
-    "id": 66,
+    "id": 87,
     "fecha_torneo_id": 11,
     "jugador_id": 4,
     "ronda_id": 484,
     "score_gross": 74,
     "handicap_aplicado": -1.0,
     "score_neto": 75.0,
-    "posicion": 3,
-    "puntos": 140.0
+    "posicion": 5,
+    "puntos": 103.33
   },
   {
-    "id": 67,
+    "id": 88,
     "fecha_torneo_id": 11,
     "jugador_id": 5,
     "ronda_id": 483,
@@ -627,18 +616,18 @@
     "puntos": 80.0
   },
   {
-    "id": 68,
+    "id": 89,
     "fecha_torneo_id": 11,
     "jugador_id": 7,
-    "ronda_id": 465,
-    "score_gross": 76,
+    "ronda_id": 495,
+    "score_gross": 73,
     "handicap_aplicado": 0.0,
-    "score_neto": 76.0,
-    "posicion": 7,
-    "puntos": 90.0
+    "score_neto": 73.0,
+    "posicion": 2,
+    "puntos": 240.0
   },
   {
-    "id": 69,
+    "id": 90,
     "fecha_torneo_id": 11,
     "jugador_id": 8,
     "ronda_id": 482,
@@ -649,18 +638,18 @@
     "puntos": 72.5
   },
   {
-    "id": 70,
+    "id": 91,
     "fecha_torneo_id": 11,
     "jugador_id": 10,
-    "ronda_id": 461,
-    "score_gross": 80,
+    "ronda_id": 494,
+    "score_gross": 77,
     "handicap_aplicado": 5.0,
-    "score_neto": 75.0,
-    "posicion": 3,
-    "puntos": 140.0
+    "score_neto": 72.0,
+    "posicion": 1,
+    "puntos": 300.0
   },
   {
-    "id": 71,
+    "id": 92,
     "fecha_torneo_id": 11,
     "jugador_id": 11,
     "ronda_id": 485,
@@ -671,36 +660,36 @@
     "puntos": 72.5
   },
   {
-    "id": 72,
+    "id": 93,
     "fecha_torneo_id": 11,
     "jugador_id": 13,
     "ronda_id": 493,
     "score_gross": 77,
     "handicap_aplicado": 3.0,
     "score_neto": 74.0,
-    "posicion": 1,
-    "puntos": 270.0
+    "posicion": 3,
+    "puntos": 170.0
   },
   {
-    "id": 73,
+    "id": 94,
     "fecha_torneo_id": 11,
     "jugador_id": 15,
     "ronda_id": 498,
     "score_gross": 78,
     "handicap_aplicado": 4.0,
     "score_neto": 74.0,
-    "posicion": 1,
-    "puntos": 270.0
+    "posicion": 3,
+    "puntos": 170.0
   },
   {
-    "id": 74,
+    "id": 95,
     "fecha_torneo_id": 11,
     "jugador_id": 17,
     "ronda_id": 487,
     "score_gross": 90,
     "handicap_aplicado": 15.0,
     "score_neto": 75.0,
-    "posicion": 3,
-    "puntos": 140.0
+    "posicion": 5,
+    "puntos": 103.33
   }
 ]
