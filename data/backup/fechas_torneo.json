@@ -43,8 +43,8 @@
     "id": 11,
     "fecha": "2026-03-28",
     "es_ultima_cuatro": 0,
-    "valida": 0,
-    "num_jugadores": 0,
+    "valida": 1,
+    "num_jugadores": 11,
     "created_at": "2026-02-21 01:42:00"
   },
   {
