@@ -613,7 +613,7 @@
     "handicap_aplicado": 12.0,
     "score_neto": 78.0,
     "posicion": 9,
-    "puntos": 80.0
+    "puntos": 77.5
   },
   {
     "id": 89,
@@ -634,8 +634,8 @@
     "score_gross": 85,
     "handicap_aplicado": 6.0,
     "score_neto": 79.0,
-    "posicion": 10,
-    "puntos": 72.5
+    "posicion": 11,
+    "puntos": 70.0
   },
   {
     "id": 91,
@@ -654,10 +654,10 @@
     "jugador_id": 11,
     "ronda_id": 485,
     "score_gross": 80,
-    "handicap_aplicado": 1.0,
-    "score_neto": 79.0,
-    "posicion": 10,
-    "puntos": 72.5
+    "handicap_aplicado": 2.0,
+    "score_neto": 78.0,
+    "posicion": 9,
+    "puntos": 77.5
   },
   {
     "id": 93,
