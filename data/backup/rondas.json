@@ -8275,8 +8275,8 @@
     "aplicable_torneo": 0,
     "tarjeta_id": "a16Ua000007MeUDIA0",
     "hoyos_json": null,
-    "handicap_cancha": null,
-    "indice_al_momento": null,
+    "handicap_cancha": -1,
+    "indice_al_momento": -0.6,
     "created_at": "2026-03-30 00:44:30"
   },
   {
@@ -8293,7 +8293,7 @@
     "aplicable_torneo": 0,
     "tarjeta_id": "a16Ua000007MeSbIAK",
     "hoyos_json": null,
-    "handicap_cancha": null,
+    "handicap_cancha": 2,
     "indice_al_momento": null,
     "created_at": "2026-03-30 00:44:39"
   },
