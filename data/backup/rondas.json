@@ -8436,9 +8436,9 @@
     "diferencial": 3.5,
     "aplicable_torneo": 0,
     "tarjeta_id": "a16Ua000007MqC1IAK",
-    "hoyos_json": null,
-    "handicap_cancha": null,
-    "indice_al_momento": null,
+    "hoyos_json": "{\"hoyos\": [{\"hoyo\": 1, \"par\": 4, \"ventaja\": 12, \"score\": 3, \"ajustado\": 3}, {\"hoyo\": 2, \"par\": 3, \"ventaja\": 16, \"score\": 4, \"ajustado\": 4}, {\"hoyo\": 3, \"par\": 4, \"ventaja\": 2, \"score\": 5, \"ajustado\": 5}, {\"hoyo\": 4, \"par\": 4, \"ventaja\": 10, \"score\": 4, \"ajustado\": 4}, {\"hoyo\": 5, \"par\": 5, \"ventaja\": 6, \"score\": 5, \"ajustado\": 5}, {\"hoyo\": 6, \"par\": 4, \"ventaja\": 14, \"score\": 7, \"ajustado\": 6}, {\"hoyo\": 7, \"par\": 5, \"ventaja\": 4, \"score\": 4, \"ajustado\": 4}, {\"hoyo\": 8, \"par\": 3, \"ventaja\": 8, \"score\": 3, \"ajustado\": 3}, {\"hoyo\": 9, \"par\": 4, \"ventaja\": 18, \"score\": 4, \"ajustado\": 4}, {\"hoyo\": 10, \"par\": 5, \"ventaja\": 5, \"score\": 6, \"ajustado\": 6}, {\"hoyo\": 11, \"par\": 3, \"ventaja\": 7, \"score\": 4, \"ajustado\": 4}, {\"hoyo\": 12, \"par\": 4, \"ventaja\": 1, \"score\": 4, \"ajustado\": 4}, {\"hoyo\": 13, \"par\": 4, \"ventaja\": 9, \"score\": 4, \"ajustado\": 4}, {\"hoyo\": 14, \"par\": 3, \"ventaja\": 17, \"score\": 3, \"ajustado\": 3}, {\"hoyo\": 15, \"par\": 5, \"ventaja\": 3, \"score\": 4, \"ajustado\": 4}, {\"hoyo\": 16, \"par\": 4, \"ventaja\": 13, \"score\": 5, \"ajustado\": 5}, {\"hoyo\": 17, \"par\": 4, \"ventaja\": 11, \"score\": 5, \"ajustado\": 5}, {\"hoyo\": 18, \"par\": 4, \"ventaja\": 15, \"score\": 3, \"ajustado\": 3}], \"out\": {\"par\": \"36\", \"score\": \"39\", \"ajustado\": \"38\"}, \"in\": {\"par\": \"36\", \"score\": \"38\", \"ajustado\": \"38\"}, \"total\": {\"par\": \"72\", \"score\": \"77\", \"ajustado\": \"76\"}, \"marca\": \"Azules-6755\", \"handicap_cancha\": 3, \"indice_al_momento\": 2.5}",
+    "handicap_cancha": 3,
+    "indice_al_momento": 2.5,
     "created_at": "2026-03-30 00:45:03"
   },
   {
@@ -8509,8 +8509,8 @@
     "aplicable_torneo": 0,
     "tarjeta_id": "a16Ua000007MePNIA0",
     "hoyos_json": null,
-    "handicap_cancha": null,
-    "indice_al_momento": null,
+    "handicap_cancha": 2,
+    "indice_al_momento": 1.8,
     "created_at": "2026-03-30 00:45:20"
   },
   {
