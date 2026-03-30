@@ -1,4 +1,4 @@
-name: Fix Fecha 5 y 6
+name: Fix Fecha 6 - Sabado prevalece
 
 on:
   push:
@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   fix:
-    name: Fix ambas fechas
+    name: Fix Fecha 6 sabado prevalece
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -24,42 +24,7 @@ jobs:
           done
           sleep 5
 
-      - name: Fix Fecha 5 with official leaderboard scores
-        run: |
-          flyctl ssh console -a copa-fedex-sucesores -C "python3 -c \"
-          import sqlite3,sys
-          sys.path.insert(0,'/app')
-          from src.database import get_db
-          DB='/data/torneo.db'
-          conn=sqlite3.connect(DB)
-          conn.execute('DELETE FROM resultados_fecha WHERE fecha_torneo_id=9')
-          scores=[(10,71,4),(6,71,8),(4,73,-1),(11,74,2),(2,74,2),(5,74,12),(16,76,2),(7,78,0),(15,80,2),(9,85,13)]
-          for jid,gross,hcp in scores:
-              neto=gross-hcp
-              conn.execute('INSERT INTO resultados_fecha(fecha_torneo_id,jugador_id,ronda_id,score_gross,handicap_aplicado,score_neto) VALUES(9,?,NULL,?,?,?)',(jid,gross,hcp,neto))
-          conn.execute('UPDATE fechas_torneo SET num_jugadores=10,valida=1 WHERE id=9')
-          conn.commit()
-          jugadores=sorted([(gross-hcp,jid,gross,hcp) for jid,gross,hcp in scores])
-          i=0
-          n=len(jugadores)
-          tabla={1:300,2:240,3:190,4:150,5:120,6:100,7:90,8:85,9:80,10:75}
-          results=[]
-          while i<n:
-              j=i
-              while j<n and jugadores[j][0]==jugadores[i][0]: j+=1
-              pts=sum(tabla.get(p+1,0) for p in range(i,j))/(j-i)
-              for k in range(i,j): results.append((i+1,jugadores[k][1],jugadores[k][2],jugadores[k][3],jugadores[k][0],round(pts,2)))
-              i=j
-          for pos,jid,gross,hcp,neto,pts in results:
-              conn.execute('UPDATE resultados_fecha SET posicion=?,puntos=?,score_neto=? WHERE fecha_torneo_id=9 AND jugador_id=?',(pos,pts,neto,jid))
-          conn.commit()
-          print('FECHA 5 FIXED:')
-          for r in conn.execute('SELECT rf.posicion,j.nombre,j.apellido,rf.score_gross,rf.handicap_aplicado,rf.score_neto,rf.puntos FROM resultados_fecha rf JOIN jugadores j ON rf.jugador_id=j.id WHERE rf.fecha_torneo_id=9 ORDER BY rf.posicion').fetchall(): print(f'  {r[0]} {r[1]} {r[2]} G:{r[3]} HCP:{r[4]} N:{r[5]} Pts:{r[6]}')
-          \""
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-
-      - name: Fix Fecha 6 - use Sunday rounds not Friday
+      - name: Fix Fecha 6 - Valencia y Velez usar sabado
         run: |
           flyctl ssh console -a copa-fedex-sucesores -C "python3 -c \"
           import sqlite3,sys
@@ -68,25 +33,22 @@ jobs:
           DB='/data/torneo.db'
           c=sqlite3.connect(DB)
           c.row_factory=sqlite3.Row
-          print('Rondas mar 28:')
-          for r in c.execute(\\\"SELECT r.id,r.jugador_id,j.nombre,j.apellido,r.fecha,r.score_gross FROM rondas r JOIN jugadores j ON r.jugador_id=j.id WHERE r.fecha='2026-03-28' AND r.club LIKE '%Manizales%'\\\").fetchall(): print(f'  {r[0]} jug:{r[1]} {r[2]} {r[3]} G:{r[4]}')
-          print('Rondas mar 29:')
-          for r in c.execute(\\\"SELECT r.id,r.jugador_id,j.nombre,j.apellido,r.fecha,r.score_gross FROM rondas r JOIN jugadores j ON r.jugador_id=j.id WHERE r.fecha='2026-03-29' AND r.club LIKE '%Manizales%' AND r.score_gross>=60\\\").fetchall(): print(f'  {r[0]} jug:{r[1]} {r[2]} {r[3]} G:{r[4]}')
-          print()
-          rondas=c.execute(\\\"SELECT r.id,r.jugador_id,r.fecha,r.score_gross FROM rondas r WHERE r.fecha IN ('2026-03-28','2026-03-29') AND r.club LIKE '%Manizales%' AND r.score_gross IS NOT NULL AND r.score_gross>=60 ORDER BY r.jugador_id,r.id\\\").fetchall()
+          SAB='2026-03-28'
+          DOM='2026-03-29'
+          rondas=c.execute(\\\"SELECT r.id,r.jugador_id,r.fecha,r.score_gross FROM rondas r WHERE r.fecha IN (?,?) AND r.club LIKE '%Manizales%' AND r.score_gross IS NOT NULL AND r.score_gross>=60 ORDER BY r.jugador_id,r.id\\\", (SAB,DOM)).fetchall()
           best={}
           for r in rondas:
               jid=r[1]
               if jid not in best: best[jid]={'id':r[0],'jid':jid,'fecha':r[2],'gross':r[3]}
-              elif r[2]=='2026-03-29' and best[jid]['fecha']=='2026-03-28': best[jid]={'id':r[0],'jid':jid,'fecha':r[2],'gross':r[3]}
-          print(f'{len(best)} players for Fecha 6:')
+              elif r[2]==SAB: best[jid]={'id':r[0],'jid':jid,'fecha':r[2],'gross':r[3]}
+          print(f'{len(best)} players:')
           for jid,r in sorted(best.items()): print(f'  jug {jid}: ronda {r[\\\"id\\\"]} {r[\\\"fecha\\\"]} G:{r[\\\"gross\\\"]}')
           c.execute('DELETE FROM resultados_fecha WHERE fecha_torneo_id=11')
           for jid,r in best.items(): c.execute('INSERT INTO resultados_fecha(fecha_torneo_id,jugador_id,ronda_id,score_gross) VALUES(11,?,?,?)',(jid,r['id'],r['gross']))
           c.execute('UPDATE fechas_torneo SET num_jugadores=?,valida=? WHERE id=11',(len(best),len(best)>=2))
           c.commit()
           recalcular_fecha(DB,11)
-          print('FECHA 6 RECALCULATED:')
+          print('\\nFECHA 6 RESULTS:')
           for r in c.execute('SELECT rf.posicion,j.nombre,j.apellido,rf.score_gross,rf.handicap_aplicado,rf.score_neto,rf.puntos FROM resultados_fecha rf JOIN jugadores j ON rf.jugador_id=j.id WHERE rf.fecha_torneo_id=11 ORDER BY rf.posicion').fetchall(): print(f'  {r[0]} {r[1]} {r[2]} G:{r[3]} HCP:{r[4]} N:{r[5]} Pts:{r[6]}')
           \""
         env:
@@ -116,6 +78,6 @@ jobs:
           git pull --rebase origin main || true
           git add data/backup/
           git diff --staged --quiet && echo "No changes" || (
-            git commit -m "Fix Fecha 5 con scores oficiales del sabado + Fix Fecha 6 usar domingo no viernes"
+            git commit -m "Fix Fecha 6: sabado prevalece sobre domingo (Valencia G:80, Velez G:76)"
             git push origin main
           )
