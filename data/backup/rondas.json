@@ -7699,8 +7699,8 @@
     "aplicable_torneo": 0,
     "tarjeta_id": "a16Ua000007JViPIAW",
     "hoyos_json": null,
-    "handicap_cancha": null,
-    "indice_al_momento": null,
+    "handicap_cancha": -2,
+    "indice_al_momento": -1.1,
     "created_at": "2026-03-28 12:41:16"
   },
   {
@@ -8548,5 +8548,23 @@
     "handicap_cancha": null,
     "indice_al_momento": null,
     "created_at": "2026-03-30 12:13:02"
+  },
+  {
+    "id": 500,
+    "jugador_id": 5,
+    "fecha": "2026-03-29",
+    "club": "Club Manizales",
+    "cancha": "Club Manizales",
+    "marca": "Azules-6755",
+    "patrones": "71.8/137/72",
+    "score_gross": 89,
+    "score_ajustado": 18,
+    "diferencial": 14.2,
+    "aplicable_torneo": 0,
+    "tarjeta_id": "a16Ua000007NJp7IAG",
+    "hoyos_json": null,
+    "handicap_cancha": null,
+    "indice_al_momento": null,
+    "created_at": "2026-03-30 18:03:46"
   }
 ]
