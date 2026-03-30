@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   audit:
-    name: Audit all recent rounds against federation
+    name: Audit dates player by player
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -24,63 +24,82 @@ jobs:
           done
           sleep 5
 
-      - name: Audit all players rounds vs federation
+      - name: Get player list
+        id: players
         run: |
-          flyctl ssh console -a copa-fedex-sucesores -C "python3 -c \"
-          import sqlite3,sys,time
+          PLAYERS=$(flyctl ssh console -a copa-fedex-sucesores -C "python3 -c \"
+          import sqlite3
+          c=sqlite3.connect('/data/torneo.db')
+          for r in c.execute('SELECT id,salesforce_id,nombre,apellido FROM jugadores WHERE salesforce_id IS NOT NULL ORDER BY id'):
+              print(f'{r[0]}|{r[1]}|{r[2]} {r[3]}')
+          \"")
+          echo "$PLAYERS"
+          echo "players<<EOF" >> $GITHUB_OUTPUT
+          echo "$PLAYERS" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+      - name: Audit each player
+        run: |
+          echo "${{ steps.players.outputs.players }}" | while IFS='|' read -r JID SFID NAME; do
+            if [ -n "$JID" ] && [ -n "$SFID" ]; then
+              echo "=== $NAME (jid=$JID) ==="
+              flyctl ssh console -a copa-fedex-sucesores -C "python3 -c \"
+          import sqlite3,sys
           sys.path.insert(0,'/app')
           from src.fedegolf_collector import FedegolfScoresCollector
           from src.sync import normalizar_fecha
+          c=sqlite3.connect('/data/torneo.db')
+          collector=FedegolfScoresCollector()
+          fed=collector.get_player_scores('$SFID')
+          if not fed: print('  No fed scores'); exit()
+          fm={}
+          for s in fed:
+              t=s.get('tarjeta_id')
+              if t: fm[t]=normalizar_fecha(s.get('fecha',''))
+          db=c.execute('SELECT id,fecha,tarjeta_id,score_gross FROM rondas WHERE jugador_id=$JID AND fecha>=\\\"2026-03-01\\\" AND tarjeta_id IS NOT NULL').fetchall()
+          fixes=0
+          for r in db:
+              if r[2] in fm and fm[r[2]]!=r[1]:
+                  print(f'  FIX ronda {r[0]} G:{r[3]}: {r[1]} -> {fm[r[2]]}')
+                  c.execute('UPDATE rondas SET fecha=? WHERE id=?',(fm[r[2]],r[0]))
+                  fixes+=1
+          if fixes:
+              c.commit()
+              print(f'  {fixes} dates fixed')
+          else:
+              print('  OK - no mismatches')
+          \"" || echo "  ERROR checking $NAME"
+              sleep 1
+            fi
+          done
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+      - name: Reassign Fecha 6 with corrected dates
+        run: |
+          flyctl ssh console -a copa-fedex-sucesores -C "python3 -c \"
+          import sqlite3,sys
+          sys.path.insert(0,'/app')
+          from src.ranking import recalcular_fecha
           DB='/data/torneo.db'
           c=sqlite3.connect(DB)
           c.row_factory=sqlite3.Row
-          collector=FedegolfScoresCollector()
-          jugadores=c.execute('SELECT id,nombre,apellido,salesforce_id FROM jugadores ORDER BY apellido').fetchall()
-          fixes=[]
-          for j in jugadores:
-              if not j['salesforce_id']: continue
-              print(f'Checking {j[\\\"nombre\\\"]} {j[\\\"apellido\\\"]}...')
-              try:
-                  fed_scores=collector.get_player_scores(j['salesforce_id'])
-              except: 
-                  print('  ERROR fetching')
-                  continue
-              if not fed_scores: 
-                  print('  No scores')
-                  continue
-              fed_map={}
-              for s in fed_scores:
-                  tid=s.get('tarjeta_id')
-                  if tid:
-                      fecha_fed=normalizar_fecha(s.get('fecha',''))
-                      fed_map[tid]={'fecha':fecha_fed,'scores':s.get('scores',''),'club':s.get('club','')}
-              db_rondas=c.execute('SELECT id,fecha,tarjeta_id,score_gross,club FROM rondas WHERE jugador_id=? AND fecha>=\\\"2026-03-01\\\" AND tarjeta_id IS NOT NULL',(j['id'],)).fetchall()
-              for r in db_rondas:
-                  tid=r['tarjeta_id']
-                  if tid in fed_map:
-                      fed=fed_map[tid]
-                      if fed['fecha']!=r['fecha']:
-                          print(f'  MISMATCH ronda {r[\\\"id\\\"]}: DB={r[\\\"fecha\\\"]} FED={fed[\\\"fecha\\\"]} G:{r[\\\"score_gross\\\"]} tarjeta={tid}')
-                          fixes.append((r['id'],r['fecha'],fed['fecha'],j['nombre'],j['apellido'],r['score_gross']))
-                          c.execute('UPDATE rondas SET fecha=? WHERE id=?',(fed['fecha'],r['id']))
-              time.sleep(0.5)
-          if fixes:
-              c.commit()
-              print()
-              print(f'=== {len(fixes)} FECHAS CORREGIDAS ===')
-              for rid,old,new,nom,ape,g in fixes:
-                  print(f'  {nom} {ape}: ronda {rid} G:{g} {old}->{new}')
-          else:
-              print()
-              print('No date mismatches found')
-          print()
-          print('=== RECALCULATING FECHA 5 AND 6 ===')
-          from src.ranking import recalcular_fecha
-          recalcular_fecha(DB,9)
+          SAB='2026-03-28'
+          DOM='2026-03-29'
+          rondas=c.execute(\\\"SELECT r.id,r.jugador_id,r.fecha,r.score_gross FROM rondas r WHERE r.fecha IN (?,?) AND r.club LIKE '%Manizales%' AND r.score_gross IS NOT NULL AND r.score_gross>=60 ORDER BY r.jugador_id,r.id\\\", (SAB,DOM)).fetchall()
+          best={}
+          for r in rondas:
+              jid=r['jugador_id']
+              if jid not in best: best[jid]=dict(r)
+              elif r['fecha']==SAB: best[jid]=dict(r)
+          c.execute('DELETE FROM resultados_fecha WHERE fecha_torneo_id=11')
+          for jid,r in best.items(): c.execute('INSERT INTO resultados_fecha(fecha_torneo_id,jugador_id,ronda_id,score_gross) VALUES(11,?,?,?)',(11,jid,r['id'],r['score_gross']))
+          c.execute('UPDATE fechas_torneo SET num_jugadores=?,valida=? WHERE id=11',(len(best),len(best)>=2))
+          c.commit()
           recalcular_fecha(DB,11)
-          print('Done')
-          print()
-          print('=== FECHA 6 RESULTS ===')
+          print('FECHA 6 AFTER AUDIT:')
           for r in c.execute('SELECT rf.posicion,j.nombre,j.apellido,rf.score_gross,rf.handicap_aplicado,rf.score_neto,rf.puntos,rr.fecha FROM resultados_fecha rf JOIN jugadores j ON rf.jugador_id=j.id LEFT JOIN rondas rr ON rf.ronda_id=rr.id WHERE rf.fecha_torneo_id=11 ORDER BY rf.posicion').fetchall():
               print(f'  {r[0]:>2} {r[1]} {r[2]} G:{r[3]} HCP:{r[4]} N:{r[5]} Pts:{r[6]} ({r[7]})')
           \""
@@ -111,6 +130,6 @@ jobs:
           git pull --rebase origin main || true
           git add data/backup/
           git diff --staged --quiet && echo "No changes" || (
-            git commit -m "Audit: fix date mismatches between DB and federation for all players"
+            git commit -m "Audit: fix all date mismatches DB vs federation + recalculate Fecha 6"
             git push origin main
           )
