@@ -335,18 +335,20 @@ git push origin main
 - NOTA: La ronda de Valencia del 28 mar en la federacion era realmente del 27 mar (viernes).
   Se corrigio la fecha en la DB y se uso la ronda del domingo 29 (G:77).
 - Gonzalez Ossa: handicap_cancha corregido a 2 (federacion tenia 2, no 1 calculado)
+- Velez Gomez: fechas corregidas manualmente. Fed tenia Vie=28mar, Sab=29mar, Dom=29mar.
+  Real: Vie G:76 (27mar), **Sab G:78 (28mar)**, Dom G:73 (29mar). Se usa sabado.
 - 1ro: Valencia Hoyos (G:77, HCP:5, Neto 72, 300 pts)
 - Empate 2do neto 74: Uribe Jaramillo / Villegas Villegas (215 pts c/u)
 - Empate 4to neto 75: Perez Quintero / Gaviria / Millan Ocampo (123.33 pts c/u)
-- 7mo: Velez Gomez (G:76, HCP:0, Neto 76, 90 pts - ronda del sabado)
-- 8vo: Villegas Herrera (G:79, HCP:2, Neto 77, 85 pts)
-- Empate 9no neto 78: Gallo Velasquez / Gonzalez Ossa (77.5 pts c/u)
+- 7mo-8vo: Villegas Herrera (G:79, HCP:2, Neto 77, 85 pts)
+- Empate neto 78: Velez Gomez (G:78, HCP:0) / Gallo / Gonzalez Ossa
 - 11mo: Alvarez Antia (G:85, HCP:6, Neto 79, 70 pts)
 - Branch: `claude/process-tournament-results-TCauT`
 
 ### Lecciones aprendidas (Fecha 5 y 6)
 - El leaderboard del club muestra scores NETOS, no gross. Siempre verificar.
-- Las tarjetas "Ir*" en la federacion son las del torneo del sabado.
-- La federacion puede tener desfase de +1 dia en las fechas.
-- `guardar_rondas` ahora actualiza fechas de tarjetas existentes (fix aplicado).
+- Las tarjetas "Ir*" en la federacion son las del torneo del sabado (para Fecha 5).
+- La federacion puede tener desfase de +1 dia en las fechas. Siempre verificar con el jugador.
+- Pedro Velez confirmo: sus fechas en la federacion estaban corridas +1 dia. Corregidas manualmente.
+- `guardar_rondas` ahora actualiza fechas de tarjetas existentes (fix aplicado en database.py).
 - Siempre usar handicap_cancha de la federacion/leaderboard, NUNCA calcular desde indice actual.
