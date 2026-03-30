@@ -1,4 +1,4 @@
-name: Re-sync and check March 21
+name: Check federation raw dates
 
 on:
   push:
@@ -10,8 +10,8 @@ permissions:
   contents: write
 
 jobs:
-  sync:
-    name: Fresh sync and check Mar 21
+  check:
+    name: Query federation directly
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -24,26 +24,98 @@ jobs:
           done
           sleep 5
 
-      - name: Sync all from federation
+      - name: Check Perez Quintero raw federation data
         run: |
-          echo "Syncing all players..."
-          curl -s -X POST https://copa-fedex-sucesores.fly.dev/api/sync/all --max-time 300 | python3 -m json.tool 2>/dev/null || true
+          flyctl ssh console -a copa-fedex-sucesores -C "python3 -c \"
+          import sys;sys.path.insert(0,'/app')
+          from src.fedegolf_collector import FedegolfScoresCollector
+          from src.sync import normalizar_fecha
+          c=FedegolfScoresCollector()
+          scores=c.get_player_scores('0035x000032ofQxAAI')
+          print('Perez Quintero - Federation raw:')
+          for s in scores[:15]:
+              raw=s.get('fecha','')
+              norm=normalizar_fecha(raw)
+              print(f'  raw={raw} norm={norm} club={s.get(\"club\",\"\")} scores={s.get(\"scores\",\"\")} tarjeta={s.get(\"tarjeta_id\",\"\")}')
+          \""
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
-      - name: Show March 21 rounds
+      - name: Check Valencia raw federation data
+        run: |
+          flyctl ssh console -a copa-fedex-sucesores -C "python3 -c \"
+          import sys;sys.path.insert(0,'/app')
+          from src.fedegolf_collector import FedegolfScoresCollector
+          from src.sync import normalizar_fecha
+          c=FedegolfScoresCollector()
+          scores=c.get_player_scores('0035x000032ocgrAAA')
+          print('Valencia Hoyos - Federation raw:')
+          for s in scores[:15]:
+              raw=s.get('fecha','')
+              norm=normalizar_fecha(raw)
+              print(f'  raw={raw} norm={norm} club={s.get(\"club\",\"\")} scores={s.get(\"scores\",\"\")} tarjeta={s.get(\"tarjeta_id\",\"\")}')
+          \""
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+      - name: Check Zuluaga raw federation data
+        run: |
+          flyctl ssh console -a copa-fedex-sucesores -C "python3 -c \"
+          import sys;sys.path.insert(0,'/app')
+          from src.fedegolf_collector import FedegolfScoresCollector
+          from src.sync import normalizar_fecha
+          c=FedegolfScoresCollector()
+          scores=c.get_player_scores('0035x000032ocvTAAQ')
+          print('Zuluaga Ramirez - Federation raw:')
+          for s in scores[:15]:
+              raw=s.get('fecha','')
+              norm=normalizar_fecha(raw)
+              print(f'  raw={raw} norm={norm} club={s.get(\"club\",\"\")} scores={s.get(\"scores\",\"\")} tarjeta={s.get(\"tarjeta_id\",\"\")}')
+          \""
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+      - name: Update existing tarjeta dates from federation
+        run: |
+          flyctl ssh console -a copa-fedex-sucesores -C "python3 -c \"
+          import sqlite3,sys,time
+          sys.path.insert(0,'/app')
+          from src.fedegolf_collector import FedegolfScoresCollector
+          from src.sync import normalizar_fecha
+          c=sqlite3.connect('/data/torneo.db')
+          collector=FedegolfScoresCollector()
+          jugadores=c.execute('SELECT id,salesforce_id,nombre,apellido FROM jugadores WHERE salesforce_id IS NOT NULL ORDER BY id').fetchall()
+          total_fixes=0
+          for j in jugadores:
+              try:
+                  fed=collector.get_player_scores(j[1])
+              except: continue
+              if not fed: continue
+              fm={}
+              for s in fed:
+                  t=s.get('tarjeta_id')
+                  if t: fm[t]=normalizar_fecha(s.get('fecha',''))
+              db=c.execute('SELECT id,fecha,tarjeta_id,score_gross FROM rondas WHERE jugador_id=? AND tarjeta_id IS NOT NULL',(j[0],)).fetchall()
+              for r in db:
+                  if r[2] in fm and fm[r[2]]!=r[1]:
+                      print(f'FIX {j[2]} {j[3]}: ronda {r[0]} G:{r[3]} {r[1]}->{fm[r[2]]}')
+                      c.execute('UPDATE rondas SET fecha=? WHERE id=?',(fm[r[2]],r[0]))
+                      total_fixes+=1
+              time.sleep(0.3)
+          c.commit()
+          print(f'Total fixes: {total_fixes}')
+          \""
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+      - name: Show March 21 after fix
         run: |
           flyctl ssh console -a copa-fedex-sucesores -C "python3 -c \"
           import sqlite3
           c=sqlite3.connect('/data/torneo.db')
-          print('=== RONDAS MARZO 21 MANIZALES ===')
-          for r in c.execute(\\\"SELECT r.id,r.jugador_id,j.nombre,j.apellido,r.fecha,r.score_gross,r.handicap_cancha,r.tarjeta_id FROM rondas r JOIN jugadores j ON r.jugador_id=j.id WHERE r.fecha='2026-03-21' AND r.club LIKE '%Manizales%' ORDER BY r.score_gross\\\").fetchall():
-              print(f'  {r[2]} {r[3]}: G:{r[5]} HCP:{r[6]} tarjeta:{r[7]} (id:{r[0]})')
-          print()
-          print('=== TODAS RONDAS MARZO 19-24 MANIZALES ===')
-          for f in ['2026-03-19','2026-03-20','2026-03-21','2026-03-22','2026-03-23','2026-03-24']:
-              rows=c.execute(\\\"SELECT r.jugador_id,j.nombre,j.apellido,r.score_gross,r.id,r.tarjeta_id FROM rondas r JOIN jugadores j ON r.jugador_id=j.id WHERE r.fecha=? AND r.club LIKE '%Manizales%' ORDER BY r.jugador_id\\\", (f,)).fetchall()
-              if rows:
-                  print(f'{f} ({len(rows)} rondas):')
-                  for r in rows: print(f'  {r[1]} {r[2]}: G:{r[3]} id:{r[4]}')
+          print('Rondas marzo 21 Manizales:')
+          for r in c.execute(\\\"SELECT r.id,j.nombre,j.apellido,r.score_gross,r.handicap_cancha,r.tarjeta_id FROM rondas r JOIN jugadores j ON r.jugador_id=j.id WHERE r.fecha='2026-03-21' AND r.club LIKE '%Manizales%' ORDER BY r.score_gross\\\").fetchall():
+              print(f'  {r[1]} {r[2]}: G:{r[3]} HCP:{r[4]} t:{r[5]}')
           \""
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
@@ -65,13 +137,13 @@ jobs:
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
-      - name: Commit backups
+      - name: Commit
         run: |
           git config user.name "Claude"
           git config user.email "noreply@anthropic.com"
           git pull --rebase origin main || true
           git add data/backup/
           git diff --staged --quiet && echo "No changes" || (
-            git commit -m "Fresh sync: check March 21 rounds from federation"
+            git commit -m "Deep check: raw federation dates + update existing tarjetas"
             git push origin main
           )
