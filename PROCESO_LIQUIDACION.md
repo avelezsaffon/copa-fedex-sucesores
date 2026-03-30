@@ -326,5 +326,12 @@ git push origin main
 - Empate 8vo neto 82: Millan Hoyos / Villegas Villegas (82.5 pts c/u)
 - Branch: `claude/process-tournament-results-TCauT`
 
-### Ranking General (despues de Fecha 5)
-(Pendiente de actualizar con ranking completo)
+### Fecha 6 - 2026-03-28
+- **11 jugadores**
+- No hubo torneo oficial, pero 11 jugadores jugaron en Club Manizales
+- Handicaps calculados desde indice (federacion no retorno handicap_cancha)
+- Empate 1ro neto 74: Felipe Uribe Jaramillo / Francisco Villegas Villegas (270 pts c/u)
+- Empate masivo 3ro neto 75: Perez Quintero / Gaviria / Valencia Hoyos / Millan Ocampo (140 pts c/u)
+- 7mo: Pedro Velez Gomez (Gross 76, HCP 0, Neto 76, 90 pts)
+- Empate 10mo neto 79: Alvarez Antia / Gonzalez Ossa (72.5 pts c/u)
+- Branch: `claude/process-tournament-results-TCauT`
