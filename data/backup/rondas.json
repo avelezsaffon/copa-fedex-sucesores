@@ -2712,7 +2712,7 @@
     "diferencial": -0.7,
     "aplicable_torneo": 0,
     "tarjeta_id": "a16Ua0000059I66IAE",
-    "hoyos_json": null,
+    "hoyos_json": "{\"hoyos\": [{\"hoyo\": 1, \"par\": 4, \"ventaja\": 12, \"score\": 3, \"ajustado\": 3}, {\"hoyo\": 2, \"par\": 3, \"ventaja\": 16, \"score\": 4, \"ajustado\": 4}, {\"hoyo\": 3, \"par\": 4, \"ventaja\": 2, \"score\": 4, \"ajustado\": 4}, {\"hoyo\": 4, \"par\": 4, \"ventaja\": 10, \"score\": 3, \"ajustado\": 3}, {\"hoyo\": 5, \"par\": 5, \"ventaja\": 6, \"score\": 4, \"ajustado\": 4}, {\"hoyo\": 6, \"par\": 4, \"ventaja\": 14, \"score\": 3, \"ajustado\": 3}, {\"hoyo\": 7, \"par\": 5, \"ventaja\": 4, \"score\": 5, \"ajustado\": 5}, {\"hoyo\": 8, \"par\": 3, \"ventaja\": 8, \"score\": 3, \"ajustado\": 3}, {\"hoyo\": 9, \"par\": 4, \"ventaja\": 18, \"score\": 4, \"ajustado\": 4}, {\"hoyo\": 10, \"par\": 5, \"ventaja\": 5, \"score\": 5, \"ajustado\": 5}, {\"hoyo\": 11, \"par\": 3, \"ventaja\": 7, \"score\": 3, \"ajustado\": 3}, {\"hoyo\": 12, \"par\": 4, \"ventaja\": 1, \"score\": 5, \"ajustado\": 5}, {\"hoyo\": 13, \"par\": 4, \"ventaja\": 9, \"score\": 5, \"ajustado\": 5}, {\"hoyo\": 14, \"par\": 3, \"ventaja\": 17, \"score\": 3, \"ajustado\": 3}, {\"hoyo\": 15, \"par\": 5, \"ventaja\": 3, \"score\": 5, \"ajustado\": 5}, {\"hoyo\": 16, \"par\": 4, \"ventaja\": 13, \"score\": 4, \"ajustado\": 4}, {\"hoyo\": 17, \"par\": 4, \"ventaja\": 11, \"score\": 3, \"ajustado\": 3}, {\"hoyo\": 18, \"par\": 4, \"ventaja\": 15, \"score\": 5, \"ajustado\": 5}], \"out\": {\"par\": \"36\", \"score\": \"33\", \"ajustado\": \"33\"}, \"in\": {\"par\": \"36\", \"score\": \"38\", \"ajustado\": \"38\"}, \"total\": {\"par\": \"72\", \"score\": \"71\", \"ajustado\": \"71\"}, \"marca\": \"Azules-6755\", \"handicap_cancha\": 1, \"indice_al_momento\": 0.9}",
     "handicap_cancha": 1,
     "indice_al_momento": 0.9,
     "created_at": "2026-02-15 13:40:08"
@@ -7922,7 +7922,7 @@
   {
     "id": 465,
     "jugador_id": 7,
-    "fecha": "2026-03-28",
+    "fecha": "2026-03-27",
     "club": "Club Manizales",
     "cancha": "Club Manizales",
     "marca": "Azules-6755",
@@ -8077,8 +8077,8 @@
     "aplicable_torneo": 0,
     "tarjeta_id": "a16Ua000007IrEjIAK",
     "hoyos_json": null,
-    "handicap_cancha": null,
-    "indice_al_momento": null,
+    "handicap_cancha": 2,
+    "indice_al_momento": 1.5,
     "created_at": "2026-03-28 12:41:45"
   },
   {
@@ -8480,7 +8480,7 @@
   {
     "id": 496,
     "jugador_id": 7,
-    "fecha": "2026-03-29",
+    "fecha": "2026-03-28",
     "club": "Club Manizales",
     "cancha": "Club Manizales",
     "marca": "Azules-6755",
