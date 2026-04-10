@@ -1,0 +1,114 @@
+[
+  {
+    "posicion": 1,
+    "jugador_id": 10,
+    "nombre": "Valencia Hoyos",
+    "total_puntos": 1152.5,
+    "fechas_jugadas": 6
+  },
+  {
+    "posicion": 2,
+    "jugador_id": 7,
+    "nombre": "Velez Gomez",
+    "total_puntos": 980.0,
+    "fechas_jugadas": 6
+  },
+  {
+    "posicion": 3,
+    "jugador_id": 2,
+    "nombre": "Villegas Herrera",
+    "total_puntos": 868.33,
+    "fechas_jugadas": 6
+  },
+  {
+    "posicion": 4,
+    "jugador_id": 11,
+    "nombre": "Gonzalez Ossa",
+    "total_puntos": 848.33,
+    "fechas_jugadas": 5
+  },
+  {
+    "posicion": 5,
+    "jugador_id": 4,
+    "nombre": "Gaviria Gutierrez",
+    "total_puntos": 763.33,
+    "fechas_jugadas": 4
+  },
+  {
+    "posicion": 6,
+    "jugador_id": 15,
+    "nombre": "Villegas Villegas",
+    "total_puntos": 736.0,
+    "fechas_jugadas": 6
+  },
+  {
+    "posicion": 7,
+    "jugador_id": 6,
+    "nombre": "Zuluaga Ramirez",
+    "total_puntos": 706.0,
+    "fechas_jugadas": 4
+  },
+  {
+    "posicion": 8,
+    "jugador_id": 9,
+    "nombre": "Millan Hoyos",
+    "total_puntos": 706.0,
+    "fechas_jugadas": 6
+  },
+  {
+    "posicion": 9,
+    "jugador_id": 13,
+    "nombre": "Uribe Jaramillo",
+    "total_puntos": 660.0,
+    "fechas_jugadas": 5
+  },
+  {
+    "posicion": 10,
+    "jugador_id": 8,
+    "nombre": "Alvarez Antia",
+    "total_puntos": 645.0,
+    "fechas_jugadas": 5
+  },
+  {
+    "posicion": 11,
+    "jugador_id": 14,
+    "nombre": "Mideros Barbossa",
+    "total_puntos": 505.0,
+    "fechas_jugadas": 4
+  },
+  {
+    "posicion": 12,
+    "jugador_id": 17,
+    "nombre": "Millan Ocampo",
+    "total_puntos": 496.83,
+    "fechas_jugadas": 5
+  },
+  {
+    "posicion": 13,
+    "jugador_id": 1,
+    "nombre": "Perez Quintero",
+    "total_puntos": 430.83,
+    "fechas_jugadas": 4
+  },
+  {
+    "posicion": 14,
+    "jugador_id": 5,
+    "nombre": "Gallo Velasquez",
+    "total_puntos": 268.33,
+    "fechas_jugadas": 3
+  },
+  {
+    "posicion": 15,
+    "jugador_id": 12,
+    "nombre": "Velez Saffon",
+    "total_puntos": 256.0,
+    "fechas_jugadas": 3
+  },
+  {
+    "posicion": 16,
+    "jugador_id": 16,
+    "nombre": "Saenz Merino",
+    "total_puntos": 162.5,
+    "fechas_jugadas": 2
+  }
+]
