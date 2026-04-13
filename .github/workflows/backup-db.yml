@@ -1,18 +1,17 @@
-name: Fix Perez Fecha 7 via script
+name: Liquidate Fecha 8
 
 on:
   push:
     paths:
       - '.github/workflows/backup-db.yml'
-      - 'scripts/fix_perez_fecha7.py'
   workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
-  fix:
-    name: Run fix script and backup
+  liquidate:
+    name: Liquidate Fecha 8 (2026-04-11)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -27,13 +26,13 @@ jobs:
 
       - name: Verify script exists on production
         run: |
-          flyctl ssh console -a copa-fedex-sucesores -C "ls -la /app/scripts/fix_perez_fecha7.py"
+          flyctl ssh console -a copa-fedex-sucesores -C "ls -la /app/scripts/liquidate_fecha_8.py"
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
-      - name: Run fix script on production
+      - name: Run liquidation script
         run: |
-          flyctl ssh console -a copa-fedex-sucesores -C "python3 /app/scripts/fix_perez_fecha7.py"
+          flyctl ssh console -a copa-fedex-sucesores -C "python3 /app/scripts/liquidate_fecha_8.py"
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
@@ -65,6 +64,6 @@ jobs:
           git pull --rebase origin main || true
           git add data/backup/
           git diff --staged --quiet && echo "No changes" || (
-            git commit -m "Fix Fecha 7 Perez: applied fix_perez_fecha7.py script"
+            git commit -m "Liquidar Fecha 8 (2026-04-11) - Andres Velez Saffon excluido (domingo no cuenta)"
             git push origin main
           )
