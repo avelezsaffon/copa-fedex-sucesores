@@ -1,4 +1,4 @@
-name: Dump raw federation HTML
+name: Delete Perez Saturday round and recalculate Fecha 7
 
 on:
   push:
@@ -10,8 +10,8 @@ permissions:
   contents: write
 
 jobs:
-  dump:
-    name: Dump raw federation data
+  fix:
+    name: Delete ronda 513 and recalculate
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -24,26 +24,93 @@ jobs:
           done
           sleep 5
 
-      - name: Dump raw HTML and parsed data for Perez
+      - name: Show Perez current state
         run: |
-          flyctl ssh console -a copa-fedex-sucesores -C "python3 /app/dump_fed.py" > dump_perez.txt 2>&1 || true
-          cat dump_perez.txt || echo "empty"
+          flyctl ssh console -a copa-fedex-sucesores -C "python3 -c \"
+          import sqlite3
+          c=sqlite3.connect('/data/torneo.db')
+          print('Perez rondas abril:')
+          for r in c.execute(\\\"SELECT id,fecha,score_gross,handicap_cancha,tarjeta_id FROM rondas WHERE jugador_id=1 AND fecha LIKE '2026-04%' ORDER BY fecha\\\").fetchall(): print(f'  id:{r[0]} {r[1]} G:{r[2]} HCP:{r[3]} t:{r[4]}')
+          print()
+          print('Perez en Fecha 7 (04-04):')
+          for r in c.execute(\\\"SELECT rf.ronda_id,rf.score_gross,rf.handicap_aplicado,rf.score_neto,rf.posicion,rf.puntos FROM resultados_fecha rf WHERE rf.fecha_torneo_id=13 AND rf.jugador_id=1\\\").fetchall(): print(f'  ronda:{r[0]} G:{r[1]} HCP:{r[2]} N:{r[3]} Pos:{r[4]} Pts:{r[5]}')
+          \""
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
-      - name: Upload dump as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: perez-dump
-          path: dump_perez.txt
+      - name: Delete ronda 513 and get Sunday handicap
+        run: |
+          flyctl ssh console -a copa-fedex-sucesores -C "python3 -c \"
+          import sqlite3,sys
+          sys.path.insert(0,'/app')
+          from src.fedegolf_collector import FedegolfScoresCollector
+          c=sqlite3.connect('/data/torneo.db')
+          r=c.execute('SELECT id,tarjeta_id FROM rondas WHERE jugador_id=1 AND fecha=\\\"2026-04-05\\\" AND club LIKE \\\"%Manizales%\\\"').fetchone()
+          if r:
+              rid,tid=r
+              print(f'Ronda domingo: id={rid} tarjeta={tid}')
+              collector=FedegolfScoresCollector()
+              try:
+                  d=collector.get_scorecard_detail(tid)
+                  if d and d.get('handicap_cancha') is not None:
+                      c.execute('UPDATE rondas SET handicap_cancha=?,indice_al_momento=? WHERE id=?',(d['handicap_cancha'],d.get('indice_al_momento'),rid))
+                      print(f'HCP obtenido: {d[\\\"handicap_cancha\\\"]}')
+                  else:
+                      print(f'SKIP: {d}')
+              except Exception as e: print(f'Error: {e}')
+          c.execute('DELETE FROM resultados_fecha WHERE fecha_torneo_id=13 AND jugador_id=1')
+          print('Resultado fecha 7 de Perez borrado')
+          c.execute('DELETE FROM rondas WHERE id=513')
+          print('Ronda 513 (04-04 G:77) borrada')
+          c.commit()
+          \""
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
-      - name: Commit dump
+      - name: Reassign Perez with Sunday round and recalculate
+        run: |
+          flyctl ssh console -a copa-fedex-sucesores -C "python3 -c \"
+          import sqlite3,sys
+          sys.path.insert(0,'/app')
+          from src.ranking import recalcular_fecha
+          c=sqlite3.connect('/data/torneo.db')
+          r=c.execute('SELECT id,score_gross FROM rondas WHERE jugador_id=1 AND fecha=\\\"2026-04-05\\\" AND club LIKE \\\"%Manizales%\\\"').fetchone()
+          if r:
+              c.execute('INSERT INTO resultados_fecha(fecha_torneo_id,jugador_id,ronda_id,score_gross) VALUES(13,1,?,?)',(r[0],r[1]))
+              c.commit()
+              print(f'Perez asignado con ronda {r[0]} G:{r[1]}')
+          recalcular_fecha('/data/torneo.db',13)
+          print()
+          print('FECHA 7 FINAL:')
+          for r in c.execute('SELECT rf.posicion,j.nombre,j.apellido,rf.score_gross,rf.handicap_aplicado,rf.score_neto,rf.puntos,rr.fecha FROM resultados_fecha rf JOIN jugadores j ON rf.jugador_id=j.id LEFT JOIN rondas rr ON rf.ronda_id=rr.id WHERE rf.fecha_torneo_id=13 ORDER BY rf.posicion').fetchall(): print(f'  {r[0]:>2} {r[1]} {r[2]} G:{r[3]} HCP:{r[4]} N:{r[5]} Pts:{r[6]} ({r[7]})')
+          \""
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+      - name: Download and backup
+        run: |
+          flyctl ssh console -a copa-fedex-sucesores -C "cat /data/torneo.db" > data/torneo_prod.db
+          python3 << 'PYEOF'
+          import sqlite3, json
+          conn = sqlite3.connect('data/torneo_prod.db')
+          conn.row_factory = sqlite3.Row
+          for tabla in ['jugadores', 'rondas', 'fechas_torneo', 'resultados_fecha', 'tabla_puntos']:
+              rows = [dict(r) for r in conn.execute(f'SELECT * FROM {tabla}').fetchall()]
+              with open(f'data/backup/{tabla}.json', 'w') as f:
+                  json.dump(rows, f, indent=2, ensure_ascii=False)
+              print(f'{tabla}: {len(rows)}')
+          conn.close()
+          PYEOF
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+      - name: Commit
         run: |
           git config user.name "Claude"
           git config user.email "noreply@anthropic.com"
           git pull --rebase origin main || true
-          git add dump_perez.txt
+          git add data/backup/
           git diff --staged --quiet && echo "No changes" || (
-            git commit -m "Dump raw federation data for debugging"
+            git commit -m "Fix Fecha 7: Perez Quintero - quitar ronda 04-04 G:77, usar domingo 04-05 G:69"
             git push origin main
           )
