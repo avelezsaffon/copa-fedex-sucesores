@@ -1,9 +1,10 @@
-name: Fix Perez via sqlite3 CLI
+name: Fix Perez Fecha 7 via script
 
 on:
   push:
     paths:
       - '.github/workflows/backup-db.yml'
+      - 'scripts/fix_perez_fecha7.py'
   workflow_dispatch:
 
 permissions:
@@ -11,7 +12,7 @@ permissions:
 
 jobs:
   fix:
-    name: Direct sqlite3 commands
+    name: Run fix script and backup
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -22,85 +23,23 @@ jobs:
           for i in 1 2 3 4 5; do
             curl -s -o /dev/null https://copa-fedex-sucesores.fly.dev/ && break || sleep 8
           done
-          sleep 5
+          sleep 15
 
-      - name: Show Perez current state
+      - name: Run fix script on production
         run: |
-          flyctl ssh console -a copa-fedex-sucesores -C "sqlite3 /data/torneo.db 'SELECT id,fecha,score_gross,handicap_cancha FROM rondas WHERE jugador_id=1 AND fecha LIKE \"2026-04%\";'"
+          flyctl ssh console -a copa-fedex-sucesores -C "python3 /app/scripts/fix_perez_fecha7.py"
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
-      - name: Show Perez Fecha 7 result
-        run: |
-          flyctl ssh console -a copa-fedex-sucesores -C "sqlite3 /data/torneo.db 'SELECT ronda_id,score_gross,handicap_aplicado,score_neto,posicion,puntos FROM resultados_fecha WHERE fecha_torneo_id=13 AND jugador_id=1;'"
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-
-      - name: Delete Perez resultado Fecha 7
-        run: |
-          flyctl ssh console -a copa-fedex-sucesores -C "sqlite3 /data/torneo.db 'DELETE FROM resultados_fecha WHERE fecha_torneo_id=13 AND jugador_id=1;'"
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-
-      - name: Delete Perez ronda 04-04
-        run: |
-          flyctl ssh console -a copa-fedex-sucesores -C "sqlite3 /data/torneo.db 'DELETE FROM rondas WHERE jugador_id=1 AND fecha=\"2026-04-04\" AND score_gross=77;'"
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-
-      - name: Get Sunday ronda id
-        run: |
-          flyctl ssh console -a copa-fedex-sucesores -C "sqlite3 /data/torneo.db 'SELECT id,score_gross,handicap_cancha,tarjeta_id FROM rondas WHERE jugador_id=1 AND fecha=\"2026-04-05\" AND club LIKE \"%Manizales%\";'"
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-
-      - name: Insert Perez with Sunday round
-        run: |
-          flyctl ssh console -a copa-fedex-sucesores -C "sqlite3 /data/torneo.db \"INSERT INTO resultados_fecha (fecha_torneo_id, jugador_id, ronda_id, score_gross) SELECT 13, 1, id, score_gross FROM rondas WHERE jugador_id=1 AND fecha='2026-04-05' AND club LIKE '%Manizales%' LIMIT 1;\""
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-
-      - name: Get handicap from federation for Sunday round
-        run: |
-          flyctl ssh console -a copa-fedex-sucesores -C "python3 -c \"
-          import sys,sqlite3
-          sys.path.insert(0,'/app')
-          from src.fedegolf_collector import FedegolfScoresCollector
-          c=sqlite3.connect('/data/torneo.db')
-          r=c.execute('SELECT id,tarjeta_id FROM rondas WHERE jugador_id=1 AND fecha=\\\"2026-04-05\\\" LIMIT 1').fetchone()
-          if r:
-              col=FedegolfScoresCollector()
-              d=col.get_scorecard_detail(r[1])
-              print(d)
-              if d and d.get('handicap_cancha') is not None:
-                  c.execute('UPDATE rondas SET handicap_cancha=?,indice_al_momento=? WHERE id=?',(d['handicap_cancha'],d.get('indice_al_momento'),r[0]))
-                  c.commit()
-                  print(f'HCP updated: {d[\\\"handicap_cancha\\\"]}')
-          \""
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-
-      - name: Recalculate Fecha 7
-        run: |
-          flyctl ssh console -a copa-fedex-sucesores -C "python3 -c \"
-          import sys
-          sys.path.insert(0,'/app')
-          from src.ranking import recalcular_fecha
-          recalcular_fecha('/data/torneo.db',13)
-          print('Recalculated')
-          \""
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-
-      - name: Show Fecha 7 final results
-        run: |
-          flyctl ssh console -a copa-fedex-sucesores -C "sqlite3 /data/torneo.db 'SELECT rf.posicion,j.apellido,rf.score_gross,rf.handicap_aplicado,rf.score_neto,rf.puntos FROM resultados_fecha rf JOIN jugadores j ON rf.jugador_id=j.id WHERE rf.fecha_torneo_id=13 ORDER BY rf.posicion;'"
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-
-      - name: Download and backup
+      - name: Download production DB
         run: |
           flyctl ssh console -a copa-fedex-sucesores -C "cat /data/torneo.db" > data/torneo_prod.db
+          ls -la data/torneo_prod.db
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+      - name: Export backups
+        run: |
           python3 << 'PYEOF'
           import sqlite3, json
           conn = sqlite3.connect('data/torneo_prod.db')
@@ -112,8 +51,6 @@ jobs:
               print(f'{tabla}: {len(rows)}')
           conn.close()
           PYEOF
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
       - name: Commit
         run: |
@@ -122,6 +59,6 @@ jobs:
           git pull --rebase origin main || true
           git add data/backup/
           git diff --staged --quiet && echo "No changes" || (
-            git commit -m "Fix Fecha 7 Perez: delete spurious 04-04 G:77, use Sunday 04-05 G:69"
+            git commit -m "Fix Fecha 7 Perez: applied fix_perez_fecha7.py script"
             git push origin main
           )
