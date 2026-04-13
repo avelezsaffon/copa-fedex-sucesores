@@ -1,4 +1,4 @@
-name: Fix Velez Fecha 6
+name: Investigate date bug
 
 on:
   push:
@@ -10,8 +10,8 @@ permissions:
   contents: write
 
 jobs:
-  fix:
-    name: Fix Velez sabado G78
+  investigate:
+    name: Compare federation raw dates
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -24,38 +24,87 @@ jobs:
           done
           sleep 5
 
-      - name: Fix Velez ronda and fix date offsets
+      - name: Download production DB and analyze
+        run: |
+          flyctl ssh console -a copa-fedex-sucesores -C "cat /data/torneo.db" > data/torneo_prod.db
+          ls -la data/torneo_prod.db
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+      - name: Show fechas torneo and April rounds
+        run: |
+          python3 << 'PYEOF'
+          import sqlite3
+          conn = sqlite3.connect('data/torneo_prod.db')
+          conn.row_factory = sqlite3.Row
+          print('=== FECHAS TORNEO ===')
+          for ft in conn.execute('SELECT * FROM fechas_torneo WHERE num_jugadores > 0 ORDER BY fecha').fetchall():
+              print(f'  {ft["fecha"]} | ID:{ft["id"]} | {ft["num_jugadores"]} jugadores')
+          print()
+          print('=== ABRIL RONDAS MANIZALES ===')
+          rows = conn.execute("SELECT r.id, r.jugador_id, j.nombre, j.apellido, r.fecha, r.score_gross, r.handicap_cancha, r.tarjeta_id FROM rondas r JOIN jugadores j ON r.jugador_id = j.id WHERE r.fecha LIKE '2026-04%' AND r.club LIKE '%Manizales%' ORDER BY r.fecha, r.jugador_id").fetchall()
+          print(f'Total: {len(rows)}')
+          for r in rows:
+              d = dict(r)
+              from datetime import date
+              dd = date.fromisoformat(d['fecha'])
+              dia = ['Lun','Mar','Mie','Jue','Vie','Sab','Dom'][dd.weekday()]
+              print(f'  {d["fecha"]} ({dia}) | {d["nombre"]} {d["apellido"]} | G:{d["score_gross"]} HCP:{d["handicap_cancha"]} ID:{d["id"]} t:{d["tarjeta_id"]}')
+          print()
+          print('=== PEREZ QUINTERO RONDAS DESDE MAR 25 ===')
+          for r in conn.execute("SELECT * FROM rondas WHERE jugador_id=1 AND fecha >= '2026-03-25' ORDER BY fecha").fetchall():
+              d = dict(r)
+              print(f'  {d["fecha"]} G:{d["score_gross"]} club:{d.get("club","")} HCP:{d.get("handicap_cancha")} ID:{d["id"]} t:{d.get("tarjeta_id")}')
+          print()
+          print('=== FECHA 2026-04-04 RESULTS ===')
+          for r in conn.execute("SELECT rf.posicion, j.nombre, j.apellido, rf.score_gross, rf.handicap_aplicado, rf.score_neto, rf.puntos, rf.ronda_id, rr.fecha as ronda_fecha FROM resultados_fecha rf JOIN jugadores j ON rf.jugador_id = j.id LEFT JOIN rondas rr ON rf.ronda_id = rr.id WHERE rf.fecha_torneo_id = (SELECT id FROM fechas_torneo WHERE fecha='2026-04-04') ORDER BY rf.posicion").fetchall():
+              d = dict(r)
+              print(f'  {d["posicion"]:>2} {d["nombre"]} {d["apellido"]} G:{d["score_gross"]} HCP:{d["handicap_aplicado"]} N:{d["score_neto"]} Pts:{d["puntos"]} | ronda:{d["ronda_id"]} fecha:{d.get("ronda_fecha","?")}')
+          conn.close()
+          PYEOF
+
+      - name: Get raw federation dates for Perez Quintero
         run: |
           flyctl ssh console -a copa-fedex-sucesores -C "python3 -c \"
-          import sqlite3,sys
+          import sys
           sys.path.insert(0,'/app')
-          from src.ranking import recalcular_fecha
-          DB='/data/torneo.db'
-          c=sqlite3.connect(DB)
-          print('Velez rondas mar 28-29:')
-          for r in c.execute(\\\"SELECT id,fecha,score_gross FROM rondas WHERE jugador_id=7 AND fecha IN ('2026-03-28','2026-03-29') AND club LIKE '%Manizales%'\\\").fetchall(): print(f'  id:{r[0]} {r[1]} G:{r[2]}')
-          print()
-          print('Fixing Velez dates:')
-          c.execute(\\\"UPDATE rondas SET fecha='2026-03-27' WHERE id=465\\\")
-          print('  ronda 465 G:76: 2026-03-28 -> 2026-03-27 (viernes real)')
-          c.execute(\\\"UPDATE rondas SET fecha='2026-03-28' WHERE id=496\\\")
-          print('  ronda 496 G:78: 2026-03-29 -> 2026-03-28 (sabado real)')
-          c.execute(\\\"UPDATE rondas SET fecha='2026-03-29' WHERE id=495\\\")
-          print('  ronda 495 G:73: stays 2026-03-29 (domingo real)')
-          c.commit()
-          print()
-          c.execute('UPDATE resultados_fecha SET ronda_id=496,score_gross=78 WHERE fecha_torneo_id=11 AND jugador_id=7')
-          c.commit()
-          recalcular_fecha(DB,11)
-          print('FECHA 6 RECALCULATED:')
-          for r in c.execute('SELECT rf.posicion,j.nombre,j.apellido,rf.score_gross,rf.handicap_aplicado,rf.score_neto,rf.puntos FROM resultados_fecha rf JOIN jugadores j ON rf.jugador_id=j.id WHERE rf.fecha_torneo_id=11 ORDER BY rf.posicion').fetchall(): print(f'  {r[0]:>2} {r[1]} {r[2]} G:{r[3]} HCP:{r[4]} N:{r[5]} Pts:{r[6]}')
+          from src.fedegolf_collector import FedegolfScoresCollector
+          from src.sync import normalizar_fecha
+          c=FedegolfScoresCollector()
+          scores=c.get_player_scores('0035x000032ofQxAAI')
+          print('Perez Quintero - federation raw (last 15):')
+          for s in scores[:15]:
+              raw=s.get('fecha','')
+              norm=normalizar_fecha(raw)
+              g=s.get('scores','')
+              t=s.get('tarjeta_id','')
+              print(f'  RAW={raw!r} NORM={norm} G={g} t={t}')
           \""
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
-      - name: Download and backup
+      - name: Get raw federation dates for Gaviria
         run: |
-          flyctl ssh console -a copa-fedex-sucesores -C "cat /data/torneo.db" > data/torneo_prod.db
+          flyctl ssh console -a copa-fedex-sucesores -C "python3 -c \"
+          import sys
+          sys.path.insert(0,'/app')
+          from src.fedegolf_collector import FedegolfScoresCollector
+          from src.sync import normalizar_fecha
+          c=FedegolfScoresCollector()
+          scores=c.get_player_scores('0035x000032odvUAAQ')
+          print('Gaviria - federation raw (last 15):')
+          for s in scores[:15]:
+              raw=s.get('fecha','')
+              norm=normalizar_fecha(raw)
+              g=s.get('scores','')
+              t=s.get('tarjeta_id','')
+              print(f'  RAW={raw!r} NORM={norm} G={g} t={t}')
+          \""
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+      - name: Backup DB to local
+        run: |
           python3 << 'PYEOF'
           import sqlite3, json
           conn = sqlite3.connect('data/torneo_prod.db')
@@ -67,8 +116,6 @@ jobs:
               print(f'{tabla}: {len(rows)}')
           conn.close()
           PYEOF
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
       - name: Commit
         run: |
@@ -77,6 +124,6 @@ jobs:
           git pull --rebase origin main || true
           git add data/backup/
           git diff --staged --quiet && echo "No changes" || (
-            git commit -m "Fix Velez Fecha 6: usar sabado G:78 (no viernes G:76). Fechas corregidas en DB."
+            git commit -m "Investigate date bug: backup latest prod DB"
             git push origin main
           )
