@@ -23,7 +23,13 @@ jobs:
           for i in 1 2 3 4 5; do
             curl -s -o /dev/null https://copa-fedex-sucesores.fly.dev/ && break || sleep 8
           done
-          sleep 15
+          sleep 30
+
+      - name: Verify script exists on production
+        run: |
+          flyctl ssh console -a copa-fedex-sucesores -C "ls -la /app/scripts/fix_perez_fecha7.py"
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
       - name: Run fix script on production
         run: |
