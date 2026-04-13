@@ -1,4 +1,4 @@
-name: Delete Perez Saturday round and recalculate Fecha 7
+name: Fix Perez Fecha 7
 
 on:
   push:
@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   fix:
-    name: Delete ronda 513 and recalculate
+    name: Simple fix for Perez
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -24,72 +24,81 @@ jobs:
           done
           sleep 5
 
-      - name: Show Perez current state
+      - name: Write fix script to production
         run: |
-          flyctl ssh console -a copa-fedex-sucesores -C "python3 -c \"
-          import sqlite3
-          c=sqlite3.connect('/data/torneo.db')
-          print('Perez rondas abril:')
-          for r in c.execute(\\\"SELECT id,fecha,score_gross,handicap_cancha,tarjeta_id FROM rondas WHERE jugador_id=1 AND fecha LIKE '2026-04%' ORDER BY fecha\\\").fetchall(): print(f'  id:{r[0]} {r[1]} G:{r[2]} HCP:{r[3]} t:{r[4]}')
-          print()
-          print('Perez en Fecha 7 (04-04):')
-          for r in c.execute(\\\"SELECT rf.ronda_id,rf.score_gross,rf.handicap_aplicado,rf.score_neto,rf.posicion,rf.puntos FROM resultados_fecha rf WHERE rf.fecha_torneo_id=13 AND rf.jugador_id=1\\\").fetchall(): print(f'  ronda:{r[0]} G:{r[1]} HCP:{r[2]} N:{r[3]} Pos:{r[4]} Pts:{r[5]}')
-          \""
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-
-      - name: Delete ronda 513 and get Sunday handicap
-        run: |
-          flyctl ssh console -a copa-fedex-sucesores -C "python3 -c \"
-          import sqlite3,sys
-          sys.path.insert(0,'/app')
-          from src.fedegolf_collector import FedegolfScoresCollector
-          c=sqlite3.connect('/data/torneo.db')
-          r=c.execute('SELECT id,tarjeta_id FROM rondas WHERE jugador_id=1 AND fecha=\\\"2026-04-05\\\" AND club LIKE \\\"%Manizales%\\\"').fetchone()
-          if r:
-              rid,tid=r
-              print(f'Ronda domingo: id={rid} tarjeta={tid}')
-              collector=FedegolfScoresCollector()
-              try:
-                  d=collector.get_scorecard_detail(tid)
-                  if d and d.get('handicap_cancha') is not None:
-                      c.execute('UPDATE rondas SET handicap_cancha=?,indice_al_momento=? WHERE id=?',(d['handicap_cancha'],d.get('indice_al_momento'),rid))
-                      print(f'HCP obtenido: {d[\\\"handicap_cancha\\\"]}')
-                  else:
-                      print(f'SKIP: {d}')
-              except Exception as e: print(f'Error: {e}')
-          c.execute('DELETE FROM resultados_fecha WHERE fecha_torneo_id=13 AND jugador_id=1')
-          print('Resultado fecha 7 de Perez borrado')
-          c.execute('DELETE FROM rondas WHERE id=513')
-          print('Ronda 513 (04-04 G:77) borrada')
-          c.commit()
-          \""
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-
-      - name: Reassign Perez with Sunday round and recalculate
-        run: |
-          flyctl ssh console -a copa-fedex-sucesores -C "python3 -c \"
-          import sqlite3,sys
-          sys.path.insert(0,'/app')
+          cat > /tmp/fix_perez.py << 'PYEOF'
+          import sqlite3, sys
+          sys.path.insert(0, '/app')
           from src.ranking import recalcular_fecha
-          c=sqlite3.connect('/data/torneo.db')
-          r=c.execute('SELECT id,score_gross FROM rondas WHERE jugador_id=1 AND fecha=\\\"2026-04-05\\\" AND club LIKE \\\"%Manizales%\\\"').fetchone()
-          if r:
-              c.execute('INSERT INTO resultados_fecha(fecha_torneo_id,jugador_id,ronda_id,score_gross) VALUES(13,1,?,?)',(r[0],r[1]))
+
+          DB = '/data/torneo.db'
+          c = sqlite3.connect(DB)
+          c.row_factory = sqlite3.Row
+
+          # Show Perez rounds April
+          print('=== Perez rondas abril ===')
+          for r in c.execute("SELECT id, fecha, score_gross, handicap_cancha, tarjeta_id FROM rondas WHERE jugador_id=1 AND fecha LIKE '2026-04%' ORDER BY fecha").fetchall():
+              print(f"  id={r['id']} {r['fecha']} G:{r['score_gross']} HCP:{r['handicap_cancha']} t:{r['tarjeta_id']}")
+
+          # Delete the spurious Saturday round (G:77)
+          row = c.execute("SELECT id FROM rondas WHERE jugador_id=1 AND fecha='2026-04-04' AND score_gross=77").fetchone()
+          if row:
+              print(f"Deleting ronda {row['id']} (Perez 04-04 G:77)")
+              c.execute("DELETE FROM resultados_fecha WHERE ronda_id=?", (row['id'],))
+              c.execute("DELETE FROM rondas WHERE id=?", (row['id'],))
               c.commit()
-              print(f'Perez asignado con ronda {r[0]} G:{r[1]}')
-          recalcular_fecha('/data/torneo.db',13)
+              print("Deleted")
+          else:
+              print("Ronda not found - maybe already deleted")
+
+          # Get Sunday round and assign
+          sunday = c.execute("SELECT id, score_gross, handicap_cancha, tarjeta_id FROM rondas WHERE jugador_id=1 AND fecha='2026-04-05' AND club LIKE '%Manizales%'").fetchone()
+          if sunday:
+              print(f"Sunday ronda: id={sunday['id']} G:{sunday['score_gross']} HCP:{sunday['handicap_cancha']}")
+              # Try to get handicap from federation
+              try:
+                  from src.fedegolf_collector import FedegolfScoresCollector
+                  col = FedegolfScoresCollector()
+                  detail = col.get_scorecard_detail(sunday['tarjeta_id'])
+                  if detail and detail.get('handicap_cancha') is not None:
+                      c.execute("UPDATE rondas SET handicap_cancha=?, indice_al_momento=? WHERE id=?",
+                                (detail['handicap_cancha'], detail.get('indice_al_momento'), sunday['id']))
+                      c.commit()
+                      print(f"Handicap obtenido: {detail['handicap_cancha']}")
+              except Exception as e:
+                  print(f"Error getting handicap: {e}")
+
+              # Make sure Perez is assigned to Fecha 7 with the Sunday round
+              existing = c.execute("SELECT id FROM resultados_fecha WHERE fecha_torneo_id=13 AND jugador_id=1").fetchone()
+              if existing:
+                  c.execute("UPDATE resultados_fecha SET ronda_id=?, score_gross=? WHERE id=?",
+                            (sunday['id'], sunday['score_gross'], existing['id']))
+                  print("Updated existing resultado")
+              else:
+                  c.execute("INSERT INTO resultados_fecha (fecha_torneo_id, jugador_id, ronda_id, score_gross) VALUES (13, 1, ?, ?)",
+                            (sunday['id'], sunday['score_gross']))
+                  print("Inserted new resultado")
+              c.commit()
+
+          # Recalculate
+          recalcular_fecha(DB, 13)
           print()
-          print('FECHA 7 FINAL:')
-          for r in c.execute('SELECT rf.posicion,j.nombre,j.apellido,rf.score_gross,rf.handicap_aplicado,rf.score_neto,rf.puntos,rr.fecha FROM resultados_fecha rf JOIN jugadores j ON rf.jugador_id=j.id LEFT JOIN rondas rr ON rf.ronda_id=rr.id WHERE rf.fecha_torneo_id=13 ORDER BY rf.posicion').fetchall(): print(f'  {r[0]:>2} {r[1]} {r[2]} G:{r[3]} HCP:{r[4]} N:{r[5]} Pts:{r[6]} ({r[7]})')
-          \""
+          print('=== FECHA 7 FINAL ===')
+          for r in c.execute("SELECT rf.posicion, j.nombre, j.apellido, rf.score_gross, rf.handicap_aplicado, rf.score_neto, rf.puntos, rr.fecha as rf_date FROM resultados_fecha rf JOIN jugadores j ON rf.jugador_id=j.id LEFT JOIN rondas rr ON rf.ronda_id=rr.id WHERE rf.fecha_torneo_id=13 ORDER BY rf.posicion").fetchall():
+              print(f"  {r['posicion']:>2} {r['nombre']} {r['apellido']} G:{r['score_gross']} HCP:{r['handicap_aplicado']} N:{r['score_neto']} Pts:{r['puntos']} ({r['rf_date']})")
+          PYEOF
+
+          # Upload to production via stdin
+          base64 -w0 /tmp/fix_perez.py > /tmp/fix_perez.b64
+          SCRIPT=$(cat /tmp/fix_perez.b64)
+          flyctl ssh console -a copa-fedex-sucesores -C "bash -c 'echo $SCRIPT | base64 -d | python3'"
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
       - name: Download and backup
         run: |
           flyctl ssh console -a copa-fedex-sucesores -C "cat /data/torneo.db" > data/torneo_prod.db
+          ls -la data/torneo_prod.db
           python3 << 'PYEOF'
           import sqlite3, json
           conn = sqlite3.connect('data/torneo_prod.db')
@@ -111,6 +120,6 @@ jobs:
           git pull --rebase origin main || true
           git add data/backup/
           git diff --staged --quiet && echo "No changes" || (
-            git commit -m "Fix Fecha 7: Perez Quintero - quitar ronda 04-04 G:77, usar domingo 04-05 G:69"
+            git commit -m "Fix Fecha 7 Perez: removed spurious 04-04 round, use Sunday 04-05 G:69"
             git push origin main
           )
