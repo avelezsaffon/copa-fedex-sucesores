@@ -51,8 +51,8 @@
     "id": 13,
     "fecha": "2026-04-04",
     "es_ultima_cuatro": 0,
-    "valida": 0,
-    "num_jugadores": 0,
+    "valida": 1,
+    "num_jugadores": 10,
     "created_at": "2026-02-21 01:42:00"
   },
   {

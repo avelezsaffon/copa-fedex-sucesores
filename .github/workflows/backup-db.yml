@@ -1,9 +1,10 @@
-name: Fix Velez Fecha 6
+name: Fix Perez Fecha 7 via script
 
 on:
   push:
     paths:
       - '.github/workflows/backup-db.yml'
+      - 'scripts/fix_perez_fecha7.py'
   workflow_dispatch:
 
 permissions:
@@ -11,7 +12,7 @@ permissions:
 
 jobs:
   fix:
-    name: Fix Velez sabado G78
+    name: Run fix script and backup
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -22,40 +23,29 @@ jobs:
           for i in 1 2 3 4 5; do
             curl -s -o /dev/null https://copa-fedex-sucesores.fly.dev/ && break || sleep 8
           done
-          sleep 5
+          sleep 30
 
-      - name: Fix Velez ronda and fix date offsets
+      - name: Verify script exists on production
         run: |
-          flyctl ssh console -a copa-fedex-sucesores -C "python3 -c \"
-          import sqlite3,sys
-          sys.path.insert(0,'/app')
-          from src.ranking import recalcular_fecha
-          DB='/data/torneo.db'
-          c=sqlite3.connect(DB)
-          print('Velez rondas mar 28-29:')
-          for r in c.execute(\\\"SELECT id,fecha,score_gross FROM rondas WHERE jugador_id=7 AND fecha IN ('2026-03-28','2026-03-29') AND club LIKE '%Manizales%'\\\").fetchall(): print(f'  id:{r[0]} {r[1]} G:{r[2]}')
-          print()
-          print('Fixing Velez dates:')
-          c.execute(\\\"UPDATE rondas SET fecha='2026-03-27' WHERE id=465\\\")
-          print('  ronda 465 G:76: 2026-03-28 -> 2026-03-27 (viernes real)')
-          c.execute(\\\"UPDATE rondas SET fecha='2026-03-28' WHERE id=496\\\")
-          print('  ronda 496 G:78: 2026-03-29 -> 2026-03-28 (sabado real)')
-          c.execute(\\\"UPDATE rondas SET fecha='2026-03-29' WHERE id=495\\\")
-          print('  ronda 495 G:73: stays 2026-03-29 (domingo real)')
-          c.commit()
-          print()
-          c.execute('UPDATE resultados_fecha SET ronda_id=496,score_gross=78 WHERE fecha_torneo_id=11 AND jugador_id=7')
-          c.commit()
-          recalcular_fecha(DB,11)
-          print('FECHA 6 RECALCULATED:')
-          for r in c.execute('SELECT rf.posicion,j.nombre,j.apellido,rf.score_gross,rf.handicap_aplicado,rf.score_neto,rf.puntos FROM resultados_fecha rf JOIN jugadores j ON rf.jugador_id=j.id WHERE rf.fecha_torneo_id=11 ORDER BY rf.posicion').fetchall(): print(f'  {r[0]:>2} {r[1]} {r[2]} G:{r[3]} HCP:{r[4]} N:{r[5]} Pts:{r[6]}')
-          \""
+          flyctl ssh console -a copa-fedex-sucesores -C "ls -la /app/scripts/fix_perez_fecha7.py"
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
-      - name: Download and backup
+      - name: Run fix script on production
+        run: |
+          flyctl ssh console -a copa-fedex-sucesores -C "python3 /app/scripts/fix_perez_fecha7.py"
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+      - name: Download production DB
         run: |
           flyctl ssh console -a copa-fedex-sucesores -C "cat /data/torneo.db" > data/torneo_prod.db
+          ls -la data/torneo_prod.db
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+      - name: Export backups
+        run: |
           python3 << 'PYEOF'
           import sqlite3, json
           conn = sqlite3.connect('data/torneo_prod.db')
@@ -67,8 +57,6 @@ jobs:
               print(f'{tabla}: {len(rows)}')
           conn.close()
           PYEOF
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
       - name: Commit
         run: |
@@ -77,6 +65,6 @@ jobs:
           git pull --rebase origin main || true
           git add data/backup/
           git diff --staged --quiet && echo "No changes" || (
-            git commit -m "Fix Velez Fecha 6: usar sabado G:78 (no viernes G:76). Fechas corregidas en DB."
+            git commit -m "Fix Fecha 7 Perez: applied fix_perez_fecha7.py script"
             git push origin main
           )
