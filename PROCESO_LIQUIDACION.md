@@ -18,8 +18,6 @@ Si la DB de produccion se pierde o corrompe, los JSON en el repo son el respaldo
 - **App**: FastAPI desplegada en Fly.dev (`copa-fedex-sucesores`)
 - **DB**: SQLite en volumen persistente `/data/torneo.db`
 - **Datos de jugadores/rondas**: Federacion Colombiana de Golf (scraping)
-- **Repo local**: `/Users/andresvelezsaffon/torneo-golf/`
-- **Repo GitHub**: `avelezsaffon/copa-fedex-sucesores`
 - **URL produccion**: https://copa-fedex-sucesores.fly.dev/
 
 ## Reglas del Torneo
@@ -196,7 +194,6 @@ ORDER BY rf.posicion
 
 Si se hicieron cambios de codigo:
 ```bash
-cd /Users/andresvelezsaffon/torneo-golf
 flyctl deploy
 ```
 
@@ -223,7 +220,6 @@ cada liquidacion.
 Exportar todas las tablas a JSON en `data/backup/`:
 
 ```bash
-cd /Users/andresvelezsaffon/torneo-golf
 source venv/bin/activate
 python3 -c "
 import sqlite3, json
@@ -268,7 +264,7 @@ git push origin main
 
 ## Herramientas Clave
 
-- `flyctl` ubicado en `/Users/andresvelezsaffon/.fly/bin/flyctl`
+- `flyctl` (instalar desde https://fly.io/docs/flyctl/install/)
 - DB local de trabajo: `data/torneo_prod.db`
 - DB produccion: `/data/torneo.db` (en el volumen de Fly)
 - Entorno virtual: `venv/` (activar con `source venv/bin/activate`)

@@ -1,3 +1,0 @@
-Connecting to fdaa:47:fb9c:a7b:5c6:cf18:ba40:2...
-python3: can't open file '/app/dump_fed.py': [Errno 2] No such file or directory
-Error: ssh shell: Process exited with status 2
